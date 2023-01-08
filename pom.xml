@@ -132,6 +132,8 @@
   <modules>
     <!-- the parent POM must come first: -->
     <module>log4j-transform-parent</module>
+    <module>log4j-transform-maven-plugin</module>
+    <module>log4j-weaver</module>
   </modules>
   <scm>
     <connection>scm:git:git@github.com:apache/logging-log4j-transform.git</connection>
@@ -168,7 +170,20 @@
     <sign-maven-plugin.version>1.0.1</sign-maven-plugin.version>
     <spotless-maven-plugin.version>2.29.0</spotless-maven-plugin.version>
   </properties>
-  <dependencyManagement/>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-transform-maven-plugin</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-weaver</artifactId>
+        <version>${revision}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <build>
     <pluginManagement>
       <plugins>
@@ -196,7 +211,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>
-        <version>${flatten-maven-plugin.version}</version>
         <inherited>false</inherited>
         <executions>
           <execution>
@@ -244,9 +258,9 @@
           <pom>
             <sortPom>
               <expandEmptyElements>false</expandEmptyElements>
-              <keepBlankLines>false</keepBlankLines>
+              <keepBlankLines>true</keepBlankLines>
               <indentSchemaLocation>true</indentSchemaLocation>
-              <sortDependencies>artifactId,groupId</sortDependencies>
+              <sortDependencies>scope,artifactId,groupId</sortDependencies>
               <sortDependencyExclusions>artifactId,groupId</sortDependencyExclusions>
               <sortPlugins>artifactId,groupId</sortPlugins>
             </sortPom>

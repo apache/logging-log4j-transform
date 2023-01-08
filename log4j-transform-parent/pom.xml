@@ -24,37 +24,93 @@
     <version>${revision}</version>
   </parent>
   <artifactId>log4j-transform-parent</artifactId>
-  <version>${revision}</version>
   <packaging>pom</packaging>
   <properties>
     <!-- project properties -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <!-- `minimalJavaBuildVersion` is employed by `org.apache:apache`, which parents `org.apache.logging:logging-parent`, which parents `org.apache.logging.log4j.tools:log4j-tools-bom`, which parents us.
-         `minimalJavaBuildVersion` is used for enforcing the compiler version.
-         We will use `java.version` to enforce the target JVM byte code, which is 8. -->
-    <minimalJavaBuildVersion>[11,12)</minimalJavaBuildVersion>
-    <java.version>8</java.version>
     <!-- `project.build.outputTimestamp` is required for reproducible builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
     <project.build.outputTimestamp>0</project.build.outputTimestamp>
     <!-- disable `maven-site-plugin`-->
     <maven.site.skip>true</maven.site.skip>
     <maven.site.deploy.skip>true</maven.site.deploy.skip>
     <!-- dependency versions -->
+    <asm.version>9.4</asm.version>
+    <assertj.version>3.23.1</assertj.version>
+    <commons-lang.version>3.12.0</commons-lang.version>
+    <commons-logging.version>1.2</commons-logging.version>
     <freemarker.version>2.3.31</freemarker.version>
+    <junit.version>5.9.1</junit.version>
+    <log4j2.version>2.19.1-SNAPSHOT</log4j2.version>
+    <maven.version>3.6.0</maven.version>
+    <plexus-utils.version>3.1.0</plexus-utils.version>
+    <slf4j.version>2.0.6</slf4j.version>
     <spotbugs.version>4.7.3</spotbugs.version>
     <!-- plugin versions -->
+    <bundle-plugin.version>5.1.8</bundle-plugin.version>
     <error-prone.version>2.16</error-prone.version>
     <findsecbugs-plugin.version>1.12.0</findsecbugs-plugin.version>
     <spotbugs-maven-plugin.version>${spotbugs.version}.0</spotbugs-maven-plugin.version>
+    <surefire.version>3.0.0-M7</surefire.version>
   </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>org.ow2.asm</groupId>
+        <artifactId>asm-bom</artifactId>
+        <version>${asm.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${junit.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-bom</artifactId>
+        <version>${log4j2.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>${assertj.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons-lang.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>${commons-logging.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.freemarker</groupId>
         <artifactId>freemarker</artifactId>
         <version>${freemarker.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-plugin-api</artifactId>
+        <version>${maven.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-utils</artifactId>
+        <version>${plexus-utils.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
       </dependency>
       <dependency>
         <groupId>com.github.spotbugs</groupId>
@@ -66,6 +122,11 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <version>${bundle-plugin.version}</version>
+        </plugin>
         <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
@@ -155,6 +216,15 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <jdkToolchain>
+            <version>${java.version}</version>
+          </jdkToolchain>
+        </configuration>
       </plugin>
       <!-- Configuration here must match the one in `.editorconfig`! -->
       <plugin>
