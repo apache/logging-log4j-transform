@@ -16,7 +16,6 @@
 # `.asf.yaml` documentation: https://cwiki.apache.org/confluence/display/INFRA/Git+-+.asf.yaml+features
 
 github:
-
   description: "Tools internally used by the Apache Log4j project"
   homepage: https://logging.apache.org/log4j/2.x/
   labels:
@@ -33,3 +32,8 @@ github:
   protected_branches:
     main:
       required_signatures: true
+
+notifications:
+  commits: commits@logging.apache.org
+  issues: notifications@logging.apache.org
+  pullrequests: notifications@logging.apache.org
