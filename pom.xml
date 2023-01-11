@@ -134,6 +134,7 @@
     <module>log4j-transform-parent</module>
     <module>log4j-transform-maven-plugin</module>
     <module>log4j-weaver</module>
+    <module>log4j-transform-maven-shade-plugin-extensions</module>
   </modules>
   <scm>
     <connection>scm:git:git@github.com:apache/logging-log4j-transform.git</connection>

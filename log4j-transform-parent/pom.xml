@@ -40,6 +40,7 @@
     <assertj.version>3.23.1</assertj.version>
     <commons-lang.version>3.12.0</commons-lang.version>
     <commons-logging.version>1.2</commons-logging.version>
+    <commons-io.version>2.11.0</commons-io.version>
     <freemarker.version>2.3.31</freemarker.version>
     <junit.version>5.9.1</junit.version>
     <log4j2.version>2.19.1-SNAPSHOT</log4j2.version>
@@ -50,6 +51,7 @@
     <!-- plugin versions -->
     <bundle-plugin.version>5.1.8</bundle-plugin.version>
     <error-prone.version>2.16</error-prone.version>
+    <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     <findsecbugs-plugin.version>1.12.0</findsecbugs-plugin.version>
     <spotbugs-maven-plugin.version>${spotbugs.version}.0</spotbugs-maven-plugin.version>
     <surefire.version>3.0.0-M7</surefire.version>
@@ -81,6 +83,11 @@
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
         <version>${assertj.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
@@ -132,6 +139,11 @@
           <artifactId>spotbugs-maven-plugin</artifactId>
           <version>${spotbugs-maven-plugin.version}</version>
         </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco-maven-plugin.version}</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -146,6 +158,7 @@
           <excludes>
             <exclude>**/target/**</exclude>
             <exclude>.java-version</exclude>
+            <exclude>src/main/resources/META-INF/MANIFEST.MF</exclude>
           </excludes>
         </configuration>
         <executions>
