@@ -68,7 +68,7 @@ jobs:
       - name: Build
         shell: bash
         env:
-          JAVA_HOME: $JAVA_HOME_11_X64
+          JAVA_HOME: ${{ env.JAVA_HOME_11_X64 }}
         run: |
           ./mvnw \
             --show-version --batch-mode --errors --no-transfer-progress \
@@ -81,7 +81,7 @@ jobs:
       - name: Report build reproducibility
         shell: bash
         env:
-          JAVA_HOME: $JAVA_HOME_11_X64
+          JAVA_HOME: ${{ env.JAVA_HOME_11_X64 }}
         run: |
           ./mvnw \
             --show-version --batch-mode --errors --no-transfer-progress \
