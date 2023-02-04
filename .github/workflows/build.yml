@@ -63,12 +63,20 @@ jobs:
           architecture: x64
           cache: maven
 
+      # On Windows dowloading the Maven Wrapper fails if we use the `bash` script.
+      #- name: Check Maven Wrapper (Windows)
+      #  shell: cmd
+      #  env:
+      #    JAVA_HOME: ${{ env.JAVA_HOME_11_X64 }}
+      #  run: mvnw --version
+
       # We could have used `verify`, but `clean install` is required while generating the build reproducibility report, which is performed in the next step.
       # For details, see: https://maven.apache.org/guides/mini/guide-reproducible-builds.html#how-to-test-my-maven-build-reproducibility
       - name: Build
         shell: bash
         env:
           JAVA_HOME: ${{ env.JAVA_HOME_11_X64 }}
+          MVNW_VERBOSE: true
         run: |
           ./mvnw \
             --show-version --batch-mode --errors --no-transfer-progress \
