@@ -42,7 +42,7 @@
     <commons-logging.version>1.2</commons-logging.version>
     <commons-io.version>2.11.0</commons-io.version>
     <freemarker.version>2.3.32</freemarker.version>
-    <junit.version>5.9.1</junit.version>
+    <junit.version>5.9.2</junit.version>
     <log4j2.version>2.19.1-SNAPSHOT</log4j2.version>
     <maven.version>3.6.0</maven.version>
     <plexus-utils.version>3.5.0</plexus-utils.version>
