@@ -14,19 +14,22 @@
  * See the license for the specific language governing permissions and
  * limitations under the license.
  */
-package org.apache.logging.log4j.maven.scan;
+package org.apache.logging.log4j.transform.maven.it;
 
-import java.nio.file.Path;
-import java.util.Set;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-public interface ClassFileInclusionScanner {
+public class Main implements Runnable {
 
-    /**
-     * Finds class files matching a specific condition.
-     *
-     * @param sourceDir path to the folder where to search files
-     * @param targetDir an auxiliary folder
-     * @return a set of relative paths to file in {@code sourceDir}
-     */
-    Set<Path> getIncludedClassFiles(Path sourceDir, Path targetDir);
+    private static final Logger logger = LogManager.getLogger();
+
+    public static void main(String[] args) {
+        logger.info("Application starts");
+        new Main().run();
+        logger.info("Application stops");
+    }
+
+    public void run() {
+        logger.info("Another log message");
+    }
 }

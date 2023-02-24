@@ -15,41 +15,45 @@
   ~ See the license for the specific language governing permissions and
   ~ limitations under the license.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.apache.logging</groupId>
-    <artifactId>logging-parent</artifactId>
-    <version>7</version>
-    <relativePath/>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-transform-parent</artifactId>
+    <version>${revision}</version>
+    <relativePath>../../../../log4j-transform-parent</relativePath>
   </parent>
   <groupId>org.apache.logging.log4j.maven.it</groupId>
   <artifactId>log4j-maven-it-location</artifactId>
-  <version>3.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
   <name>Apache Log4j Maven plugin test</name>
   <description>The Apache Log4j Maven plugin test</description>
-  <packaging>jar</packaging>
   <properties>
-    <log4jParentDir>${basedir}/../../../..</log4jParentDir>
+    <log4j2.version>2.20.0</log4j2.version>
+    <revision>0.1.0-SNAPSHOT</revision>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-      <version>${project.version}</version>
       <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-maven-plugin</artifactId>
+        <artifactId>log4j-transform-maven-plugin</artifactId>
         <version>${project.version}</version>
         <executions>
           <execution>

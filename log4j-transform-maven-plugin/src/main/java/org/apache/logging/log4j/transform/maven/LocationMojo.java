@@ -14,7 +14,7 @@
  * See the license for the specific language governing permissions and
  * limitations under the license.
  */
-package org.apache.logging.log4j.maven;
+package org.apache.logging.log4j.transform.maven;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -26,11 +26,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.maven.scan.ClassFileInclusionScanner;
-import org.apache.logging.log4j.maven.scan.SimpleInclusionScanner;
+import org.apache.logging.log4j.transform.maven.scan.ClassFileInclusionScanner;
+import org.apache.logging.log4j.transform.maven.scan.SimpleInclusionScanner;
 import org.apache.logging.log4j.weaver.LocationCacheGenerator;
 import org.apache.logging.log4j.weaver.LocationClassConverter;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.apache.maven.artifact.versioning.OverConstrainedVersionException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -38,6 +42,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Generates location information for use with Log4j2.
@@ -45,6 +50,16 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 @Mojo(name = "generate-location", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true,
         requiresDependencyResolution = ResolutionScope.COMPILE)
 public class LocationMojo extends AbstractMojo {
+
+    private static final String LOG4J_GROUP_ID = "org.apache.logging.log4j";
+    private static final String LOG4J_API_ARTIFACT_ID = "log4j-api";
+    private static final ArtifactVersion MIN_SUPPORTED_VERSION = new DefaultArtifactVersion("2.20.0");
+
+    /**
+     * The Maven project.
+     */
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
+    private MavenProject project;
 
     /**
      * The directory containing class files to process.
@@ -67,6 +82,8 @@ public class LocationMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        validateLog4jVersion();
+
         final Path sourceDirectory = this.sourceDirectory.toPath();
         final Path outputDirectory = this.outputDirectory.toPath();
         final LocationCacheGenerator locationCache = new LocationCacheGenerator();
@@ -135,5 +152,25 @@ public class LocationMojo extends AbstractMojo {
             super(cause);
         }
 
+    }
+
+    private void validateLog4jVersion() throws MojoExecutionException {
+        Artifact log4jApi = project.getArtifacts()
+                .stream()
+                .filter(a -> LOG4J_GROUP_ID.equals(a.getGroupId()) && LOG4J_API_ARTIFACT_ID.equals(a.getArtifactId()))
+                .findAny()
+                .orElseThrow(() -> new MojoExecutionException("Missing `log4j-api` dependency."));
+        try {
+            if (MIN_SUPPORTED_VERSION.compareTo(log4jApi.getSelectedVersion()) > 0) {
+                throw new MojoExecutionException("Log4j2 API version " + MIN_SUPPORTED_VERSION
+                        + " required. Selected version: " + log4jApi.getSelectedVersion());
+            }
+            // Transitive dependency
+            if (!project.getDependencyArtifacts().contains(log4jApi)) {
+                getLog().warn("Log4j2 API should not be a transitive dependency.");
+            }
+        } catch (OverConstrainedVersionException e) {
+            throw new MojoExecutionException("Can not determine `log4j-api` version.", e);
+        }
     }
 }

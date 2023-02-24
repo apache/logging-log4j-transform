@@ -14,7 +14,7 @@
  * See the license for the specific language governing permissions and
  * limitations under the license.
  */
-package org.apache.logging.log4j.maven.scan;
+package org.apache.logging.log4j.transform.maven.scan;
 
 import java.io.IOException;
 import java.nio.file.Files;

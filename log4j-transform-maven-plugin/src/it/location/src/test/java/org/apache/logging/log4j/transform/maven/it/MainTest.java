@@ -14,22 +14,16 @@
  * See the license for the specific language governing permissions and
  * limitations under the license.
  */
-package org.apache.logging.log4j.maven.it.location;
+package org.apache.logging.log4j.transform.maven.it;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.Test;
 
-public class Main implements Runnable {
+public class MainTest {
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final String[] ARGS = {"Hello", "Log4j2"};
 
-    public static void main(String[] args) {
-        logger.info("Application starts");
-        new Main().run();
-        logger.info("Application stops");
-    }
-
-    public void run() {
-        logger.info("Another log message");
+    @Test
+    public void testDoesNotThrow() {
+        Main.main(ARGS);
     }
 }
