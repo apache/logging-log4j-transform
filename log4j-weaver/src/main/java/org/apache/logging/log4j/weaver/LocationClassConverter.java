@@ -23,10 +23,21 @@ import java.io.OutputStream;
 import org.apache.logging.log4j.weaver.log4j2.LogBuilderConversionHandler;
 import org.apache.logging.log4j.weaver.log4j2.LoggerConversionHandler;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
 public class LocationClassConverter {
+
+    /**
+     * Classloader to resolve a class hierarchy.
+     */
+    private final ClassLoader classpath;
+
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2")
+    public LocationClassConverter(ClassLoader classpath) {
+        this.classpath = classpath;
+    }
 
     /**
      * Adds location information to a classfile.
@@ -36,12 +47,29 @@ public class LocationClassConverter {
      * @param locationCache a container for location data
      */
     public void convert(InputStream src, OutputStream dest, LocationCacheGenerator locationCache) throws IOException {
-        final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        final ClassWriter writer = new PrivateClassWriter(ClassWriter.COMPUTE_FRAMES, classpath);
+
         final LocationClassVisitor converter = new LocationClassVisitor(writer, locationCache);
         converter.addClassConversionHandler(new LoggerConversionHandler());
         converter.addClassConversionHandler(new LogBuilderConversionHandler());
         new ClassReader(src).accept(converter, ClassReader.EXPAND_FRAMES);
 
         dest.write(writer.toByteArray());
+    }
+
+    private static class PrivateClassWriter extends ClassWriter {
+
+        private final ClassLoader classpath;
+
+        public PrivateClassWriter(int flags, ClassLoader classpath) {
+            super(flags);
+            this.classpath = classpath;
+        }
+
+        @Override
+        protected ClassLoader getClassLoader() {
+            return classpath;
+        }
+
     }
 }

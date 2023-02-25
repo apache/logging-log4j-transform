@@ -20,8 +20,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,6 +58,7 @@ public class LocationMojo extends AbstractMojo {
     private static final String LOG4J_GROUP_ID = "org.apache.logging.log4j";
     private static final String LOG4J_API_ARTIFACT_ID = "log4j-api";
     private static final ArtifactVersion MIN_SUPPORTED_VERSION = new DefaultArtifactVersion("2.20.0");
+    private static final URL[] EMPTY_URL_ARRAY = new URL[0];
 
     /**
      * The Maven project.
@@ -87,7 +92,7 @@ public class LocationMojo extends AbstractMojo {
         final Path sourceDirectory = this.sourceDirectory.toPath();
         final Path outputDirectory = this.outputDirectory.toPath();
         final LocationCacheGenerator locationCache = new LocationCacheGenerator();
-        final LocationClassConverter converter = new LocationClassConverter();
+        final LocationClassConverter converter = new LocationClassConverter(getProjectDependencies());
 
         try {
             final Set<Path> staleClassFiles = getClassFileInclusionScanner().getIncludedClassFiles(sourceDirectory,
@@ -172,5 +177,19 @@ public class LocationMojo extends AbstractMojo {
         } catch (OverConstrainedVersionException e) {
             throw new MojoExecutionException("Can not determine `log4j-api` version.", e);
         }
+    }
+
+    private ClassLoader getProjectDependencies() throws MojoExecutionException {
+        Set<Artifact> artifacts = project.getArtifacts();
+        List<URL> urls = new ArrayList<>(artifacts.size() + 1);
+        try {
+            urls.add(sourceDirectory.toURI().toURL());
+            for (Artifact artifact : artifacts) {
+                urls.add(artifact.getFile().toURI().toURL());
+            }
+        } catch (MalformedURLException e) {
+            throw new MojoExecutionException(e);
+        }
+        return new URLClassLoader(urls.toArray(EMPTY_URL_ARRAY));
     }
 }

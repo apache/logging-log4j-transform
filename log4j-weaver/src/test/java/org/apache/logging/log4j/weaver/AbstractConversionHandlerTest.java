@@ -33,7 +33,7 @@ public class AbstractConversionHandlerTest {
         final TestClassLoader testCl = new TestClassLoader();
 
         final ByteArrayOutputStream dest = new ByteArrayOutputStream();
-        final LocationClassConverter converter = new LocationClassConverter();
+        final LocationClassConverter converter = new LocationClassConverter(AbstractConversionHandlerTest.class.getClassLoader());
         final LocationCacheGenerator locationCache = new LocationCacheGenerator();
 
         getNestedClasses(internalName).forEach(classFile -> assertDoesNotThrow(() -> {
