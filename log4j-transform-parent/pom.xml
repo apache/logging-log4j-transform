@@ -45,7 +45,7 @@
     <junit.version>5.9.2</junit.version>
     <log4j2.version>2.20.0</log4j2.version>
     <maven.version>3.6.3</maven.version>
-    <plexus-utils.version>3.5.0</plexus-utils.version>
+    <plexus-utils.version>3.5.1</plexus-utils.version>
     <slf4j.version>2.0.6</slf4j.version>
     <spotbugs.version>4.7.3</spotbugs.version>
     <!-- plugin versions -->
