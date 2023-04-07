@@ -54,7 +54,7 @@
     <jacoco-maven-plugin.version>0.8.9</jacoco-maven-plugin.version>
     <findsecbugs-plugin.version>1.12.0</findsecbugs-plugin.version>
     <maven-invoker-plugin.version>3.5.1</maven-invoker-plugin.version>
-    <spotbugs-maven-plugin.version>4.7.3.3</spotbugs-maven-plugin.version>
+    <spotbugs-maven-plugin.version>4.7.3.4</spotbugs-maven-plugin.version>
     <surefire.version>3.0.0-M7</surefire.version>
   </properties>
   <dependencyManagement>
