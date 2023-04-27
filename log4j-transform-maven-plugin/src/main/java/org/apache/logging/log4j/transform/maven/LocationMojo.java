@@ -86,6 +86,10 @@ public class LocationMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if ("pom".equals(project.getPackaging())) {
+            getLog().info("Skipping project with packaging \"pom\".");
+            return;
+        }
         validateLog4jVersion();
 
         final Path sourceDirectory = this.sourceDirectory.toPath();
