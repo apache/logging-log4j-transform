@@ -57,7 +57,7 @@
         <executions>
           <execution>
             <goals>
-              <goal>generate-location</goal>
+              <goal>process-classes</goal>
             </goals>
           </execution>
         </executions>

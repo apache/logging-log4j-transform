@@ -50,7 +50,7 @@ import org.apache.maven.project.MavenProject;
 /**
  * Generates location information for use with Log4j2.
  */
-@Mojo(name = "generate-location", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true,
+@Mojo(name = "process-classes", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true,
         requiresDependencyResolution = ResolutionScope.COMPILE)
 public class LocationMojo extends AbstractMojo {
 
