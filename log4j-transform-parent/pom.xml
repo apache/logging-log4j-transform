@@ -54,7 +54,6 @@
     <findsecbugs-plugin.version>1.12.0</findsecbugs-plugin.version>
     <maven-invoker-plugin.version>3.5.1</maven-invoker-plugin.version>
     <spotbugs-maven-plugin.version>4.7.3.4</spotbugs-maven-plugin.version>
-    <surefire.toolchain.range>[1.8, 9)</surefire.toolchain.range>
     <surefire.version>3.0.0-M7</surefire.version>
   </properties>
   <dependencyManagement>
@@ -241,15 +240,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <jdkToolchain>
-            <version>${surefire.toolchain.range}</version>
-          </jdkToolchain>
-        </configuration>
-      </plugin>
       <!-- Configuration here must match the one in `.editorconfig`! -->
       <plugin>
         <groupId>com.github.spotbugs</groupId>
@@ -275,4 +265,25 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>java8-tests</id>
+      <properties>
+        <surefire.toolchain.range>[1.8, 9)</surefire.toolchain.range>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <jdkToolchain>
+                <version>${surefire.toolchain.range}</version>
+              </jdkToolchain>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
