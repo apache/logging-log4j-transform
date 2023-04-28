@@ -191,7 +191,7 @@ public class LocationMojo extends AbstractMojo {
                 urls.add(artifact.getFile().toURI().toURL());
             }
         } catch (MalformedURLException e) {
-            throw new MojoExecutionException(e);
+            throw new MojoExecutionException("An error occurred, while resolving the project's classpath.", e);
         }
         return new URLClassLoader(urls.toArray(EMPTY_URL_ARRAY));
     }
