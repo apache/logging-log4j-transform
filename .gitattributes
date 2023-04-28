@@ -7,3 +7,6 @@
 *.yml        text eol=lf
 # Maven Wrapper need LF line endings
 /.mvn/wrapper/maven-wrapper.properties eol=lf
+# Maven Wrapper scripts
+/mvnw     text eol=lf
+/mvnw.cmd text eol=crlf
