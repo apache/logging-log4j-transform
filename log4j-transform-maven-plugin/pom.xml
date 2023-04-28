@@ -20,17 +20,13 @@
   <parent>
     <groupId>org.apache.logging.log4j</groupId>
     <artifactId>log4j-transform-parent</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1-SNAPSHOT</version>
     <relativePath>../log4j-transform-parent</relativePath>
   </parent>
   <artifactId>log4j-transform-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Apache Log4j Transform Maven plugin</name>
   <description>The Apache Log4j Transform Maven plugin</description>
-
-  <scm>
-    <tag>rel/0.1.0.rc1</tag>
-  </scm>
   <dependencies>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
