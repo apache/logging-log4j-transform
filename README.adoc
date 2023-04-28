@@ -23,6 +23,29 @@ a bytecode weaver that improves logging performance by precomputing the location
 xref:log4j-transform-maven-shade-plugin-extensions/README.adoc[`log4j-transform-maven-shade-plugin-extensions`]::
 a https://maven.apache.org/plugins/maven-shade-plugin/examples/resource-transformers.html[resource transformer] for the Apache Maven Shade Plugin that allows you to use additional Log4j 2.x Core component modules.
 
+== Build
+
+This project generates Java 8 bytecode, though requires Java 11 for compilation.
+You can build and test sources using `./mvnw verify` command.
+
+== Distribution
+
+In accordance with the Apache Software Foundation's release https://infra.apache.org/release-distribution.html[distribution policy] and https://infra.apache.org/release-publishing.html[creation process], project artifacts are _officially_ accessible from the following locations:
+
+* ASF https://repository.apache.org/content/repositories/releases[Release] and https://repository.apache.org/content/repositories/snapshots[snapshot] repositories (mirrored to https://central.sonatype.dev/[the Maven Central Repository])
+* ASF https://downloads.apache.org/logging/log4j-transform[Distribution directory]
+
+See xref:RELEASING.adoc[release instructions] for further details.
+
+== Support
+
+You can use GitHub Issues for feature requests and bug reports – not questions!
+For the rest, you can use mailto:security@logging.apache.org[the Log4j development mailing list].
+
+== Security
+
+If you have encountered an unlisted security vulnerability or other unexpected behaviour that has security impact, please report them privately to mailto:security@logging.apache.org[the Log4j security mailing list].
+See https://logging.apache.org/log4j/2.x/security.html[the Log4j Security page] for further details.
 == License
 
 Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.

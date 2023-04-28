@@ -32,7 +32,7 @@ This resource transformer is usually used together with the `ManifestResourceTra
 
 A typical configuration is:
 
-[xml]
+[source,xml]
 ----
 <project>
   [...]

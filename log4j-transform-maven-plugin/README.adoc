@@ -19,6 +19,32 @@
 The Transform Plugin is used to postprocess the compiled classes of your project and replace all Log4j 2.x API calls with https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/LogBuilder.html[`LogBuilder`] calls with a statically precomputed location.
 This allows you to use location information in your logs without incurring in the *expensive* runtime calls usually used to acquire it.
 
+== How it works
+
+The working principle is very simple: every call to the Log4j 2.x API like
+[source,java]
+----
+public void helloLog() {
+    logger.info(MarkerManager.getMarker("NET"), "Sending {} bytes of data.", 1000);
+}
+----
+is rewritten at a bytecode levelinto an equivalent `LogBuilder` call:
+[source,java]
+----
+private static final StackTraceElement[] locations = {
+        new StackTraceElement("org.apache.logging.log4j.HelloWorld", "HelloWorld.java", "helloLog", 1234)
+};
+
+public void helloLog() {
+    logger.atInfo()
+          .withLocation(locations[0])
+          .withMarker(MarkerManager.getMarker("NET"))
+          .log("Sending {} bytes of data.", 1000);
+}
+----
+
+In the current implementation locations are stored in classes whose name ends in `$$Log4j2$$Cache`, so they can not accidentally be used by XML/JSON serializers.
+
 == Goals
 
 This plugin consists of a single goal:
@@ -32,7 +58,7 @@ To use the plugin you need to declare a dependency on https://central.sonatype.c
 
 Add the following configuration to your POM file:
 
-[xml]
+[source,xml]
 ----
 <project>
   [...]

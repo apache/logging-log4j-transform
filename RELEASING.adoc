@@ -1,0 +1,125 @@
+////
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements. See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License. You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+////
+
+= Release instructions
+
+[WARNING]
+====
+In the code examples below, assuming the version to be released is `7.8.0`.
+====
+
+== Stage the release artifacts
+
+. Checkout the release branch: `git checkout -B release/7.8.0 origin/master`
+. Perform and commit following changes:
+.. Set the `revision` property to `7.8.0` in xref:pom.xml[`pom.xml`]
+.. Update the version and date in xref:CHANGELOG.adoc[`CHANGELOG.adoc`]
+. Make sure that `./mvnw clean verify` succeeds – if not, commit necessary fixes
+. Push the `release/7.8.0` branch
+. Run `./mvnw clean deploy`
+. Run:
+[source,console]
+----
+ZIP_FILEPATH="/tmp/apache-log4j-transform-7.8.0-src.zip"
+git ls-files -z | xargs -0 zip -9 "$ZIP_FILEPATH" --
+gpg --armor --detach-sign "$ZIP_FILEPATH"
+sha512sum "$ZIP_FILEPATH" > "$ZIP_FILEPATH.sha512"
+----
+. _Close_ the repository in https://repository.apache.org/[repository.apache.org]
+. Commit _the signed sources and their checksum_ (e.g., `apache-log4j-transform-7.8.0-src.{zip,.zip.asc,.zip.sha512}`) to https://dist.apache.org/repos/dist/dev/logging/log4j[dist.apache.org/repos/dist/**dev**/logging/log4j] Subversion repository and delete any artifacts from old releases
+
+== Vote the release
+
+Collect release votes via email using the following template:
+
+.`[VOTE] Release Apache Log4j Transformation Tools 7.8.0` titled email to `dev@logging.apache.org`
+[source]
+----
+The Apache Log4j Transformation Tools 7.8.0 release is now available for voting.
+
+This release contains minor enhancements and bug fixes.
+
+Source repository: https://github.com/apache/logging-log4j-transform
+Tag: rel/7.8.0-rc1
+Commit: e82a44142280d013bd76ea18951fde00dcee192b
+Artifacts: https://dist.apache.org/repos/dist/dev/logging/log4j/
+Nexus repository: https://repository.apache.org/content/repositories/orgapachelogging-1096
+Signing key: https://keyserver.ubuntu.com/pks/lookup?search=077e8893a6dcc33dd4a4d5b256e73ba9a0b592d0&fingerprint=on&op=index
+
+Please download, test, and cast your votes on the Log4j developers list.
+
+[ ] +1, release the artifacts
+[ ] -1, don't release, because...
+
+The vote will remain open for 72 hours (or more if required). All votes are welcome and we encourage everyone to test the release, but only the Logging Services PMC votes are officially counted. At least 3 +1 votes and more positive than negative votes are required.
+----
+
+[WARNING]
+====
+Make sure your email is sent in plain text, that is, https://infra.apache.org/contrib-email-tips#nohtml[no HTML]!
+If you are using GMail, simply enable the _"Plain text mode"_ while composing your message.
+====
+
+Once the consensus is reached within the set time frame, respond to the first post in the thread as follows:
+
+[source]
+----
+Adding my +1.
+
+With that, the release passes with 3 binding +1 votes from A, B and me.
+----
+
+== Publish the release
+
+=== In git repository
+
+. Pull the most recent changes and tags
+. Tag the release (e.g., `rel/7.8.0`) and push it
++
+[IMPORTANT]
+====
+The ASF infrastructure treats ``rel/``-prefixed git tags special and ensures they are immutable for provenance reasons.
+====
+. Rebase `release/7.8.0` changes to `main`
+. Set the revision property to the next development version (e.g., `7.9.0-SNAPSHOT`) in xref:pom.xml[`pom.xml`]
+. Commit changes and push the `main` branch
+. Delete the local and remote copies of the `release/7.8.0` branch
+
+=== In the ASF infrastructure
+
+. _Release_ the repository in https://reporter.apache.org/addrelease.html?logging[repository.apache.org]
+. In https://dist.apache.org/repos/dist/release/logging/log4j[dist.apache.org/repos/dist] Subversion repository,
+.. move the signed sources and their checksum from `*dev*/logging/log4j` directory to `*release*/logging/log4j-tools/7.8.0`
+.. delete the folder from an earlier release in `*release*/logging/log4j-tools`
+.. commit changes
+. Report the release at https://reporter.apache.org/[reporter.apache.org]
+
+=== In GitHub
+
+Once the artifacts are visible in https://central.sonatype.dev/[central.sonatype.dev], https://github.com/apache/logging-log4j-tools/releases/new[create a new release in GitHub]
+
+. Use the `rel/7.8.0` tag
+. Copy necessary changes from xref:CHANGELOG.adoc[`CHANGELOG.adoc`]
+.. formatting needs to be converted from AsciiDoc to https://github.github.com/gfm/[GitHub Flavored Markdown]
+.. GitHub Issue links need to be converted from
++
+[source]
+----
+https://github.com/apache/logging-log4j-transform/issues/19[#19]
+----
++
+AsciiDoc-formatted links to simply `#19`
