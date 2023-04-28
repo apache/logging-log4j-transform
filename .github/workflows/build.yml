@@ -65,7 +65,7 @@ jobs:
             --show-version --batch-mode --errors --no-transfer-progress \
             -DtrimStackTrace=false \
             -DinstallAtEnd=true \
-            -Pjava8-tests
+            -Pjava8-tests \
             clean install
 
       # `clean verify artifact:compare` is required to generate the build reproducibility report.
