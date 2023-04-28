@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.logging.log4j</groupId>
     <artifactId>log4j-transform-bom</artifactId>
-    <version>${revision}</version>
+    <version>0.1.0</version>
   </parent>
   <artifactId>log4j-transform-parent</artifactId>
   <packaging>pom</packaging>
@@ -30,7 +30,7 @@
     <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!-- `project.build.outputTimestamp` is required for reproducible builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-    <project.build.outputTimestamp>0</project.build.outputTimestamp>
+    <project.build.outputTimestamp>1682714623</project.build.outputTimestamp>
     <!-- disable `maven-site-plugin`-->
     <maven.site.skip>true</maven.site.skip>
     <maven.site.deploy.skip>true</maven.site.deploy.skip>

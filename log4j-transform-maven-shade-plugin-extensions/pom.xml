@@ -20,13 +20,17 @@
   <parent>
     <groupId>org.apache.logging.log4j</groupId>
     <artifactId>log4j-transform-parent</artifactId>
-    <version>${revision}</version>
+    <version>0.1.0</version>
     <relativePath>../log4j-transform-parent</relativePath>
   </parent>
   <artifactId>log4j-transform-maven-shade-plugin-extensions</artifactId>
   <packaging>jar</packaging>
   <name>Apache Log4j Maven Shade Plugin Transformer</name>
   <description>Transformer implementation to concatenate Log4j2Plugins.dat files</description>
+
+  <scm>
+    <tag>rel/0.1.0.rc1</tag>
+  </scm>
   <properties>
     <docLabel>Shaded Plugin Log4j2 Transformer</docLabel>
     <maven.doap.skip>true</maven.doap.skip>
