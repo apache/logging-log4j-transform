@@ -50,31 +50,6 @@
   </licenses>
   <developers>
     <developer>
-      <id>rgoers</id>
-      <name>Ralph Goers</name>
-      <email>rgoers@apache.org</email>
-      <organization>Nextiva</organization>
-      <roles>
-        <role>PMC Member</role>
-      </roles>
-      <timezone>America/Phoenix</timezone>
-    </developer>
-    <developer>
-      <id>ggregory</id>
-      <name>Gary Gregory</name>
-      <email>ggregory@apache.org</email>
-      <url>https://www.garygregory.com</url>
-      <organization>The Apache Software Foundation</organization>
-      <organizationUrl>https://www.apache.org/</organizationUrl>
-      <roles>
-        <role>PMC Member</role>
-      </roles>
-      <timezone>America/New_York</timezone>
-      <properties>
-        <picUrl>https://people.apache.org/~ggregory/img/garydgregory80.png</picUrl>
-      </properties>
-    </developer>
-    <developer>
       <id>pkarwasz</id>
       <name>Piotr P. Karwasz</name>
       <email>pkarwasz@apache.org</email>
@@ -82,50 +57,6 @@
         <role>PMC Member</role>
       </roles>
       <timezone>Europe/Warsaw</timezone>
-    </developer>
-    <developer>
-      <id>ckozak</id>
-      <name>Carter Kozak</name>
-      <email>ckozak@apache.org</email>
-      <url>https://github.com/carterkozak</url>
-      <roles>
-        <role>PMC Member</role>
-      </roles>
-      <timezone>America/New York</timezone>
-      <properties>
-        <picUrl>https://www.gravatar.com/avatar/e057b8f2538a0258f451d9efc8d2f6fa.jpg</picUrl>
-      </properties>
-    </developer>
-    <developer>
-      <id>rpopma</id>
-      <name>Remko Popma</name>
-      <email>rpopma@apache.org</email>
-      <roles>
-        <role>PMC Member</role>
-      </roles>
-      <timezone>Asia/Tokyo</timezone>
-      <properties>
-        <picUrl>https://people.apache.org/~rpopma/img/profilepic.jpg</picUrl>
-      </properties>
-    </developer>
-    <developer>
-      <id>mattsicker</id>
-      <name>Matt Sicker</name>
-      <email>mattsicker@apache.org</email>
-      <organization>Apple</organization>
-      <roles>
-        <role>PMC Member</role>
-      </roles>
-      <timezone>America/Chicago</timezone>
-    </developer>
-    <developer>
-      <id>vy</id>
-      <name>Volkan Yazıcı</name>
-      <email>vy@apache.org</email>
-      <roles>
-        <role>PMC Member</role>
-      </roles>
-      <timezone>Europe/Amsterdam</timezone>
     </developer>
   </developers>
   <modules>
