@@ -1,4 +1,6 @@
 ##
+# Every file recognized as text should use LF
+* text=auto eol=lf
 # These are checked by Spotless
 *.java       text eol=lf
 *.properties text eol=lf
