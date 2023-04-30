@@ -125,7 +125,7 @@ jobs:
           java-package: jdk
           architecture: x64
           cache: maven
-          server-id: ${{ github.ref == 'refs/heads/master' && 'apache.snapshots.https' || 'apache.releases.https' }}
+          server-id: ${{ github.ref == 'refs/heads/main' && 'apache.snapshots.https' || 'apache.releases.https' }}
           server-username: NEXUS_USERNAME
           server-password: NEXUS_PASSWORD
           # We won't use `maven-gpg-plugin`, but this is convenient to import the GPG secret key
@@ -141,7 +141,7 @@ jobs:
           echo "PROJECT_VERSION=$PROJECT_VERSION" >> $GITHUB_ENV
 
       - name: Check version (SNAPSHOT)
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main'
         run: |
           [[ "$PROJECT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-SNAPSHOT$ ]] || {
             echo "was expecting a snapshot version, found: \"$PROJECT_VERSION\"" 1>&2
@@ -179,8 +179,8 @@ jobs:
             -P release
         env:
           # `NEXUS_USERNAME` and `NEXUS_PASSWORD` are used in `~/.m2/settings.xml` created by `setup-java` action
-          NEXUS_USERNAME: ${{ github.ref == 'refs/heads/master' && secrets.NEXUS_USER || secrets.LOGGING_STAGE_DEPLOYER_USER }}
-          NEXUS_PASSWORD: ${{ github.ref == 'refs/heads/master' && secrets.NEXUS_PW || secrets.LOGGING_STAGE_DEPLOYER_PW }}
+          NEXUS_USERNAME: ${{ github.ref == 'refs/heads/main' && secrets.NEXUS_USER || secrets.LOGGING_STAGE_DEPLOYER_USER }}
+          NEXUS_PASSWORD: ${{ github.ref == 'refs/heads/main' && secrets.NEXUS_PW || secrets.LOGGING_STAGE_DEPLOYER_PW }}
           # `SIGN_KEY` is used by `sign-maven-plugin`
           SIGN_KEY: ${{ secrets.GPG_SECRET_KEY }}
 
