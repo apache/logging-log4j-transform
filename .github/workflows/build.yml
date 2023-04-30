@@ -105,3 +105,96 @@ jobs:
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy:
+
+    runs-on: ubuntu-latest
+    needs: merge
+    if: github.repository == 'apache/logging-log4j-transform' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/'))
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab   # 3.5.2
+
+      - name: Set up Java & GPG
+        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2   # 3.7.0
+        with:
+          distribution: temurin
+          java-version: 17
+          java-package: jdk
+          architecture: x64
+          cache: maven
+          server-id: ${{ github.ref == 'refs/heads/master' && 'apache.snapshots.https' || 'apache.releases.https' }}
+          server-username: NEXUS_USERNAME
+          server-password: NEXUS_PASSWORD
+          # We won't use `maven-gpg-plugin`, but this is convenient to import the GPG secret key
+          gpg-private-key: ${{ secrets.GPG_SECRET_KEY }}
+
+      - name: Export artifact version
+        run: |
+          export PROJECT_VERSION=$(./mvnw \
+            --quiet --batch-mode -DforceStdout=true \
+            -Dexpression=project.version \
+            help:evaluate \
+            | tail -n 1)
+          echo "PROJECT_VERSION=$PROJECT_VERSION" >> $GITHUB_ENV
+
+      - name: Check version (SNAPSHOT)
+        if: github.ref == 'refs/heads/master'
+        run: |
+          [[ "$PROJECT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-SNAPSHOT$ ]] || {
+            echo "was expecting a snapshot version, found: \"$PROJECT_VERSION\"" 1>&2
+            exit 1
+          }
+
+      - name: Check version (RELEASE)
+        if: startsWith(github.ref, 'refs/heads/release/')
+        run: |
+          [[ "${GITHUB_REF/refs\/heads\/release\//}" == "$PROJECT_VERSION" ]] || {
+            echo "git ref \"$GITHUB_REF\" mismatches with the version: \"$PROJECT_VERSION\"" 1>&2
+            exit 1
+          }
+          [[ "$PROJECT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || {
+            echo "was expecting a release version, found: \"$PROJECT_VERSION\"" 1>&2
+            exit 1
+          }
+          export CHANGELOG_VERSION=$(grep "^== " CHANGELOG.adoc | head -n 1 | sed -r 's/^== (.+) \(.+\)$/\1/')
+          [[ "$PROJECT_VERSION" == "$CHANGELOG_VERSION" ]] || {
+            echo "version \"$PROJECT_VERSION\" doesn't match the one in changelog: \"$CHANGELOG_VERSION\"" 1>&2
+            exit 1
+          }
+          export CURRENT_DATE=$(date +%Y-%m-%d)
+          export CHANGELOG_DATE=$(grep "^== " CHANGELOG.adoc | head -n 1 | sed -r 's/^== .+ \((.+)\)$/\1/')
+          [[ "$CURRENT_DATE" == "$CHANGELOG_DATE" ]] || {
+            echo "current date \"$CURRENT_DATE\" doesn't match the one in the changelog: \"$CHANGELOG_DATE\"" 1>&2
+            exit 1
+          }
+
+      - name: Deploy
+        run: |
+          gpg --list-secret-keys
+          ./mvnw \
+            --show-version --batch-mode --errors --no-transfer-progress \
+            -P release
+        env:
+          # `NEXUS_USERNAME` and `NEXUS_PASSWORD` are used in `~/.m2/settings.xml` created by `setup-java` action
+          NEXUS_USERNAME: ${{ github.ref == 'refs/heads/master' && secrets.NEXUS_USER || secrets.LOGGING_STAGE_DEPLOYER_USER }}
+          NEXUS_PASSWORD: ${{ github.ref == 'refs/heads/master' && secrets.NEXUS_PW || secrets.LOGGING_STAGE_DEPLOYER_PW }}
+          # `SIGN_KEY` is used by `sign-maven-plugin`
+          SIGN_KEY: ${{ secrets.GPG_SECRET_KEY }}
+
+      - name: Create artifacts (RELEASE)
+        if: startsWith(github.ref, 'refs/heads/release/')
+        run: |
+          export ZIP_FILEPATH="target/apache-log4j-transform-${PROJECT_VERSION}-src.zip"
+          git ls-files -z | xargs -0 zip -9 "$ZIP_FILEPATH" --
+          gpg --armor --detach-sign --yes --pinentry-mode error "$ZIP_FILEPATH"
+          sha512sum "$ZIP_FILEPATH" > "$ZIP_FILEPATH.sha512"
+
+      - name: Upload artifacts (RELEASE)
+        if: startsWith(github.ref, 'refs/heads/release/')
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce   # 3.1.2
+        with:
+          name: Sources
+          path: target/apache-log4j-tools-*-src.zip*
