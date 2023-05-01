@@ -190,7 +190,7 @@ Add the following configuration to your POM file:
       <plugin>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-transform-maven-plugin</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>0.1.0</version>
         <executions>
           <execution>
             <goals>
