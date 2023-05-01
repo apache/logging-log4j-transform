@@ -98,6 +98,7 @@
     <project.build.outputTimestamp>1682714736</project.build.outputTimestamp>
     <!-- plugin versions -->
     <flatten-maven-plugin.version>1.4.1</flatten-maven-plugin.version>
+    <log4j-changelog-maven-plugin.version>0.3.0</log4j-changelog-maven-plugin.version>
     <sign-maven-plugin.version>1.0.1</sign-maven-plugin.version>
   </properties>
   <dependencyManagement>
@@ -125,6 +126,21 @@
             <!-- Setting `outputDirectory` to `project.build.directory`, which is cleaned by `default-clean` execution of `clean:clean`.
                  This makes `flatten:clean` redundant. -->
             <outputDirectory>${project.build.directory}</outputDirectory>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-changelog-maven-plugin</artifactId>
+          <version>${log4j-changelog-maven-plugin.version}</version>
+          <configuration>
+            <indexTemplates/>
+            <changelogTemplates>
+              <template>
+                <source>${project.basedir}/src/changelog/CHANGELOG.adoc.ftl</source>
+                <target>${project.basedir}/CHANGELOG.adoc</target>
+                <failIfNotFound>true</failIfNotFound>
+              </template>
+            </changelogTemplates>
           </configuration>
         </plugin>
         <!-- Downgrade until https://issues.apache.org/jira/browse/MRELEASE-1091 is reverted -->

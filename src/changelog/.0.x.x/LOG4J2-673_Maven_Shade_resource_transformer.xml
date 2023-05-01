@@ -17,7 +17,9 @@
   -->
 <entry type="added">
   <issue id="LOG4J2-673" link="https://issues.apache.org/jira/browse/LOG4J2-673"/>
-  <author id="edwgiz"/>
+  <author id="edwgiz" name="Eduard Gizatullin"/>
+  <!-- Committer -->
+  <author id="pkarwasz"/>
   <description format="asciidoc">
     Add resource transformer for the Maven Shade Plugin to merge `Log4j2Plugins.dat` plugin caches.
   </description>
