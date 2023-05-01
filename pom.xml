@@ -133,7 +133,7 @@
           <artifactId>log4j-changelog-maven-plugin</artifactId>
           <version>${log4j-changelog-maven-plugin.version}</version>
           <configuration>
-            <indexTemplates/>
+            <indexTemplates />
             <changelogTemplates>
               <template>
                 <source>${project.basedir}/src/changelog/CHANGELOG.adoc.ftl</source>
