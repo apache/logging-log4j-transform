@@ -159,15 +159,15 @@ jobs:
             echo "was expecting a release version, found: \"$PROJECT_VERSION\"" 1>&2
             exit 1
           }
-          export CHANGELOG_VERSION=$(grep "^== " CHANGELOG.adoc | head -n 1 | sed -r 's/^== (.+) \(.+\)$/\1/')
+          export CHANGELOG_VERSION=$(grep "^= " CHANGELOG.adoc | head -n 1 | sed -r 's/^= (.+) \(.+\)$/\1/')
           [[ "$PROJECT_VERSION" == "$CHANGELOG_VERSION" ]] || {
             echo "version \"$PROJECT_VERSION\" doesn't match the one in changelog: \"$CHANGELOG_VERSION\"" 1>&2
             exit 1
           }
-          export CURRENT_DATE=$(date +%Y-%m-%d)
-          export CHANGELOG_DATE=$(grep "^== " CHANGELOG.adoc | head -n 1 | sed -r 's/^== .+ \((.+)\)$/\1/')
-          [[ "$CURRENT_DATE" == "$CHANGELOG_DATE" ]] || {
-            echo "current date \"$CURRENT_DATE\" doesn't match the one in the changelog: \"$CHANGELOG_DATE\"" 1>&2
+          export EXPECTED_DATE=$(date --date="now + 3 days" +%Y-%m-%d)
+          export CHANGELOG_DATE=$(grep "^= " CHANGELOG.adoc | head -n 1 | sed -r 's/^= .+ \((.+)\)$/\1/')
+          [[ "$EXPECTED_DATE" == "$CHANGELOG_DATE" ]] || {
+            echo "expected release date \"$EXPECTED_DATE\" doesn't match the one in the changelog: \"$CHANGELOG_DATE\"" 1>&2
             exit 1
           }
 
@@ -197,4 +197,4 @@ jobs:
         uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce   # 3.1.2
         with:
           name: Sources
-          path: target/apache-log4j-tools-*-src.zip*
+          path: target/apache-log4j-transform-*-src.zip*
