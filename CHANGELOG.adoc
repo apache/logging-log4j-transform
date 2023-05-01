@@ -1,0 +1,6 @@
+= 0.1.0 (2023-05-04)
+
+== Added
+
+* https://issues.apache.org/jira/browse/LOG4J2-3638[LOG4J2-3638]: Add bytecode transformation tool to provide location information without reflection. (https://github.com/ppkarwasz[pkarwasz])
+* https://issues.apache.org/jira/browse/LOG4J2-673[LOG4J2-673]: Add resource transformer for the Maven Shade Plugin to merge `Log4j2Plugins.dat` plugin caches. Thanks to https://github.com/edwgiz[Eduard Gizatullin]. (https://github.com/ppkarwasz[pkarwasz])

@@ -27,18 +27,29 @@ In the code examples below, assuming the version to be released is `7.8.0`.
 . Checkout the release branch: `git checkout -B release/7.8.0 origin/master`
 . Perform and commit following changes:
 .. Set the `revision` property to `7.8.0` in xref:pom.xml[`pom.xml`]
-.. Update the version and date in xref:CHANGELOG.adoc[`CHANGELOG.adoc`]
-. Make sure that `./mvnw clean verify` succeeds – if not, commit necessary fixes
-. Push the `release/7.8.0` branch
-. Run `./mvnw clean deploy`
-. Run:
+.. Set the `project.build.outputTimestamp` in xref:pom.xml[`pom.xml`] and xref:log4j-transform-parent/pom.xml[`log4j-transform-parent/pom.xml`] to the expected release date (72 hours from now)
+.. Release and export the changelog:
++
 [source,console]
 ----
-ZIP_FILEPATH="/tmp/apache-log4j-transform-7.8.0-src.zip"
-git ls-files -z | xargs -0 zip -9 "$ZIP_FILEPATH" --
-gpg --armor --detach-sign "$ZIP_FILEPATH"
-sha512sum "$ZIP_FILEPATH" > "$ZIP_FILEPATH.sha512"
+./mvnw -N -Dlog4j.changelog.releaseVersion=0.1.0 log4j-changelog:release log4j-changelog:export
 ----
++
+. Make sure that `./mvnw clean verify` succeeds – if not, commit necessary fixes
+. Push the `release/7.8.0` branch
+. Make sure the associated https://github.com/apache/logging-log4j-tools/actions[GitHub Actions workflow] succeeds:
+.. *Signed artifacts* are uploaded to the _Staging Repositories_ in https://repository.apache.org/[repository.apache.org]
+.. *Signed sources and their checksum* are uploaded as GitHub Actions workflow artifacts
+.. `*rel/7.8.0-rc1*` git tag should be created
++
+[IMPORTANT]
+====
+The ASF infrastructure treats ``rel/``-prefixed git tags special and ensures they are immutable for provenance reasons.
+To make the above operation idempotent and allow retries, the release candidate enumeration used in the tag will be incremented automatically; `rel/7.8.0-rc1`, `rel/7.8.0-rc2`, etc.
+====
+
++
+If not, commit necessary fixes, push, and repeat.
 . _Close_ the repository in https://repository.apache.org/[repository.apache.org]
 . Commit _the signed sources and their checksum_ (e.g., `apache-log4j-transform-7.8.0-src.{zip,.zip.asc,.zip.sha512}`) to https://dist.apache.org/repos/dist/dev/logging/log4j[dist.apache.org/repos/dist/**dev**/logging/log4j] Subversion repository and delete any artifacts from old releases
 
@@ -94,7 +105,7 @@ With that, the release passes with 3 binding +1 votes from A, B and me.
 ====
 The ASF infrastructure treats ``rel/``-prefixed git tags special and ensures they are immutable for provenance reasons.
 ====
-. Rebase `release/7.8.0` changes to `main`
+. Merge `release/7.8.0` changes to `main`
 . Set the revision property to the next development version (e.g., `7.9.0-SNAPSHOT`) in xref:pom.xml[`pom.xml`]
 . Commit changes and push the `main` branch
 . Delete the local and remote copies of the `release/7.8.0` branch
