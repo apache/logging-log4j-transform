@@ -26,15 +26,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.weaver.Constants;
 import org.apache.logging.log4j.weaver.LocationCacheGenerator;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 public class SimpleInclusionScanner implements ClassFileInclusionScanner {
 
-    private static final String DEFAULT_INCLUSION_PATTERN = "**/*.class";
-    private static final String DEFAULT_EXCLUSION_PATTERN = "**/*" + Constants.LOCATION_CACHE_SUFFIX + ".class";
     private static final String[] EMPTY_ARRAY = new String[0];
 
     private final long lastUpdatedWithinMsecs;

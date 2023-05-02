@@ -26,6 +26,8 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -76,6 +78,18 @@ public class LocationMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project.build.outputDirectory}", required = true, readonly = false)
     private File outputDirectory;
+
+    /**
+     * A list of inclusion filters for the processor.
+     */
+    @Parameter
+    private Set<String> includes = new HashSet<>();
+
+    /**
+     * A list of exclusion filters for the processor.
+     */
+    @Parameter
+    private Set<String> excludes = new HashSet<>();
 
     /**
      * Sets the granularity in milliseconds of the last modification date for
@@ -149,7 +163,19 @@ public class LocationMojo extends AbstractMojo {
     }
 
     protected ClassFileInclusionScanner getClassFileInclusionScanner() {
-        return new SimpleInclusionScanner(staleMillis, getLog());
+        if (includes.isEmpty() && excludes.isEmpty()) {
+            return new SimpleInclusionScanner(staleMillis, getLog());
+        }
+
+        final Set<String> actualIncludes = includes.isEmpty()
+                ? Collections.singleton(ClassFileInclusionScanner.DEFAULT_INCLUSION_PATTERN)
+                : includes;
+
+        // We always exclude Log4j2 cache files
+        final Set<String> actualExcludes = new HashSet<>(excludes);
+        actualExcludes.add(ClassFileInclusionScanner.DEFAULT_EXCLUSION_PATTERN);
+
+        return new SimpleInclusionScanner(staleMillis, actualIncludes, actualExcludes, getLog());
     }
 
     private static class WrappedIOException extends RuntimeException {

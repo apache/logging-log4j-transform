@@ -19,7 +19,12 @@ package org.apache.logging.log4j.transform.maven.scan;
 import java.nio.file.Path;
 import java.util.Set;
 
+import org.apache.logging.log4j.weaver.Constants;
+
 public interface ClassFileInclusionScanner {
+
+    static final String DEFAULT_INCLUSION_PATTERN = "**/*.class";
+    static final String DEFAULT_EXCLUSION_PATTERN = "**/*" + Constants.LOCATION_CACHE_SUFFIX + ".class";
 
     /**
      * Finds class files matching a specific condition.
