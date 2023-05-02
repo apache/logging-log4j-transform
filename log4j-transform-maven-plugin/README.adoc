@@ -61,6 +61,41 @@ is used and a bump of around 9 µs per logging statement when
 https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/LogBuilder.html[`LogBuilder`]
 is used.
 
+By comparison, *disabling* location information on the same machine gives:
+
+[cols="1,1,1,1,1"]
+|===
+|Logging interface|Precompiled location|Score|Error|Units
+
+|https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/LogBuilder.html[`LogBuilder`]
+|yes
+|234666,556
+|±19759,779
+|ops/s
+
+
+|https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html[`Logger`]
+|yes
+|210751,730
+|±1508,148
+|ops/s
+
+
+|https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/LogBuilder.html[`LogBuilder`]
+|no
+|212562,315
+|±3631,670
+|ops/s
+
+
+|https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html[`Logger`]
+|no
+|220837,404
+|±13248,184
+|ops/s
+
+|===
+
 == How it works
 
 The working principle is very simple: every call to the Log4j 2.x API like
