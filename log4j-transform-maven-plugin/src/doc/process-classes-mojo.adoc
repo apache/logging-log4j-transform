@@ -58,6 +58,16 @@ Generates static location information of Log4j 2.x API calls in the project clas
 |===
 |Name|Type|Since|Description
 
+|`<includes>`
+|`List<String>`
+|-
+| Files to include. If empty all class files will be processed.
+
+|`<excludes>`
+|`List<String>`
+|-
+| Files to exclude.
+
 |`<staleMillis>`
 |`int`
 |-
