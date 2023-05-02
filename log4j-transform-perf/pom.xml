@@ -27,8 +27,8 @@
   <name>Log4j Transformation Tools Performance test</name>
   <description>Performance tests for Apache Log4j Transformation Tools</description>
   <properties>
-    <install.skip>true</install.skip>
-    <deploy.skip>true</deploy.skip>
+    <maven.install.skip>true</maven.install.skip>
+    <maven.deploy.skip>true</maven.deploy.skip>
     <spotbugs.skip>true</spotbugs.skip>
   </properties>
   <dependencies>

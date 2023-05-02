@@ -63,7 +63,6 @@
     <!-- the parent POM must come first: -->
     <module>log4j-transform-parent</module>
     <module>log4j-transform-maven-plugin</module>
-    <module>log4j-transform-perf</module>
     <module>log4j-weaver</module>
     <module>log4j-transform-maven-shade-plugin-extensions</module>
   </modules>
