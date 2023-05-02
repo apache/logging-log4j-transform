@@ -184,13 +184,10 @@ jobs:
           # `SIGN_KEY` is used by `sign-maven-plugin`
           SIGN_KEY: ${{ secrets.GPG_SECRET_KEY }}
 
-      - name: Create artifacts (RELEASE)
+      - name: Sign artifacts (RELEASE)
         if: startsWith(github.ref, 'refs/heads/release/')
         run: |
-          export ZIP_FILEPATH="target/apache-log4j-transform-${PROJECT_VERSION}-src.zip"
-          git ls-files -z | xargs -0 zip -9 "$ZIP_FILEPATH" --
-          gpg --armor --detach-sign --yes --pinentry-mode error "$ZIP_FILEPATH"
-          sha512sum "$ZIP_FILEPATH" > "$ZIP_FILEPATH.sha512"
+          gpg --armor --detach-sign --yes --pinentry-mode error "target/apache-log4j-transform-${PROJECT_VERSION}-src.zip"
 
       - name: Upload artifacts (RELEASE)
         if: startsWith(github.ref, 'refs/heads/release/')
