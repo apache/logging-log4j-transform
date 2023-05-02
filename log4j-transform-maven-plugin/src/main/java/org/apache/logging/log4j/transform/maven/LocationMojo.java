@@ -68,13 +68,13 @@ public class LocationMojo extends AbstractMojo {
     /**
      * The directory containing class files to process.
      */
-    @Parameter(defaultValue = "${project.build.outputDirectory}", required = true, readonly = true)
+    @Parameter(defaultValue = "${project.build.outputDirectory}", required = true, readonly = false)
     private File sourceDirectory;
 
     /**
      * The directory containing processed files.
      */
-    @Parameter(defaultValue = "${project.build.outputDirectory}", required = true, readonly = true)
+    @Parameter(defaultValue = "${project.build.outputDirectory}", required = true, readonly = false)
     private File outputDirectory;
 
     /**
