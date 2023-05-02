@@ -230,6 +230,7 @@
             <groupId>net.nicoulaj.maven.plugins</groupId>
             <artifactId>checksum-maven-plugin</artifactId>
             <version>1.11</version>
+            <inherited>false</inherited>
             <executions>
               <execution>
                 <id>source-release-checksum</id>
