@@ -34,7 +34,8 @@
         <exclude>**/.project</exclude>
         <exclude>**/.settings/**</exclude>
         <exclude>.mvn/wrapper/maven-wrapper.jar</exclude>
-        <!-- Remove Git and Github specific stuff -->
+        <!-- Remove ASF, Git and Github specific stuff -->
+        <exclude>.asf.yaml</exclude>
         <exclude>.git/**</exclude>
         <exclude>.github/**</exclude>
         <exclude>.gitattributes</exclude>
