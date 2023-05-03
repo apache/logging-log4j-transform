@@ -23,34 +23,58 @@ This allows you to use location information in your logs without incurring in th
 
 Finding the location of a logging call is a very expensive operation (a couple of microseconds).
 
-Running a single threaded xref:../log4j-transform-perf/src/main/java/org/apache/logging/log4j/transform/perf/LocationBenchmark.java[`LocationBenchmark`] on a Ryzen 7 2700U laptop with Java 17 gives the following results:
+Running xref:../log4j-transform-perf/src/main/java/org/apache/logging/log4j/transform/perf/LocationBenchmark.java[`LocationBenchmark`] on a Ryzen 7 2700U laptop with Java 17 gives the following results:
 
-[cols="1,1,1,1,1"]
+[cols="1,1,1,1,1,1,1"]
 |===
-|Logging interface|Precomputed location|Score|Error|Units
+|Logging interface|Sync/async logger|No. threads|Precomputed location|Score|Error|Units
 
 |https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/LogBuilder.html[`LogBuilder`]
+|sync
+|1
 |yes
 |202343,624
 |±719,875
 |ops/s
 
-|https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html[`Logger`]
-|yes
-|202579,793
-|±547,961
-|ops/s
-
 |https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/LogBuilder.html[`LogBuilder`]
+|sync
+|1
 |no
 |68449,813
 |±5086,148
 |ops/s
 
 |https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html[`Logger`]
+|sync
+|1
+|yes
+|202579,793
+|±547,961
+|ops/s
+
+|https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html[`Logger`]
+|sync
+|1
 |no
 |100105,246
 |±13748,554
+|ops/s
+
+|https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html[`Logger`]
+|async
+|8
+|yes
+|726877,012
+|±38214,575
+|ops/s
+
+|https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html[`Logger`]
+|async
+|8
+|no
+|440245,135
+|±4849,946
 |ops/s
 
 |===
@@ -63,35 +87,56 @@ is used.
 
 By comparison, *disabling* location information on the same machine gives:
 
-[cols="1,1,1,1,1"]
+[cols="1,1,1,1,1,1,1"]
 |===
-|Logging interface|Precompiled location|Score|Error|Units
+|Logging interface|Sync/async logger|No. threads|Precomputed location|Score|Error|Units
 
 |https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/LogBuilder.html[`LogBuilder`]
+|sync
+|1
 |yes
 |234666,556
 |±19759,779
 |ops/s
 
-
-|https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html[`Logger`]
-|yes
-|210751,730
-|±1508,148
-|ops/s
-
-
 |https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/LogBuilder.html[`LogBuilder`]
+|sync
+|1
 |no
 |212562,315
 |±3631,670
 |ops/s
 
+|https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html[`Logger`]
+|sync
+|1
+|yes
+|210751,730
+|±1508,148
+|ops/s
 
 |https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html[`Logger`]
+|sync
+|1
 |no
 |220837,404
 |±13248,184
+|ops/s
+
+|https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html[`Logger`]
+|async
+|8
+|yes
+|743467,533
+|±38046,044
+|ops/s
+
+|https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html[`Logger`]
+|async
+|8
+|no
+|776778,635
+|±38878,794
 |ops/s
 
 |===
