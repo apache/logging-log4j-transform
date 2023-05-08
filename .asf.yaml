@@ -16,7 +16,7 @@
 # `.asf.yaml` documentation: https://cwiki.apache.org/confluence/display/INFRA/Git+-+.asf.yaml+features
 
 github:
-  description: "Tools internally used by the Apache Log4j project"
+  description: "Tools for binary post-processing of projects using Apache Log4j."
   homepage: https://logging.apache.org/log4j/2.x/
   labels:
     - apache
