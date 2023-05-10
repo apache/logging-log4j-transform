@@ -98,7 +98,7 @@
     <project.build.outputTimestamp>1683307797</project.build.outputTimestamp>
     <!-- plugin versions -->
     <checksum-maven-plugin.version>1.11</checksum-maven-plugin.version>
-    <flatten-maven-plugin.version>1.4.1</flatten-maven-plugin.version>
+    <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
     <log4j-changelog-maven-plugin.version>0.3.0</log4j-changelog-maven-plugin.version>
     <sign-maven-plugin.version>1.0.1</sign-maven-plugin.version>
   </properties>
