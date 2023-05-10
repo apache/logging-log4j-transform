@@ -50,7 +50,7 @@
     <spotbugs.version>4.7.3</spotbugs.version>
     <!-- plugin versions -->
     <bundle-plugin.version>5.1.8</bundle-plugin.version>
-    <error-prone.version>2.19.0</error-prone.version>
+    <error-prone.version>2.19.1</error-prone.version>
     <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
     <findsecbugs-plugin.version>1.12.0</findsecbugs-plugin.version>
     <maven-invoker-plugin.version>3.5.1</maven-invoker-plugin.version>
