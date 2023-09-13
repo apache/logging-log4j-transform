@@ -90,4 +90,5 @@ public class SimpleInclusionScanner implements ClassFileInclusionScanner {
         }
         return false;
     }
+
 }

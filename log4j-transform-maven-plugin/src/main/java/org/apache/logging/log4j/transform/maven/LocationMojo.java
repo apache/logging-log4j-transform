@@ -221,4 +221,5 @@ public class LocationMojo extends AbstractMojo {
         }
         return new URLClassLoader(urls.toArray(EMPTY_URL_ARRAY));
     }
+
 }

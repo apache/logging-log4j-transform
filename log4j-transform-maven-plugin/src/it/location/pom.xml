@@ -16,25 +16,29 @@
   ~ limitations under the License.
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.apache.logging</groupId>
     <artifactId>logging-parent</artifactId>
-    <version>9</version>
+    <version>10.0.0</version>
     <relativePath />
   </parent>
+
   <groupId>org.apache.logging.log4j.maven.it</groupId>
   <artifactId>log4j-maven-it-location</artifactId>
   <version>@project.version@</version>
   <packaging>jar</packaging>
-  <name>Apache Log4j Maven plugin test</name>
-  <description>The Apache Log4j Maven plugin test</description>
+
   <properties>
     <junit.version>5.9.3</junit.version>
     <log4j2.version>2.20.0</log4j2.version>
   </properties>
+
   <dependencyManagement>
     <dependencies>
+
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
@@ -42,6 +46,7 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-bom</artifactId>
@@ -50,23 +55,30 @@
         <scope>import</scope>
       </dependency>
     </dependencies>
+
   </dependencyManagement>
+
   <dependencies>
+
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
       <scope>runtime</scope>
     </dependency>
+
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -83,4 +95,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>

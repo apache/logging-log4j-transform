@@ -18,12 +18,13 @@ package org.apache.logging.log4j.transform.maven.it;
 
 import org.junit.jupiter.api.Test;
 
-public class MainTest {
+class MainTest {
 
     private static final String[] ARGS = {"Hello", "Log4j2"};
 
     @Test
-    public void testDoesNotThrow() {
+    void testDoesNotThrow() {
         Main.main(ARGS);
     }
+
 }

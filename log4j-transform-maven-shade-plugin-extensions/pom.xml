@@ -16,31 +16,34 @@
   ~ limitations under the License.
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.apache.logging.log4j</groupId>
     <artifactId>log4j-transform-parent</artifactId>
     <version>${revision}</version>
     <relativePath>../log4j-transform-parent</relativePath>
   </parent>
+
   <artifactId>log4j-transform-maven-shade-plugin-extensions</artifactId>
   <packaging>jar</packaging>
+
   <name>Apache Log4j Maven Shade Plugin Transformer</name>
   <description>Transformer implementation to concatenate Log4j2Plugins.dat files</description>
-  <properties>
-    <docLabel>Shaded Plugin Log4j2 Transformer</docLabel>
-    <maven.doap.skip>true</maven.doap.skip>
-  </properties>
 
   <dependencies>
+
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
@@ -49,15 +52,18 @@
     <dependency>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-shade-plugin</artifactId>
-      <version>3.4.1</version>
+      <version>3.5.0</version>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -105,4 +111,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>

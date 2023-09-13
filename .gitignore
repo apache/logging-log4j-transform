@@ -13,16 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-## Keep in sync with src/assembly/source-assembly.xml
 target/
-# IntelliJ IDEA
 .idea
 *.iml
 *.iws
-# Eclipse
-.classpath
-.project
-.settings/
-# Maven wrapper
+/out
+.flattened-pom.xml
 /.mvn/wrapper/maven-wrapper.jar
-
+# Eclipse
+.project
+.classpath
+.settings/

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<#--
   ~ Licensed to the Apache Software Foundation (ASF) under one or more
   ~ contributor license agreements.  See the NOTICE file distributed with
   ~ this work for additional information regarding copyright ownership.
@@ -15,11 +14,9 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<entry xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://logging.apache.org/log4j/changelog"
-       xsi:schemaLocation="http://logging.apache.org/log4j/changelog https://logging.apache.org/log4j/changelog-0.1.1.xsd"
-       type="added">
-  <issue id="LOG4J2-3638" link="https://issues.apache.org/jira/browse/LOG4J2-3638"/>
-  <author id="github:ppkarwasz"/>
-  <description format="markdown">Added `log4j-transform-maven-plugin` bytecode transformation tool to provide location information without reflection</description>
-</entry>
+
+# ${release.version}<#if release.date?has_content> (${release.date})</#if>
+
+This is the second release of the project.
+
+<#include "../.changelog.md.ftl">

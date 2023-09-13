@@ -16,42 +16,55 @@
   ~ limitations under the License.
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.apache.logging.log4j</groupId>
     <artifactId>log4j-transform-parent</artifactId>
     <version>${revision}</version>
     <relativePath>../log4j-transform-parent</relativePath>
   </parent>
+
   <artifactId>log4j-transform-perf</artifactId>
+
   <name>Log4j Transformation Tools Performance test</name>
   <description>Performance tests for Apache Log4j Transformation Tools</description>
+
   <properties>
     <maven.install.skip>true</maven.install.skip>
     <maven.deploy.skip>true</maven.deploy.skip>
     <spotbugs.skip>true</spotbugs.skip>
   </properties>
+
   <dependencies>
+
     <dependency>
       <groupId>org.openjdk.jmh</groupId>
       <artifactId>jmh-core</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
     </dependency>
+
     <dependency>
       <groupId>com.github.spotbugs</groupId>
       <artifactId>spotbugs-annotations</artifactId>
       <scope>provided</scope>
     </dependency>
+
   </dependencies>
+
   <build>
     <plugins>
+
       <plugin>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-transform-maven-plugin</artifactId>
@@ -68,6 +81,7 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -91,6 +105,7 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -142,6 +157,8 @@
           </execution>
         </executions>
       </plugin>
+
     </plugins>
   </build>
+
 </project>

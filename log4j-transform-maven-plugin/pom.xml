@@ -16,44 +16,57 @@
   ~ limitations under the License.
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.apache.logging.log4j</groupId>
     <artifactId>log4j-transform-parent</artifactId>
     <version>${revision}</version>
     <relativePath>../log4j-transform-parent</relativePath>
   </parent>
+
   <artifactId>log4j-transform-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
+
   <name>Apache Log4j Transform Maven plugin</name>
   <description>The Apache Log4j Transform Maven plugin</description>
+
   <dependencies>
+
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-weaver</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
       <scope>provided</scope>
     </dependency>
+
   </dependencies>
+
   <build>
     <plugins>
+
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
@@ -61,26 +74,27 @@
           <skip>true</skip>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
-        <configuration>
-          <cloneProjectsTo>${project.build.directory}/its</cloneProjectsTo>
-          <localRepositoryPath>${project.build.directory}/it-repo</localRepositoryPath>
-          <goals>
-            <goal>clean verify</goal>
-          </goals>
-        </configuration>
         <executions>
           <execution>
+            <id>invoke-its</id>
             <goals>
               <goal>install</goal>
               <goal>integration-test</goal>
               <goal>verify</goal>
             </goals>
+            <phase>integration-test</phase>
+            <configuration>
+              <cloneProjectsTo>${project.build.directory}/its</cloneProjectsTo>
+              <localRepositoryPath>${project.build.directory}/it-repo</localRepositoryPath>
+            </configuration>
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
@@ -93,6 +107,7 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
@@ -100,6 +115,25 @@
           <goalPrefix>log4j-transform</goalPrefix>
         </configuration>
       </plugin>
+
     </plugins>
   </build>
+
+  <profiles>
+
+    <!-- disable `maven-invoker-plugin` if `skipTests` is present -->
+    <profile>
+      <id>invoker-toggle</id>
+      <activation>
+        <property>
+          <name>skipTests</name>
+        </property>
+      </activation>
+      <properties>
+        <invoker.skip>true</invoker.skip>
+      </properties>
+    </profile>
+
+  </profiles>
+
 </project>

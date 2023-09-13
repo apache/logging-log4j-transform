@@ -14,67 +14,57 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-= log4j-transform:process-classes
+= `log4j-transform:process-classes`
 
-*Full name*:
+Full name::
 
-org.apache.logging.log4j:log4j-transform-maven-plugin:0.1.0:process-classes
+`org.apache.logging.log4j:log4j-transform-maven-plugin:0.1.0:process-classes`
 
-*Description*:
+Description::
 
-Generates static location information of Log4j 2.x API calls in the project classes. The resulting bytecode will no rely on runtime resolution of location information.
+Generates static location information of Log4j 2.x API calls in the project classes.
+The resulting bytecode will not rely on runtime resolution of the location information.
 
-*Attributes*:
+Attributes::
 
- * Requires a Maven project to be executed.
- * Requires dependency resolution of artifacts in scope: <code>compile</code>.
- * The goal is thread-safe and supports parallel builds.
+ * Requires a Maven project to be executed
+ * Requires dependency resolution of artifacts in scope: `<code>compile</code>`
+ * The goal is thread-safe and supports parallel builds
  * Binds by default to the http://maven.apache.org/ref/current/maven-core/lifecycles.html[lifecycle phase]: `process-classes`.
 
 == Required Parameters
 
-[cols="1,1,1,10"]
+[cols="3,3,10"]
 |===
-|Name|Type|Since|Description
+|Name|Type|Description
 
 |`<sourceDirectory>`
 |`File`
-|-
 | The directory containing classes to be processed.
-
-*Default value*: `${project.build.outputDirectory}`
+It defaults to `${project.build.outputDirectory}`.
 
 |`<sourceDirectory>`
 |`File`
-|-
 | The directory where woven classes will be written.
-
-*Default value*; `${project.build.outputDirectory}`
+It defaults to `${project.build.outputDirectory}`.
 |===
 
 == Optional Parameters
 
-[cols="1,1,1,10"]
+[cols="3,3,10"]
 |===
-|Name|Type|Since|Description
+|Name|Type|Description
 
 |`<includes>`
 |`List<String>`
-|-
 | Files to include. If empty all class files will be processed.
 
 |`<excludes>`
 |`List<String>`
-|-
 | Files to exclude.
 
 |`<staleMillis>`
 |`int`
-|-
-| Sets the granularity in milliseconds of the last modification date for testing whether a class file needs weaving.
-
-*Default value is*: `0`.
-
-*User property is*: `lastModGranularityMs`.
-
+| Sets the granularity in milliseconds of the last modification date for testing if a class file needs weaving.
+It defaults to `0` and can be configured using the `lastModGranularityMs` property.
 |===

@@ -21,15 +21,16 @@ import org.apache.logging.log4j.Logger;
 
 public class Main implements Runnable {
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public static void main(String[] args) {
-        logger.info("Application starts");
+        LOGGER.info("Application starts");
         new Main().run();
-        logger.info("Application stops");
+        LOGGER.info("Application stops");
     }
 
     public void run() {
-        logger.info("Another log message");
+        LOGGER.info("Another log message");
     }
+
 }
