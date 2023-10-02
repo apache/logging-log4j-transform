@@ -55,6 +55,7 @@ public class LoggerConversionHandlerExample {
     private static final Object P9 = "(p9)";
     private static final Object[] PARRAY = { "(...)" };
     private static final Supplier<?>[] SUPPLIERS = { () -> OBJECT };
+    @SuppressWarnings("StaticAssignmentOfThrowable")
     private static final Throwable THROWABLE = new RuntimeException();
     private static final Marker MARKER = MarkerManager.getMarker("MARKER");
 

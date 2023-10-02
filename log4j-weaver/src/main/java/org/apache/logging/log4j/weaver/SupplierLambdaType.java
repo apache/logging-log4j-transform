@@ -32,6 +32,7 @@ import static org.apache.logging.log4j.weaver.Constants.SUPPLIER_TYPE;
  * An enumeration of {@code org.apache.logging.log4j.util.Supplier<Message>} lambdas, named after the type of message and parameter types.
  *
  */
+@SuppressWarnings("ImmutableEnumChecker")
 public enum SupplierLambdaType {
     MESSAGE_SUPPLIER(MESSAGE_SUPPLIER_TYPE),
     FORMATTED_MESSAGE(STRING_TYPE, OBJECT_ARRAY_TYPE),
@@ -46,7 +47,7 @@ public enum SupplierLambdaType {
 
     private final Type[] argumentTypes;
 
-    private SupplierLambdaType(final Type... argumentTypes) {
+    SupplierLambdaType(final Type... argumentTypes) {
         this.argumentTypes = argumentTypes;
     }
 

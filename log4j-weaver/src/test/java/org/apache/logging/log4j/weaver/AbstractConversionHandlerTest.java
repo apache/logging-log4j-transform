@@ -50,10 +50,12 @@ public class AbstractConversionHandlerTest {
         final Path topClass = Paths
                 .get(AbstractConversionHandlerTest.class.getClassLoader().getResource(internalName + ".class").toURI());
         final String simpleClassName = Paths.get(internalName).getFileName().toString();
-        return Files.walk(topClass.getParent(), 1).filter(p -> {
-            final String nested = p.getFileName().toString();
-            return nested.startsWith(simpleClassName) && nested.endsWith(".class");
-        }).sorted();
+        try (Stream<Path> paths = Files.walk(topClass.getParent(), 1)) {
+            return paths.filter(p -> {
+                final String nested = p.getFileName().toString();
+                return nested.startsWith(simpleClassName) && nested.endsWith(".class");
+            }).sorted();
+        }
     }
 
     private static class TestClassLoader extends ClassLoader {
