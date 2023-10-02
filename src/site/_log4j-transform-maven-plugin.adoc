@@ -1,25 +1,27 @@
-//
-// Licensed to the Apache Software Foundation (ASF) under one or more
-// contributor license agreements.  See the NOTICE file distributed with
-// this work for additional information regarding copyright ownership.
-// The ASF licenses this file to you under the Apache License, Version 2.0
-// (the "License"); you may not use this file except in compliance with
-// the License.  You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-= Log4j Transform Maven Plugin
+////
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+////
+[#log4j-transform-maven-plugin]
+== Log4j Transform Maven Plugin
 
 The Transform Plugin is used to postprocess the compiled classes of your project and replace all Log4j 2.x API calls with https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/LogBuilder.html[`LogBuilder`] calls with a statically precomputed location.
 This allows you to use location information in your logs without incurring in the *expensive* runtime calls usually used to acquire it.
 
-== Why do we need it
+[#log4j-transform-maven-plugin-why]
+=== Why do we need it
 
 Finding the location of a logging call is a very expensive operation (a couple of microseconds).
 
@@ -141,7 +143,8 @@ By comparison, *disabling* location information on the same machine gives:
 
 |===
 
-== How it works
+[#log4j-transform-maven-plugin-how]
+=== How it works
 
 The working principle is very simple: every call to the Log4j 2.x API like
 [source,java]
@@ -167,41 +170,91 @@ public void helloLog() {
 
 In the current implementation locations are stored in classes whose name ends in `+++$$Log4j2$$Cache+++`, so they can not accidentally be used by XML/JSON serializers.
 
-== Goals
+[#log4j-transform-maven-plugin-goals]
+=== Goals
 
 This plugin consists of a single goal:
 
-xref:src/doc/process-classes-mojo.adoc[`log4j-transform:process-classes`]::
+xref:#log4j-transform-maven-plugin-process-classes[`log4j-transform:process-classes`]::
 is bound to the process-classes phase and weaves your classes to include precomputed location information.
 
-== Usage
+[#log4j-transform-maven-plugin-process-classes]
+==== `log4j-transform:process-classes`
+
+Full name::
+
+`org.apache.logging.log4j:log4j-transform-maven-plugin:{project-version}:process-classes`
+
+Description::
+
+Generates static location information of Log4j 2.x API calls in the project classes.
+The resulting bytecode will not rely on runtime resolution of the location information.
+
+Attributes::
+
+* Requires a Maven project to be executed
+* Requires dependency resolution of artifacts in scope: `<code>compile</code>`
+* The goal is thread-safe and supports parallel builds
+* Binds by default to the http://maven.apache.org/ref/current/maven-core/lifecycles.html[lifecycle phase]: `process-classes`.
+
+[#log4j-transform-maven-plugin-process-classes-required-parameters]
+===== Required Parameters
+
+[cols="3,3,10"]
+|===
+|Name|Type|Description
+
+|`<sourceDirectory>`
+|`File`
+| The directory containing classes to be processed.
+It defaults to `${project.build.outputDirectory}`.
+
+|`<sourceDirectory>`
+|`File`
+| The directory where woven classes will be written.
+It defaults to `${project.build.outputDirectory}`.
+|===
+
+[#log4j-transform-maven-plugin-process-classes-optional-parameters]
+===== Optional Parameters
+
+[cols="3,3,10"]
+|===
+|Name|Type|Description
+
+|`<includes>`
+|`List<String>`
+| Files to include. If empty all class files will be processed.
+
+|`<excludes>`
+|`List<String>`
+| Files to exclude.
+
+|`<staleMillis>`
+|`int`
+| Sets the granularity in milliseconds of the last modification date for testing if a class file needs weaving.
+It defaults to `0` and can be configured using the `lastModGranularityMs` property.
+|===
+
+[#log4j-transform-maven-plugin-usage]
+=== Usage
 
 To use the plugin you need to declare a dependency on https://central.sonatype.com/artifact/org.apache.logging.log4j/log4j-api/2.20.0[`log4j-api`] version 2.20.0 or newer.
 
 Add the following configuration to your POM file:
 
-[source,xml]
+[source,xml,subs="+attributes"]
 ----
-<project>
-  [...]
-  <build>
-    [...]
-    <plugins>
-      <plugin>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-transform-maven-plugin</artifactId>
-        <version>0.1.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>process-classes</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-    [...]
-  </build>
-  [...]
-</project>
+<plugin>
+  <groupId>org.apache.logging.log4j</groupId>
+  <artifactId>log4j-transform-maven-plugin</artifactId>
+  <version>{project-version}</version>
+  <executions>
+    <execution>
+      <goals>
+        <goal>process-classes</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
 ----
