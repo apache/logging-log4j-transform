@@ -32,6 +32,10 @@
   <name>Apache Log4j Maven Shade Plugin Transformer</name>
   <description>Transformer implementation to concatenate Log4j2Plugins.dat files</description>
 
+  <properties>
+    <bnd.skip>true</bnd.skip>
+  </properties>
+
   <dependencies>
 
     <dependency>

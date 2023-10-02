@@ -42,11 +42,9 @@
     <maven.version>3.9.4</maven.version>
     <plexus-utils.version>4.0.0</plexus-utils.version>
     <slf4j.version>2.0.9</slf4j.version>
-    <spotbugs.version>4.7.3</spotbugs.version>
 
     <!-- plugin versions -->
     <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
-    <maven-bundle-plugin.version>5.1.8</maven-bundle-plugin.version>
     <maven-invoker-plugin.version>3.5.1</maven-invoker-plugin.version>
     <maven-shade-plugin.version>3.5.0</maven-shade-plugin.version>
     <surefire.version>3.0.0-M7</surefire.version>
@@ -134,12 +132,6 @@
         <version>${slf4j.version}</version>
       </dependency>
 
-      <dependency>
-        <groupId>com.github.spotbugs</groupId>
-        <artifactId>spotbugs-annotations</artifactId>
-        <version>${spotbugs.version}</version>
-      </dependency>
-
     </dependencies>
   </dependencyManagement>
 
@@ -151,12 +143,6 @@
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>${jacoco-maven-plugin.version}</version>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.felix</groupId>
-          <artifactId>maven-bundle-plugin</artifactId>
-          <version>${maven-bundle-plugin.version}</version>
         </plugin>
 
         <plugin>
