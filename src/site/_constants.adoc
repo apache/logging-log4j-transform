@@ -34,7 +34,7 @@
 ////
 
 :project-github-url: https://github.com/apache/logging-log4j-transform
-:project-version: 0.2.0-SNAPSHOT
+:project-version: 0.2.0
 :project-name: Log4j Transform
 :project-id: log4j-transform
 :java-target-version: 8
