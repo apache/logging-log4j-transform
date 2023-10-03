@@ -33,10 +33,18 @@
     3. Commit both `.release-notes.adoc.ftl` and the generated `7.8.0.adoc`
 ////
 
-[#release-notes-0-x-x]
-=== 0.x.x
+[#release-notes-0-2-0]
+=== 0.2.0
 
-
+Release date:: 2023-10-03
 
 This is the second release of the project.
 
+
+==== Added
+
+* Started publishing https://logging.apache.org/log4j/transform[the project website]
+
+==== Changed
+
+* Migrated to `logging-parent` 10.1.1 and adopted its CI and `pom.xml` infrastructure

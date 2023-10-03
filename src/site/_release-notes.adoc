@@ -36,5 +36,5 @@
 [#release-notes]
 == Release Notes
 
-include::_release-notes/_0.x.x.adoc[]
+include::_release-notes/_0.2.0.adoc[]
 include::_release-notes/_0.1.0.adoc[]

@@ -33,10 +33,11 @@
     3. Commit both `.release-notes.adoc.ftl` and the generated `7.8.0.adoc`
 ////
 
-[#release-notes-0-x-x]
-=== 0.x.x
+[#release-notes-${release.version?replace("[^a-zA-Z0-9]", "-", "r")}]
+=== ${release.version}
 
-
+<#if release.date?has_content>Release date:: ${release.date}</#if>
 
 This is the second release of the project.
 
+<#include "../.changelog.adoc.ftl">
