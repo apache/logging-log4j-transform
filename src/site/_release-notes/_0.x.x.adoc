@@ -44,3 +44,4 @@ This is the second release of the project.
 ==== Changed
 
 * Migrated to `logging-parent` 10.1.1 and adopted its CI and `pom.xml` infrastructure
+* Update `org.ow2.asm:asm-bom` to version `9.6`
