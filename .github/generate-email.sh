@@ -33,20 +33,22 @@ fail_for_invalid_args() {
 
 # Constants
 PROJECT_NAME="Apache Log4j Transformation Tools"
+PROJECT_SITE="https://logging.apache.org/log4j/transform"
+PROJECT_STAGING_SITE="${PROJECT_SITE/apache.org/staged.apache.org}"
 PROJECT_REPO="https://github.com/apache/logging-log4j-transform"
 PROJECT_DIST_DIR="https://dist.apache.org/repos/dist/dev/logging/log4j-transform"
 PROJECT_VERSION="$2"
 COMMIT_ID="$3"
 
 # Check release notes file
-RELEASE_NOTES_FILE="$SCRIPT_DIR/../target/release-notes/$PROJECT_VERSION.md"
+RELEASE_NOTES_FILE="$SCRIPT_DIR/../src/site/_release-notes/_$PROJECT_VERSION.adoc"
 [ -f "$RELEASE_NOTES_FILE" ] || {
     stderr "Couldn't find release notes file: $RELEASE_NOTES_FILE"
     exit 1
 }
 
 dump_release_notes() {
-    awk "f{print} /^# $PROJECT_VERSION/{f=1}" "$RELEASE_NOTES_FILE"
+    awk "f{print} /^Release date::/{f=1}" "$RELEASE_NOTES_FILE"
 }
 
 case $1 in
@@ -58,7 +60,8 @@ Title: [VOTE] Release $PROJECT_NAME $PROJECT_VERSION
 
 This is a vote to release the $PROJECT_NAME $PROJECT_VERSION.
 
-Source repository: $PROJECT_REPO
+Website: $PROJECT_STAGING_SITE
+GitHub: $PROJECT_REPO
 Commit: $COMMIT_ID
 Distribution: $PROJECT_DIST_DIR
 Nexus: https://repository.apache.org/content/repositories/orgapachelogging-1113
@@ -85,14 +88,14 @@ announce)
 To: log4j-user@logging.apache.org, dev@logging.apache.org
 Title: [ANNOUNCE] $PROJECT_NAME $PROJECT_VERSION released
 
-${PROJECT_NAME}[1] team is pleased to announce the $PROJECT_VERSION
+${PROJECT_NAME} team is pleased to announce the $PROJECT_VERSION
 release. This project contains tools for binary postprocessing of
 projects that use the Apache Log4j API. For further information
 (support, download, etc.) see the project website[1].
 
-[1] $PROJECT_REPO
+[1] $PROJECT_SITE
 
-# Release Notes
+=== Release Notes
 EOF
     dump_release_notes
     ;;

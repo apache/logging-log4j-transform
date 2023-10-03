@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -50,10 +51,18 @@ public class AbstractConversionHandlerTest {
         final Path topClass = Paths
                 .get(AbstractConversionHandlerTest.class.getClassLoader().getResource(internalName + ".class").toURI());
         final String simpleClassName = Paths.get(internalName).getFileName().toString();
-        return Files.walk(topClass.getParent(), 1).filter(p -> {
-            final String nested = p.getFileName().toString();
-            return nested.startsWith(simpleClassName) && nested.endsWith(".class");
-        }).sorted();
+        try (Stream<Path> paths = Files.walk(topClass.getParent(), 1)) {
+            return paths
+                    .filter(p -> {
+                        final String nested = p.getFileName().toString();
+                        return nested.startsWith(simpleClassName) && nested.endsWith(".class");
+                    })
+                    .sorted()
+                    // We create a shallow-copy to return a `Stream` without leaking file descriptors
+                    .collect(Collectors.toList())
+                    .stream();
+        }
+
     }
 
     private static class TestClassLoader extends ClassLoader {

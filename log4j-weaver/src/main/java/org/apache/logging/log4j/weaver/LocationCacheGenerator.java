@@ -17,12 +17,8 @@
 package org.apache.logging.log4j.weaver;
 
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -70,7 +66,7 @@ public class LocationCacheGenerator {
         final LocationCacheContents contents = locationCacheClasses.computeIfAbsent(cacheClassName,
                 k -> new LocationCacheContents());
         contents.addLambda(type);
-        final String methodName = type.name().toLowerCase();
+        final String methodName = type.name().toLowerCase(Locale.US);
         final String methodDescriptor = Type.getMethodDescriptor(MESSAGE_TYPE, type.getArgumentTypes());
         switch (type) {
             case FORMATTED_MESSAGE:
@@ -104,7 +100,7 @@ public class LocationCacheGenerator {
         final Set<SupplierLambdaType> lambdas = contents.getLambdas();
         for (final SupplierLambdaType type : lambdas) {
             final InstructionAdapter mv = new InstructionAdapter(cv.visitMethod(Opcodes.ACC_STATIC,
-                    type.name().toLowerCase(), type.getImplementationMethodDescriptor(), null, null));
+                    type.name().toLowerCase(Locale.US), type.getImplementationMethodDescriptor(), null, null));
             switch (type) {
                 case FORMATTED_MESSAGE:
                     writeFormattedMessage(mv);

@@ -32,6 +32,10 @@
   <name>Apache Log4j Transform Maven plugin</name>
   <description>The Apache Log4j Transform Maven plugin</description>
 
+  <properties>
+    <bnd.skip>true</bnd.skip>
+  </properties>
+
   <dependencies>
 
     <dependency>
@@ -66,14 +70,6 @@
 
   <build>
     <plugins>
-
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

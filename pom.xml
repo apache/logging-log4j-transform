@@ -31,7 +31,7 @@
   <parent>
     <groupId>org.apache.logging</groupId>
     <artifactId>logging-parent</artifactId>
-    <version>10.0.0</version>
+    <version>10.1.1</version>
   </parent>
 
   <groupId>org.apache.logging.log4j</groupId>
@@ -39,7 +39,7 @@
   <version>${revision}</version>
   <packaging>pom</packaging>
 
-  <url>https://github.com/apache/logging-log4j-transform</url>
+  <url>https://logging.apache.org/log4j/transform</url>
 
   <inceptionYear>2022</inceptionYear>
 
@@ -107,6 +107,8 @@
 
   </properties>
 
+  <!-- `dependencyManagement` must only contain `log4j-transform` modules and nothing else!
+       Modules here must have a corresponding entry in `modules` block above! -->
   <dependencyManagement>
     <dependencies>
 
@@ -147,6 +149,11 @@
             </goals>
             <phase>process-resources</phase>
             <inherited>false</inherited>
+            <configuration>
+              <pomElements>
+                <parent>keep</parent>
+              </pomElements>
+            </configuration>
           </execution>
         </executions>
       </plugin>
