@@ -151,6 +151,19 @@
             <inherited>false</inherited>
             <configuration>
               <pomElements>
+                <!-- Keep the `parent`!
+
+                     This is necessary, since...
+                     1. `-parent` depends on `-bom`
+                     2. `-bom` depends on `logging-parent`
+                     3. `logging-parent` contains `dependencyManagement`, etc. that are used by `-maven-plugin` et al.
+                     4. Dependencies of `-maven-plugin` et al. is resolved *at runtime*.
+                     5. Though at runtime, the deployed `-bom` is used, which is flattened and hence doesn't have a parent!
+                     6. Hence, at runtime, all `logging-parent` logic is lost.
+                     7. To avoid this, we override the `flatten-bom` configuration to retain the parent.
+
+                     This should ideally be fixed in the `flatten-bom` configuration provided by `logging-parent`.
+                     You can remove `<parent>keep`, if https://github.com/apache/logging-parent/issues/37 is resolved. -->
                 <parent>keep</parent>
               </pomElements>
             </configuration>
