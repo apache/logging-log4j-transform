@@ -65,5 +65,7 @@ jobs:
       contents: write
     with:
       project-id: log4j-transform
+      distribution-attachment-filepath-pattern: |-
+          '^.*/target/log4j-(weaver|transform-(.+))-'${PROJECT_VERSION}'\\.jar$'
       distribution-attachment-count: 3
       site-enabled: true
