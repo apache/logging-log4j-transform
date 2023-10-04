@@ -54,6 +54,8 @@ A typical configuration is:
   </dependencies>
   <executions>
     <execution>
+      <id>shade-jar-with-dependencies</id>
+      <phase>package</phase>
       <goals>
         <goal>shade</goal>
       </goals>
