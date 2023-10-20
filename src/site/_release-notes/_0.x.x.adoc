@@ -43,9 +43,10 @@ This is the second release of the project.
 
 ==== Added
 
+* Started generating CycloneDX SBOM with the recent update of `logging-parent` to version `10.2.0`
 * Started publishing https://logging.apache.org/log4j/transform[the project website]
 
 ==== Changed
 
-* Migrated to `logging-parent` 10.1.1 and adopted its CI and `pom.xml` infrastructure
+* Migrated `logging-parent` to version `10.2.0` and adopted its CI and `pom.xml` infrastructure
 * Update `org.ow2.asm:asm-bom` to version `9.6`

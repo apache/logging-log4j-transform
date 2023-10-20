@@ -15,7 +15,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" child.project.url.inherit.append.path="false" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <!-- ██     ██  █████  ██████  ███    ██ ██ ███    ██  ██████  ██
        ██     ██ ██   ██ ██   ██ ████   ██ ██ ████   ██ ██       ██
@@ -31,7 +31,7 @@
   <parent>
     <groupId>org.apache.logging</groupId>
     <artifactId>logging-parent</artifactId>
-    <version>10.1.1</version>
+    <version>10.2.0</version>
   </parent>
 
   <groupId>org.apache.logging.log4j</groupId>
@@ -79,7 +79,7 @@
 
   </modules>
 
-  <scm>
+  <scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false" child.scm.url.inherit.append.path="false">
     <connection>scm:git:git@github.com:apache/logging-log4j-transform.git</connection>
     <developerConnection>scm:git:git@github.com:apache/logging-log4j-transform.git</developerConnection>
     <tag>HEAD</tag>
@@ -95,6 +95,10 @@
     <system>GitHub Actions</system>
     <url>https://github.com/apache/logging-log4j-transform/actions</url>
   </ciManagement>
+
+  <distributionManagement>
+    <downloadUrl>https://logging.apache.org/log4j/transform/latest/#distribution</downloadUrl>
+  </distributionManagement>
 
   <properties>
 
@@ -149,24 +153,6 @@
             </goals>
             <phase>process-resources</phase>
             <inherited>false</inherited>
-            <configuration>
-              <pomElements>
-                <!-- Keep the `parent`!
-
-                     This is necessary, since...
-                     1. `-parent` depends on `-bom`
-                     2. `-bom` depends on `logging-parent`
-                     3. `logging-parent` contains `dependencyManagement`, etc. that are used by `-maven-plugin` et al.
-                     4. Dependencies of `-maven-plugin` et al. is resolved *at runtime*.
-                     5. Though at runtime, the deployed `-bom` is used, which is flattened and hence doesn't have a parent!
-                     6. Hence, at runtime, all `logging-parent` logic is lost.
-                     7. To avoid this, we override the `flatten-bom` configuration to retain the parent.
-
-                     This should ideally be fixed in the `flatten-bom` configuration provided by `logging-parent`.
-                     You can remove `<parent>keep`, if https://github.com/apache/logging-parent/issues/37 is resolved. -->
-                <parent>keep</parent>
-              </pomElements>
-            </configuration>
           </execution>
         </executions>
       </plugin>
