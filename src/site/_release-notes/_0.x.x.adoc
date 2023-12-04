@@ -49,5 +49,6 @@ This is the second release of the project.
 ==== Changed
 
 * Migrated `logging-parent` to version `10.2.0` and adopted its CI and `pom.xml` infrastructure
+* Update `org.apache.maven.plugins:maven-shade-plugin` to version `3.5.1` (https://github.com/apache/logging-log4j-transform/pull/64[64])
 * Update `org.junit:junit-bom` to version `5.10.1` (https://github.com/apache/logging-log4j-transform/pull/63[63])
 * Update `org.ow2.asm:asm-bom` to version `9.6`
