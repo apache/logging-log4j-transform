@@ -16,22 +16,6 @@
  */
 package org.apache.logging.log4j.weaver;
 
-import java.lang.invoke.CallSite;
-import java.lang.invoke.LambdaMetafactory;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.util.Map;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.logging.log4j.weaver.LocationCacheGenerator.LocationCacheValue;
-import org.objectweb.asm.Handle;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.GeneratorAdapter;
-
 import static org.apache.logging.log4j.weaver.Constants.LOG_BUILDER_TYPE;
 import static org.apache.logging.log4j.weaver.Constants.MESSAGE_TYPE;
 import static org.apache.logging.log4j.weaver.Constants.OBJECT_TYPE;
@@ -39,6 +23,21 @@ import static org.apache.logging.log4j.weaver.Constants.STACK_TRACE_ELEMENT_ARRA
 import static org.apache.logging.log4j.weaver.Constants.STACK_TRACE_ELEMENT_TYPE;
 import static org.apache.logging.log4j.weaver.Constants.STRING_TYPE;
 import static org.apache.logging.log4j.weaver.Constants.WITH_LOCATION_METHOD;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.lang.invoke.CallSite;
+import java.lang.invoke.LambdaMetafactory;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.util.Map;
+import org.apache.logging.log4j.weaver.LocationCacheGenerator.LocationCacheValue;
+import org.objectweb.asm.Handle;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.GeneratorAdapter;
 
 public class LocationMethodVisitor extends GeneratorAdapter {
 
@@ -48,11 +47,20 @@ public class LocationMethodVisitor extends GeneratorAdapter {
     private static final Type LAMBDA_METAFACTORY_TYPE = Type.getType(LambdaMetafactory.class);
     private static final Type METHOD_HANDLE_TYPE = Type.getType(MethodHandle.class);
     private static final Type METHOD_TYPE_TYPE = Type.getType(MethodType.class);
-    private static final String LAMBDA_METAFACTORY_DESC = Type.getMethodDescriptor(Type.getType(CallSite.class),
-            Type.getType(MethodHandles.Lookup.class), STRING_TYPE, METHOD_TYPE_TYPE, METHOD_TYPE_TYPE,
-            METHOD_HANDLE_TYPE, METHOD_TYPE_TYPE);
-    private static final Handle LAMBDA_METAFACTORY_HANDLE = new Handle(Opcodes.H_INVOKESTATIC,
-            LAMBDA_METAFACTORY_TYPE.getInternalName(), "metafactory", LAMBDA_METAFACTORY_DESC, false);
+    private static final String LAMBDA_METAFACTORY_DESC = Type.getMethodDescriptor(
+            Type.getType(CallSite.class),
+            Type.getType(MethodHandles.Lookup.class),
+            STRING_TYPE,
+            METHOD_TYPE_TYPE,
+            METHOD_TYPE_TYPE,
+            METHOD_HANDLE_TYPE,
+            METHOD_TYPE_TYPE);
+    private static final Handle LAMBDA_METAFACTORY_HANDLE = new Handle(
+            Opcodes.H_INVOKESTATIC,
+            LAMBDA_METAFACTORY_TYPE.getInternalName(),
+            "metafactory",
+            LAMBDA_METAFACTORY_DESC,
+            false);
 
     private final LocationClassVisitor locationClassVisitor;
     private final Map<String, ClassConversionHandler> handlers;
@@ -66,9 +74,13 @@ public class LocationMethodVisitor extends GeneratorAdapter {
     private int lineNumber;
     private Label currentLabel;
 
-    protected LocationMethodVisitor(final LocationClassVisitor locationClassVisitor,
-            final Map<String, ClassConversionHandler> handlers, final MethodVisitor mv, final int access,
-            final String name, final String descriptor) {
+    protected LocationMethodVisitor(
+            final LocationClassVisitor locationClassVisitor,
+            final Map<String, ClassConversionHandler> handlers,
+            final MethodVisitor mv,
+            final int access,
+            final String name,
+            final String descriptor) {
         super(Opcodes.ASM9, mv, access, name, descriptor);
         this.locationClassVisitor = locationClassVisitor;
         this.handlers = handlers;
@@ -117,8 +129,8 @@ public class LocationMethodVisitor extends GeneratorAdapter {
             if (label != null) {
                 // the generator adapter uses different variable indexes
                 // so we use 'mv' directly
-                mv.visitLocalVariable("log4j2$$p" + i, OBJECT_TYPE.getDescriptor(), null, label, currentLabel,
-                        localVariables[i]);
+                mv.visitLocalVariable(
+                        "log4j2$$p" + i, OBJECT_TYPE.getDescriptor(), null, label, currentLabel, localVariables[i]);
             }
         }
         super.visitEnd();
@@ -141,7 +153,8 @@ public class LocationMethodVisitor extends GeneratorAdapter {
     }
 
     public void invokeSupplierLambda(SupplierLambdaType type) {
-        invokeDynamic("get",
+        invokeDynamic(
+                "get",
                 type.getInvokedMethodDescriptor(),
                 LAMBDA_METAFACTORY_HANDLE,
                 SUPPLIER_OF_OBJECT_TYPE,

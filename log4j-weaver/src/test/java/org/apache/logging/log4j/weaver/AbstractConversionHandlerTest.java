@@ -16,14 +16,14 @@
  */
 package org.apache.logging.log4j.weaver;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import java.io.ByteArrayOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class AbstractConversionHandlerTest {
 
@@ -34,22 +34,26 @@ public class AbstractConversionHandlerTest {
         final TestClassLoader testCl = new TestClassLoader();
 
         final ByteArrayOutputStream dest = new ByteArrayOutputStream();
-        final LocationClassConverter converter = new LocationClassConverter(AbstractConversionHandlerTest.class.getClassLoader());
+        final LocationClassConverter converter =
+                new LocationClassConverter(AbstractConversionHandlerTest.class.getClassLoader());
         final LocationCacheGenerator locationCache = new LocationCacheGenerator();
 
-        getNestedClasses(internalName).forEach(classFile -> assertDoesNotThrow(() -> {
-            dest.reset();
-            converter.convert(Files.newInputStream(classFile), dest, locationCache);
-            testCl.defineClass(dest.toByteArray());
-        }));
+        getNestedClasses(internalName)
+                .forEach(classFile -> assertDoesNotThrow(() -> {
+                    dest.reset();
+                    converter.convert(Files.newInputStream(classFile), dest, locationCache);
+                    testCl.defineClass(dest.toByteArray());
+                }));
         locationCache.generateClasses().values().forEach(testCl::defineClass);
         convertedClass = testCl.loadClass(internalName.replaceAll("/", "."));
         testObject = assertDoesNotThrow(() -> convertedClass.getConstructor().newInstance());
     }
 
     private static Stream<Path> getNestedClasses(String internalName) throws Exception {
-        final Path topClass = Paths
-                .get(AbstractConversionHandlerTest.class.getClassLoader().getResource(internalName + ".class").toURI());
+        final Path topClass = Paths.get(AbstractConversionHandlerTest.class
+                .getClassLoader()
+                .getResource(internalName + ".class")
+                .toURI());
         final String simpleClassName = Paths.get(internalName).getFileName().toString();
         try (Stream<Path> paths = Files.walk(topClass.getParent(), 1)) {
             return paths
@@ -62,7 +66,6 @@ public class AbstractConversionHandlerTest {
                     .collect(Collectors.toList())
                     .stream();
         }
-
     }
 
     private static class TestClassLoader extends ClassLoader {

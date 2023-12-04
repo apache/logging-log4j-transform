@@ -16,18 +16,17 @@
  */
 package org.apache.logging.log4j.weaver;
 
+import static org.apache.logging.log4j.weaver.Constants.*;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.logging.log4j.weaver.LocationCacheGenerator.LocationCacheValue;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-
-import static org.apache.logging.log4j.weaver.Constants.*;
 
 public class LocationClassVisitor extends ClassVisitor {
 
@@ -57,13 +56,13 @@ public class LocationClassVisitor extends ClassVisitor {
     }
 
     @Override
-    public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
-            String[] exceptions) {
+    public MethodVisitor visitMethod(
+            int access, String name, String descriptor, String signature, String[] exceptions) {
         this.methodName = name;
         final MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
         return mv != null
-                ? new LocationMethodVisitor(this, Collections.unmodifiableMap(conversionHandlers), mv, access, name,
-                        descriptor)
+                ? new LocationMethodVisitor(
+                        this, Collections.unmodifiableMap(conversionHandlers), mv, access, name, descriptor)
                 : null;
     }
 
@@ -78,8 +77,12 @@ public class LocationClassVisitor extends ClassVisitor {
     public Handle createLambda(SupplierLambdaType type) {
         switch (type) {
             case MESSAGE_SUPPLIER:
-                return new Handle(Opcodes.H_INVOKEINTERFACE, MESSAGE_SUPPLIER_TYPE.getInternalName(), "get",
-                        Type.getMethodDescriptor(MESSAGE_TYPE), true);
+                return new Handle(
+                        Opcodes.H_INVOKEINTERFACE,
+                        MESSAGE_SUPPLIER_TYPE.getInternalName(),
+                        "get",
+                        Type.getMethodDescriptor(MESSAGE_TYPE),
+                        true);
             default:
                 return locationCache.createLambda(declaringClass, type);
         }

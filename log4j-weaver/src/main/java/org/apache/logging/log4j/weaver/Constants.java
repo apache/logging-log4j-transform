@@ -35,18 +35,18 @@ public class Constants {
     // Log4j2 types
     public static final Type ENTRY_MESSAGE_TYPE = Type.getObjectType("org/apache/logging/log4j/message/EntryMessage");
     public static final Type EXIT_MESSAGE_TYPE = Type.getObjectType("org/apache/logging/log4j/message/ExitMessage");
-    public static final Type FLOW_MESSAGE_FACTORY_TYPE = Type
-            .getObjectType("org/apache/logging/log4j/message/FlowMessageFactory");
+    public static final Type FLOW_MESSAGE_FACTORY_TYPE =
+            Type.getObjectType("org/apache/logging/log4j/message/FlowMessageFactory");
     public static final Type LOG_BUILDER_TYPE = Type.getObjectType("org/apache/logging/log4j/LogBuilder");
     public static final Type LEVEL_TYPE = Type.getObjectType("org/apache/logging/log4j/Level");
     public static final Type LOGGER_TYPE = Type.getObjectType("org/apache/logging/log4j/Logger");
     public static final Type LOGGING_SYSTEM_TYPE = Type.getObjectType("org/apache/logging/log4j/spi/LoggingSystem");
     public static final Type MARKER_TYPE = Type.getObjectType("org/apache/logging/log4j/Marker");
     public static final Type MESSAGE_TYPE = Type.getObjectType("org/apache/logging/log4j/message/Message");
-    public static final Type MESSAGE_FACTORY_TYPE = Type
-            .getObjectType("org/apache/logging/log4j/message/MessageFactory");
-    public static final Type MESSAGE_SUPPLIER_TYPE = Type
-            .getObjectType("org/apache/logging/log4j/util/MessageSupplier");
+    public static final Type MESSAGE_FACTORY_TYPE =
+            Type.getObjectType("org/apache/logging/log4j/message/MessageFactory");
+    public static final Type MESSAGE_SUPPLIER_TYPE =
+            Type.getObjectType("org/apache/logging/log4j/util/MessageSupplier");
     public static final Type SUPPLIER_TYPE = Type.getObjectType("org/apache/logging/log4j/util/Supplier");
     public static final Type SUPPLIER_ARRAY_TYPE = Type.getType("[" + SUPPLIER_TYPE.getDescriptor());
 
@@ -58,16 +58,16 @@ public class Constants {
     public static final Method AT_INFO_METHOD = new Method("atInfo", NO_ARGS_DESC);
     public static final Method AT_TRACE_METHOD = new Method("atTrace", NO_ARGS_DESC);
     public static final Method AT_WARN_METHOD = new Method("atWarn", NO_ARGS_DESC);
-    public static final Method AT_LEVEL_METHOD = new Method("atLevel",
-            Type.getMethodDescriptor(LOG_BUILDER_TYPE, LEVEL_TYPE));
-    public static final Method WITH_LOCATION_METHOD = new Method("withLocation",
-            Type.getMethodDescriptor(LOG_BUILDER_TYPE, STACK_TRACE_ELEMENT_TYPE));
-    public static final Method WITH_MARKER_METHOD = new Method("withMarker",
-            Type.getMethodDescriptor(LOG_BUILDER_TYPE, MARKER_TYPE));
-    public static final Method WITH_THROWABLE_METHOD = new Method("withThrowable",
-            Type.getMethodDescriptor(LOG_BUILDER_TYPE, THROWABLE_TYPE));
-    public static final Method LOG_AND_GET_METHOD = new Method("logAndGet",
-            Type.getMethodDescriptor(MESSAGE_TYPE, SUPPLIER_TYPE));
+    public static final Method AT_LEVEL_METHOD =
+            new Method("atLevel", Type.getMethodDescriptor(LOG_BUILDER_TYPE, LEVEL_TYPE));
+    public static final Method WITH_LOCATION_METHOD =
+            new Method("withLocation", Type.getMethodDescriptor(LOG_BUILDER_TYPE, STACK_TRACE_ELEMENT_TYPE));
+    public static final Method WITH_MARKER_METHOD =
+            new Method("withMarker", Type.getMethodDescriptor(LOG_BUILDER_TYPE, MARKER_TYPE));
+    public static final Method WITH_THROWABLE_METHOD =
+            new Method("withThrowable", Type.getMethodDescriptor(LOG_BUILDER_TYPE, THROWABLE_TYPE));
+    public static final Method LOG_AND_GET_METHOD =
+            new Method("logAndGet", Type.getMethodDescriptor(MESSAGE_TYPE, SUPPLIER_TYPE));
 
     private Constants() {
         // prevent instantiation

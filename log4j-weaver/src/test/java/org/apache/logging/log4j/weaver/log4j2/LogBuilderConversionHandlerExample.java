@@ -16,12 +16,11 @@
  */
 package org.apache.logging.log4j.weaver.log4j2;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-
 import org.apache.logging.log4j.LogBuilder;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogBuilderConversionHandlerExample {
 
@@ -36,10 +35,11 @@ public class LogBuilderConversionHandlerExample {
         assertThat(called).isFalse();
 
         final StackTraceElement stackTraceElement = new StackTraceElement(
-                LogBuilderConversionHandlerExample.class.getName(), "specialMethod",
-                "LogBuilderConversionHandlerExample.java", 1024);
+                LogBuilderConversionHandlerExample.class.getName(),
+                "specialMethod",
+                "LogBuilderConversionHandlerExample.java",
+                1024);
         logBuilder.withLocation(stackTraceElement).log();
         assertThat(locationRef).hasValue(stackTraceElement);
     }
-
 }

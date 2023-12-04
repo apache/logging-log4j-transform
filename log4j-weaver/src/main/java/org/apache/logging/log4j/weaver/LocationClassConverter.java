@@ -16,11 +16,10 @@
  */
 package org.apache.logging.log4j.weaver;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.logging.log4j.weaver.log4j2.LogBuilderConversionHandler;
 import org.apache.logging.log4j.weaver.log4j2.LoggerConversionHandler;
 import org.objectweb.asm.ClassReader;
@@ -69,6 +68,5 @@ public class LocationClassConverter {
         protected ClassLoader getClassLoader() {
             return classpath;
         }
-
     }
 }

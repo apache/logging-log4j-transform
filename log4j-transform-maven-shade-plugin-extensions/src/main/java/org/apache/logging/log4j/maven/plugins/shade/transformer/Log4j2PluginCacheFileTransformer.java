@@ -16,6 +16,9 @@
  */
 package org.apache.logging.log4j.maven.plugins.shade.transformer;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.apache.logging.log4j.core.config.plugins.processor.PluginProcessor.PLUGIN_CACHE_FILE;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -32,21 +35,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
-
 import org.apache.logging.log4j.core.config.plugins.processor.PluginCache;
 import org.apache.logging.log4j.core.config.plugins.processor.PluginEntry;
 import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.apache.maven.plugins.shade.resource.ReproducibleResourceTransformer;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
-import static org.apache.logging.log4j.core.config.plugins.processor.PluginProcessor.PLUGIN_CACHE_FILE;
-
 /**
  * 'log4j-maven-shade-plugin' transformer implementation.
  */
-public class Log4j2PluginCacheFileTransformer
-        implements ReproducibleResourceTransformer {
+public class Log4j2PluginCacheFileTransformer implements ReproducibleResourceTransformer {
 
     /**
      * Log4j config files to share across the transformation stages.
@@ -60,7 +57,6 @@ public class Log4j2PluginCacheFileTransformer
      * Store youngest (i.e. largest millisecond) so that we can produce reproducible jar file
      */
     private long youngestTime = 0;
-
 
     /**
      * Default constructor, initializing internal state.
@@ -93,10 +89,9 @@ public class Log4j2PluginCacheFileTransformer
      * @throws IOException thrown by file writing errors
      */
     @Override
-    public void processResource(final String resource,
-                                final InputStream resourceInput,
-                                final List<Relocator> relocators,
-                                final long time) throws IOException {
+    public void processResource(
+            final String resource, final InputStream resourceInput, final List<Relocator> relocators, final long time)
+            throws IOException {
         final Path tempFile = Files.createTempFile("Log4j2Plugins", "dat");
         Files.copy(resourceInput, tempFile, REPLACE_EXISTING);
         tempFiles.add(tempFile);
@@ -115,7 +110,6 @@ public class Log4j2PluginCacheFileTransformer
         return tempFiles.size() > 0;
     }
 
-
     /**
      * Stores all previously collected log4j-cache-files to the target jar.
      *
@@ -123,16 +117,14 @@ public class Log4j2PluginCacheFileTransformer
      * @throws IOException When the IO blows up
      */
     @Override
-    public void modifyOutputStream(final JarOutputStream jos)
-            throws IOException {
+    public void modifyOutputStream(final JarOutputStream jos) throws IOException {
         try {
             final PluginCache aggregator = new PluginCache();
             aggregator.loadCacheFiles(getUrls());
             relocatePlugin(tempRelocators, aggregator.getAllCategories());
             putJarEntry(jos);
             // prevent the aggregator to close the jar output
-            final CloseShieldOutputStream outputStream =
-                    new CloseShieldOutputStream(jos);
+            final CloseShieldOutputStream outputStream = new CloseShieldOutputStream(jos);
             aggregator.writeCache(outputStream);
         } finally {
             deleteTempFiles();
@@ -154,29 +146,25 @@ public class Log4j2PluginCacheFileTransformer
      * @param relocators           relocators.
      * @param aggregatorCategories all categories of the aggregator
      */
-    /* default */ void relocatePlugin(final List<Relocator> relocators,
-                                      Map<String, Map<String, PluginEntry>> aggregatorCategories) {
-        for (final Entry<String, Map<String, PluginEntry>> categoryEntry
-                : aggregatorCategories.entrySet()) {
-            for (final Entry<String, PluginEntry> pluginMapEntry
-                    : categoryEntry.getValue().entrySet()) {
+    /* default */ void relocatePlugin(
+            final List<Relocator> relocators, Map<String, Map<String, PluginEntry>> aggregatorCategories) {
+        for (final Entry<String, Map<String, PluginEntry>> categoryEntry : aggregatorCategories.entrySet()) {
+            for (final Entry<String, PluginEntry> pluginMapEntry :
+                    categoryEntry.getValue().entrySet()) {
                 final PluginEntry pluginEntry = pluginMapEntry.getValue();
                 final String originalClassName = pluginEntry.getClassName();
 
-                final Relocator matchingRelocator = findFirstMatchingRelocator(
-                        originalClassName, relocators);
+                final Relocator matchingRelocator = findFirstMatchingRelocator(originalClassName, relocators);
 
                 if (matchingRelocator != null) {
-                    final String newClassName = matchingRelocator
-                            .relocateClass(originalClassName);
+                    final String newClassName = matchingRelocator.relocateClass(originalClassName);
                     pluginEntry.setClassName(newClassName);
                 }
             }
         }
     }
 
-    private Relocator findFirstMatchingRelocator(final String originalClassName,
-                                                 final List<Relocator> relocators) {
+    private Relocator findFirstMatchingRelocator(final String originalClassName, final List<Relocator> relocators) {
         Relocator result = null;
         for (final Relocator relocator : relocators) {
             if (relocator.canRelocateClass(originalClassName)) {

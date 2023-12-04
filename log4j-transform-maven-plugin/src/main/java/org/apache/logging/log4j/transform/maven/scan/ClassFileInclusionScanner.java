@@ -18,7 +18,6 @@ package org.apache.logging.log4j.transform.maven.scan;
 
 import java.nio.file.Path;
 import java.util.Set;
-
 import org.apache.logging.log4j.weaver.Constants;
 
 public interface ClassFileInclusionScanner {
@@ -34,5 +33,4 @@ public interface ClassFileInclusionScanner {
      * @return a set of relative paths to file in {@code sourceDir}
      */
     Set<Path> getIncludedClassFiles(Path sourceDir, Path targetDir);
-
 }

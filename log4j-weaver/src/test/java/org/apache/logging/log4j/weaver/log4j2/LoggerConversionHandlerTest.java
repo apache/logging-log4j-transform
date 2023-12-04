@@ -17,7 +17,6 @@
 package org.apache.logging.log4j.weaver.log4j2;
 
 import java.util.stream.Stream;
-
 import org.apache.logging.log4j.core.test.appender.ListAppender;
 import org.apache.logging.log4j.core.test.junit.LoggerContextSource;
 import org.apache.logging.log4j.core.test.junit.Named;
@@ -43,8 +42,19 @@ public class LoggerConversionHandlerTest extends AbstractConversionHandlerTest {
     }
 
     static Stream<String> testLocationConverter() {
-        return Stream.of("testFatal", "testError", "testWarn", "testInfo", "testDebug", "testLog", "testFrames",
-                "testPrintf", "testLogBuilder", "testPassthrough", "testCatchingThrowing", "testTraceEntry",
+        return Stream.of(
+                "testFatal",
+                "testError",
+                "testWarn",
+                "testInfo",
+                "testDebug",
+                "testLog",
+                "testFrames",
+                "testPrintf",
+                "testLogBuilder",
+                "testPassthrough",
+                "testCatchingThrowing",
+                "testTraceEntry",
                 "testTraceExit");
     }
 
@@ -53,5 +63,4 @@ public class LoggerConversionHandlerTest extends AbstractConversionHandlerTest {
     public void testLocationConverter(final String methodName) throws Exception {
         convertedClass.getMethod(methodName, ListAppender.class).invoke(testObject, appender);
     }
-
 }

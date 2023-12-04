@@ -16,16 +16,6 @@
  */
 package org.apache.logging.log4j.weaver.log4j2;
 
-import java.util.Arrays;
-
-import org.apache.logging.log4j.weaver.ClassConversionHandler;
-import org.apache.logging.log4j.weaver.Constants;
-import org.apache.logging.log4j.weaver.ConversionException;
-import org.apache.logging.log4j.weaver.LocationMethodVisitor;
-import org.apache.logging.log4j.weaver.SupplierLambdaType;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.Method;
-
 import static org.apache.logging.log4j.weaver.Constants.AT_DEBUG_METHOD;
 import static org.apache.logging.log4j.weaver.Constants.AT_ERROR_METHOD;
 import static org.apache.logging.log4j.weaver.Constants.AT_FATAL_METHOD;
@@ -49,6 +39,15 @@ import static org.apache.logging.log4j.weaver.Constants.THROWABLE_TYPE;
 import static org.apache.logging.log4j.weaver.Constants.WITH_MARKER_METHOD;
 import static org.apache.logging.log4j.weaver.Constants.WITH_THROWABLE_METHOD;
 
+import java.util.Arrays;
+import org.apache.logging.log4j.weaver.ClassConversionHandler;
+import org.apache.logging.log4j.weaver.Constants;
+import org.apache.logging.log4j.weaver.ConversionException;
+import org.apache.logging.log4j.weaver.LocationMethodVisitor;
+import org.apache.logging.log4j.weaver.SupplierLambdaType;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.Method;
+
 public class LoggerConversionHandler implements ClassConversionHandler {
 
     private static final String CATCHING = "Catching";
@@ -58,15 +57,15 @@ public class LoggerConversionHandler implements ClassConversionHandler {
     private static final String THROWING = "Throwing";
     private static final String THROWING_MARKER = "THROWING_MARKER";
     // Argument list of `LogBuilder.log(String, Supplier...)`
-    private static final Type[] LOG_BUILDER_LOG_STRING_SUPPLIER = new Type[] { STRING_TYPE, SUPPLIER_ARRAY_TYPE };
+    private static final Type[] LOG_BUILDER_LOG_STRING_SUPPLIER = new Type[] {STRING_TYPE, SUPPLIER_ARRAY_TYPE};
     // Argument list of `LogBuilder.log(Supplier<Message>)`
-    private static final Type[] LOG_BUILDER_LOG_SUPPLIER_MESSAGE = new Type[] { SUPPLIER_TYPE };
-    private static final Method LOG_BUILDER_LOG_SUPPLIER_METHOD = new Method("log",
-            Type.getMethodDescriptor(Type.VOID_TYPE, LOG_BUILDER_LOG_SUPPLIER_MESSAGE));
-    private static final Method LOG_BUILDER_LOG_STRING_METHOD = new Method("log",
-            Type.getMethodDescriptor(Type.VOID_TYPE, STRING_TYPE));
+    private static final Type[] LOG_BUILDER_LOG_SUPPLIER_MESSAGE = new Type[] {SUPPLIER_TYPE};
+    private static final Method LOG_BUILDER_LOG_SUPPLIER_METHOD =
+            new Method("log", Type.getMethodDescriptor(Type.VOID_TYPE, LOG_BUILDER_LOG_SUPPLIER_MESSAGE));
+    private static final Method LOG_BUILDER_LOG_STRING_METHOD =
+            new Method("log", Type.getMethodDescriptor(Type.VOID_TYPE, STRING_TYPE));
     private static final Type ABSTRACT_LOGGER_TYPE = Type.getObjectType("org/apache/logging/log4j/spi/AbstractLogger");
-    private static final Type[] MESSAGE_OBJECT_ARRAY = { MESSAGE_TYPE, OBJECT_TYPE };
+    private static final Type[] MESSAGE_OBJECT_ARRAY = {MESSAGE_TYPE, OBJECT_TYPE};
 
     @Override
     public String getOwner() {
@@ -284,8 +283,10 @@ public class LoggerConversionHandler implements ClassConversionHandler {
                 mv.loadLocal(vars[i]);
             }
             final boolean usesSuppliers = types[types.length - 1].equals(SUPPLIER_ARRAY_TYPE);
-            mv.invokeSupplierLambda(usesSuppliers ? SupplierLambdaType.ENTRY_MESSAGE_STRING_SUPPLIERS
-                    : SupplierLambdaType.ENTRY_MESSAGE_STRING_OBJECTS);
+            mv.invokeSupplierLambda(
+                    usesSuppliers
+                            ? SupplierLambdaType.ENTRY_MESSAGE_STRING_SUPPLIERS
+                            : SupplierLambdaType.ENTRY_MESSAGE_STRING_OBJECTS);
         }
         mv.invokeInterface(LOG_BUILDER_TYPE, LOG_AND_GET_METHOD);
     }
@@ -321,8 +322,10 @@ public class LoggerConversionHandler implements ClassConversionHandler {
                 mv.loadLocal(vars[1]);
             }
             mv.loadLocal(vars[0]);
-            mv.invokeSupplierLambda(hasResult ? SupplierLambdaType.EXIT_MESSAGE_OBJECT_ENTRY_MESSAGE
-                    : SupplierLambdaType.EXIT_MESSAGE_ENTRY_MESSAGE);
+            mv.invokeSupplierLambda(
+                    hasResult
+                            ? SupplierLambdaType.EXIT_MESSAGE_OBJECT_ENTRY_MESSAGE
+                            : SupplierLambdaType.EXIT_MESSAGE_ENTRY_MESSAGE);
         } else {
             final boolean hasFormat = STRING_TYPE.equals(types[0]);
             if (hasFormat) {

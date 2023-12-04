@@ -31,5 +31,4 @@ public class LogBuilderConversionHandlerTest extends AbstractConversionHandlerTe
     public void testWithLocation() throws Exception {
         convertedClass.getMethod("testWithLocation").invoke(testObject);
     }
-
 }

@@ -16,8 +16,10 @@
  */
 package org.apache.logging.log4j.weaver.log4j2;
 
-import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
 
+import java.util.List;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,9 +34,6 @@ import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.message.SimpleMessage;
 import org.apache.logging.log4j.spi.AbstractLogger;
 import org.apache.logging.log4j.util.Supplier;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class LoggerConversionHandlerExample {
 
@@ -53,9 +52,12 @@ public class LoggerConversionHandlerExample {
     private static final Object P7 = "(p7)";
     private static final Object P8 = "(p8)";
     private static final Object P9 = "(p9)";
-    private static final Object[] PARRAY = { "(...)" };
-    private static final Supplier<?>[] SUPPLIERS = { () -> OBJECT };
-    @SuppressWarnings("StaticAssignmentOfThrowable") private static final Throwable THROWABLE = new RuntimeException();
+    private static final Object[] PARRAY = {"(...)"};
+    private static final Supplier<?>[] SUPPLIERS = {() -> OBJECT};
+
+    @SuppressWarnings("StaticAssignmentOfThrowable")
+    private static final Throwable THROWABLE = new RuntimeException();
+
     private static final Marker MARKER = MarkerManager.getMarker("MARKER");
 
     private static final Logger logger = LogManager.getLogger();
@@ -925,8 +927,8 @@ public class LoggerConversionHandlerExample {
         assertThat(event.getMessage().getFormattedMessage()).isEqualTo("Exit (Message): (Object)");
     }
 
-    private static LogEvent assertLocationEquals(final String methodName, final int lineNumber,
-            final ListAppender app) {
+    private static LogEvent assertLocationEquals(
+            final String methodName, final int lineNumber, final ListAppender app) {
         final List<LogEvent> events = app.getEvents();
         assertThat(events).hasSize(1);
         final LogEvent event = events.get(0);

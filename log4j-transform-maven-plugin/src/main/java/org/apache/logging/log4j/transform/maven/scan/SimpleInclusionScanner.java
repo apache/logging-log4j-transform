@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.apache.logging.log4j.weaver.LocationCacheGenerator;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -40,12 +39,15 @@ public class SimpleInclusionScanner implements ClassFileInclusionScanner {
     private final Log log;
 
     public SimpleInclusionScanner(long lastUpdateWithinMsecs, Log log) {
-        this(lastUpdateWithinMsecs, Collections.singleton(DEFAULT_INCLUSION_PATTERN),
-                Collections.singleton(DEFAULT_EXCLUSION_PATTERN), log);
+        this(
+                lastUpdateWithinMsecs,
+                Collections.singleton(DEFAULT_INCLUSION_PATTERN),
+                Collections.singleton(DEFAULT_EXCLUSION_PATTERN),
+                log);
     }
 
-    public SimpleInclusionScanner(long lastUpdateWithinMsecs, Set<String> sourceIncludes, Set<String> sourceExcludes,
-            Log log) {
+    public SimpleInclusionScanner(
+            long lastUpdateWithinMsecs, Set<String> sourceIncludes, Set<String> sourceExcludes, Log log) {
         this.lastUpdatedWithinMsecs = lastUpdateWithinMsecs;
         this.sourceIncludes = new HashSet<>(sourceIncludes);
         this.sourceExcludes = new HashSet<>(sourceExcludes);
@@ -56,7 +58,8 @@ public class SimpleInclusionScanner implements ClassFileInclusionScanner {
     public Set<Path> getIncludedClassFiles(Path sourceDir, Path targetDir) {
         final Set<Path> potentialSources = scanForSources(sourceDir, sourceIncludes, sourceExcludes);
 
-        return potentialSources.stream().filter(source -> isLocationCacheStale(sourceDir, targetDir, source))
+        return potentialSources.stream()
+                .filter(source -> isLocationCacheStale(sourceDir, targetDir, source))
                 .collect(Collectors.toSet());
     }
 
@@ -70,9 +73,7 @@ public class SimpleInclusionScanner implements ClassFileInclusionScanner {
         scanner.setExcludes(sourceExcludes.toArray(EMPTY_ARRAY));
         scanner.scan();
 
-        return Stream.of(scanner.getIncludedFiles())
-                .map(sourceDir::resolve)
-                .collect(Collectors.toSet());
+        return Stream.of(scanner.getIncludedFiles()).map(sourceDir::resolve).collect(Collectors.toSet());
     }
 
     private boolean isLocationCacheStale(Path sourceDir, Path targetDir, Path source) {
@@ -90,5 +91,4 @@ public class SimpleInclusionScanner implements ClassFileInclusionScanner {
         }
         return false;
     }
-
 }

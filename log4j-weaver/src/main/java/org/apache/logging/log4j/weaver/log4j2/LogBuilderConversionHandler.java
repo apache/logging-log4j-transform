@@ -16,12 +16,12 @@
  */
 package org.apache.logging.log4j.weaver.log4j2;
 
+import static org.apache.logging.log4j.weaver.Constants.LOG_BUILDER_TYPE;
+
 import org.apache.logging.log4j.weaver.ClassConversionHandler;
 import org.apache.logging.log4j.weaver.LocationMethodVisitor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
-
-import static org.apache.logging.log4j.weaver.Constants.LOG_BUILDER_TYPE;
 
 public class LogBuilderConversionHandler implements ClassConversionHandler {
 
@@ -32,10 +32,10 @@ public class LogBuilderConversionHandler implements ClassConversionHandler {
 
     @Override
     public void handleMethodInstruction(LocationMethodVisitor mv, String name, String descriptor) {
-        if ("withLocation".equals(name) && Type.getMethodDescriptor(LOG_BUILDER_TYPE).equals(descriptor)) {
+        if ("withLocation".equals(name)
+                && Type.getMethodDescriptor(LOG_BUILDER_TYPE).equals(descriptor)) {
             return;
         }
         mv.invokeInterface(LOG_BUILDER_TYPE, new Method(name, descriptor));
     }
-
 }

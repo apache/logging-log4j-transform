@@ -18,7 +18,6 @@ package org.apache.logging.log4j.weaver.log4j2;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-
 import org.apache.logging.log4j.LogBuilder;
 
 public final class LogBuilderMock implements LogBuilder {

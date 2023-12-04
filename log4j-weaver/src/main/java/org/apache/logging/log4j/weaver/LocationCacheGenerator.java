@@ -16,21 +16,6 @@
  */
 package org.apache.logging.log4j.weaver;
 
-import java.nio.file.Path;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Handle;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.InstructionAdapter;
-
 import static org.apache.logging.log4j.weaver.Constants.ENTRY_MESSAGE_TYPE;
 import static org.apache.logging.log4j.weaver.Constants.EXIT_MESSAGE_TYPE;
 import static org.apache.logging.log4j.weaver.Constants.FLOW_MESSAGE_FACTORY_TYPE;
@@ -43,28 +28,42 @@ import static org.apache.logging.log4j.weaver.Constants.STACK_TRACE_ELEMENT_TYPE
 import static org.apache.logging.log4j.weaver.Constants.STRING_TYPE;
 import static org.apache.logging.log4j.weaver.Constants.SUPPLIER_ARRAY_TYPE;
 
+import java.nio.file.Path;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Handle;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.InstructionAdapter;
+
 public class LocationCacheGenerator {
 
     private static final Type LAMBDA_UTIL_TYPE = Type.getObjectType("org/apache/logging/log4j/util/LambdaUtil");
-    private static final Type STRING_FORMATTER_MESSAGE_FACTORY_TYPE = Type
-            .getObjectType("org/apache/logging/log4j/message/StringFormatterMessageFactory");
+    private static final Type STRING_FORMATTER_MESSAGE_FACTORY_TYPE =
+            Type.getObjectType("org/apache/logging/log4j/message/StringFormatterMessageFactory");
     private static final String LOCATION_FIELD = "locations";
 
     private final Map<String, LocationCacheContents> locationCacheClasses = new ConcurrentHashMap<>();
 
-    public LocationCacheValue addLocation(final String internalClassName, final String methodName,
-            final String fileName, final int lineNumber) {
+    public LocationCacheValue addLocation(
+            final String internalClassName, final String methodName, final String fileName, final int lineNumber) {
         final String cacheClassName = getCacheClassName(internalClassName);
-        final LocationCacheContents contents = locationCacheClasses.computeIfAbsent(cacheClassName,
-                k -> new LocationCacheContents());
+        final LocationCacheContents contents =
+                locationCacheClasses.computeIfAbsent(cacheClassName, k -> new LocationCacheContents());
         final int index = contents.addLocation(internalClassName, methodName, fileName, lineNumber);
         return new LocationCacheValue(cacheClassName, LOCATION_FIELD, index);
     }
 
     public Handle createLambda(String internalClassName, SupplierLambdaType type) {
         final String cacheClassName = getCacheClassName(internalClassName);
-        final LocationCacheContents contents = locationCacheClasses.computeIfAbsent(cacheClassName,
-                k -> new LocationCacheContents());
+        final LocationCacheContents contents =
+                locationCacheClasses.computeIfAbsent(cacheClassName, k -> new LocationCacheContents());
         contents.addLambda(type);
         final String methodName = type.name().toLowerCase(Locale.US);
         final String methodDescriptor = Type.getMethodDescriptor(MESSAGE_TYPE, type.getArgumentTypes());
@@ -85,8 +84,7 @@ public class LocationCacheGenerator {
     }
 
     public Map<String, byte[]> generateClasses() {
-        return locationCacheClasses.entrySet()
-                .parallelStream()
+        return locationCacheClasses.entrySet().parallelStream()
                 .collect(Collectors.toMap(Entry::getKey, e -> generateCacheClass(e.getKey(), e.getValue())));
     }
 
@@ -99,8 +97,12 @@ public class LocationCacheGenerator {
         // We add lambdas to this class
         final Set<SupplierLambdaType> lambdas = contents.getLambdas();
         for (final SupplierLambdaType type : lambdas) {
-            final InstructionAdapter mv = new InstructionAdapter(cv.visitMethod(Opcodes.ACC_STATIC,
-                    type.name().toLowerCase(Locale.US), type.getImplementationMethodDescriptor(), null, null));
+            final InstructionAdapter mv = new InstructionAdapter(cv.visitMethod(
+                    Opcodes.ACC_STATIC,
+                    type.name().toLowerCase(Locale.US),
+                    type.getImplementationMethodDescriptor(),
+                    null,
+                    null));
             switch (type) {
                 case FORMATTED_MESSAGE:
                     writeFormattedMessage(mv);
@@ -125,12 +127,12 @@ public class LocationCacheGenerator {
         return cv.toByteArray();
     }
 
-    private static void writeLocations(final String innerClassName, final ClassVisitor cv,
-            final List<StackTraceElement> locations) {
+    private static void writeLocations(
+            final String innerClassName, final ClassVisitor cv, final List<StackTraceElement> locations) {
         cv.visitField(Opcodes.ACC_STATIC, LOCATION_FIELD, STACK_TRACE_ELEMENT_ARRAY_TYPE.getInternalName(), null, null)
                 .visitEnd();
-        final InstructionAdapter mv = new InstructionAdapter(
-                cv.visitMethod(Opcodes.ACC_STATIC, "<clinit>", "()V", null, null));
+        final InstructionAdapter mv =
+                new InstructionAdapter(cv.visitMethod(Opcodes.ACC_STATIC, "<clinit>", "()V", null, null));
         mv.visitCode();
         mv.visitMaxs(9, 0);
         mv.iconst(locations.size());
@@ -145,7 +147,9 @@ public class LocationCacheGenerator {
             mv.aconst(location.getMethodName());
             mv.aconst(location.getFileName());
             mv.iconst(location.getLineNumber());
-            mv.invokespecial(STACK_TRACE_ELEMENT_TYPE.getInternalName(), "<init>",
+            mv.invokespecial(
+                    STACK_TRACE_ELEMENT_TYPE.getInternalName(),
+                    "<init>",
                     Type.getMethodDescriptor(Type.VOID_TYPE, STRING_TYPE, STRING_TYPE, STRING_TYPE, Type.INT_TYPE),
                     false);
             mv.visitInsn(Opcodes.AASTORE);
@@ -158,12 +162,17 @@ public class LocationCacheGenerator {
     private static void writeFormattedMessage(final InstructionAdapter mv) {
         mv.visitCode();
         mv.visitMaxs(3, 2);
-        mv.getstatic(STRING_FORMATTER_MESSAGE_FACTORY_TYPE.getInternalName(), "INSTANCE",
+        mv.getstatic(
+                STRING_FORMATTER_MESSAGE_FACTORY_TYPE.getInternalName(),
+                "INSTANCE",
                 STRING_FORMATTER_MESSAGE_FACTORY_TYPE.getDescriptor());
         mv.load(0, STRING_TYPE);
         mv.load(1, OBJECT_ARRAY_TYPE);
-        mv.invokevirtual(STRING_FORMATTER_MESSAGE_FACTORY_TYPE.getInternalName(), "newMessage",
-                Type.getMethodType(MESSAGE_TYPE, STRING_TYPE, OBJECT_ARRAY_TYPE).getDescriptor(), false);
+        mv.invokevirtual(
+                STRING_FORMATTER_MESSAGE_FACTORY_TYPE.getInternalName(),
+                "newMessage",
+                Type.getMethodType(MESSAGE_TYPE, STRING_TYPE, OBJECT_ARRAY_TYPE).getDescriptor(),
+                false);
         mv.areturn(MESSAGE_TYPE);
         mv.visitEnd();
     }
@@ -173,15 +182,20 @@ public class LocationCacheGenerator {
         mv.visitCode();
         mv.visitMaxs(args.length, args.length);
         mv.load(0, LOGGER_TYPE);
-        mv.invokeinterface(LOGGER_TYPE.getInternalName(), "getFlowMessageFactory",
+        mv.invokeinterface(
+                LOGGER_TYPE.getInternalName(),
+                "getFlowMessageFactory",
                 Type.getMethodDescriptor(FLOW_MESSAGE_FACTORY_TYPE));
         for (int i = 1; i < args.length; i++) {
             mv.load(i, args[i]);
         }
         final boolean isEntry = type.name().startsWith("ENTRY");
         final String methodName = isEntry ? "newEntryMessage" : "newExitMessage";
-        mv.invokeinterface(FLOW_MESSAGE_FACTORY_TYPE.getInternalName(), methodName, Type.getMethodDescriptor(
-                isEntry ? ENTRY_MESSAGE_TYPE : EXIT_MESSAGE_TYPE, Arrays.copyOfRange(args, 1, args.length)));
+        mv.invokeinterface(
+                FLOW_MESSAGE_FACTORY_TYPE.getInternalName(),
+                methodName,
+                Type.getMethodDescriptor(
+                        isEntry ? ENTRY_MESSAGE_TYPE : EXIT_MESSAGE_TYPE, Arrays.copyOfRange(args, 1, args.length)));
         mv.areturn(MESSAGE_TYPE);
         mv.visitEnd();
     }
@@ -190,13 +204,20 @@ public class LocationCacheGenerator {
         mv.visitCode();
         mv.visitMaxs(3, 3);
         mv.load(0, LOGGER_TYPE);
-        mv.invokeinterface(LOGGER_TYPE.getInternalName(), "getFlowMessageFactory",
+        mv.invokeinterface(
+                LOGGER_TYPE.getInternalName(),
+                "getFlowMessageFactory",
                 Type.getMethodDescriptor(FLOW_MESSAGE_FACTORY_TYPE));
         mv.load(1, STRING_TYPE);
         mv.load(2, SUPPLIER_ARRAY_TYPE);
-        mv.invokestatic(LAMBDA_UTIL_TYPE.getInternalName(), "getAll",
-                Type.getMethodDescriptor(OBJECT_ARRAY_TYPE, SUPPLIER_ARRAY_TYPE), false);
-        mv.invokeinterface(FLOW_MESSAGE_FACTORY_TYPE.getInternalName(), "newEntryMessage",
+        mv.invokestatic(
+                LAMBDA_UTIL_TYPE.getInternalName(),
+                "getAll",
+                Type.getMethodDescriptor(OBJECT_ARRAY_TYPE, SUPPLIER_ARRAY_TYPE),
+                false);
+        mv.invokeinterface(
+                FLOW_MESSAGE_FACTORY_TYPE.getInternalName(),
+                "newEntryMessage",
                 Type.getMethodDescriptor(ENTRY_MESSAGE_TYPE, STRING_TYPE, OBJECT_ARRAY_TYPE));
         mv.areturn(MESSAGE_TYPE);
         mv.visitEnd();
@@ -211,8 +232,9 @@ public class LocationCacheGenerator {
         if (fileName == null) {
             throw new IllegalArgumentException("The 'classFile' parameter is an empty path.");
         }
-        final String cacheFileName = LocationCacheGenerator
-                .getCacheClassName(StringUtils.removeEnd(fileName.toString(), ".class")) + ".class";
+        final String cacheFileName =
+                LocationCacheGenerator.getCacheClassName(StringUtils.removeEnd(fileName.toString(), ".class"))
+                        + ".class";
         return classFile.resolveSibling(cacheFileName);
     }
 
@@ -253,10 +275,10 @@ public class LocationCacheGenerator {
         private final List<StackTraceElement> locations = new CopyOnWriteArrayList<>();
         private Set<SupplierLambdaType> lambdas = EnumSet.noneOf(SupplierLambdaType.class);
 
-        public int addLocation(final String internalClassName, final String methodName, final String fileName,
-                final int lineNumber) {
-            final StackTraceElement location = new StackTraceElement(internalClassName.replaceAll("/", "."), methodName,
-                    fileName, lineNumber);
+        public int addLocation(
+                final String internalClassName, final String methodName, final String fileName, final int lineNumber) {
+            final StackTraceElement location =
+                    new StackTraceElement(internalClassName.replaceAll("/", "."), methodName, fileName, lineNumber);
             locations.add(location);
             return locations.indexOf(location);
         }
@@ -273,5 +295,4 @@ public class LocationCacheGenerator {
             return lambdas;
         }
     }
-
 }

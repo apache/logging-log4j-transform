@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.apache.logging.log4j.transform.maven.scan.ClassFileInclusionScanner;
 import org.apache.logging.log4j.transform.maven.scan.SimpleInclusionScanner;
 import org.apache.logging.log4j.weaver.LocationCacheGenerator;
@@ -52,7 +51,10 @@ import org.apache.maven.project.MavenProject;
 /**
  * Generates location information for use with Log4j2.
  */
-@Mojo(name = "process-classes", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true,
+@Mojo(
+        name = "process-classes",
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES,
+        threadSafe = true,
         requiresDependencyResolution = ResolutionScope.COMPILE)
 public class LocationMojo extends AbstractMojo {
 
@@ -64,7 +66,7 @@ public class LocationMojo extends AbstractMojo {
     /**
      * The Maven project.
      */
-    @Parameter( defaultValue = "${project}", readonly = true, required = true )
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
     /**
@@ -112,8 +114,8 @@ public class LocationMojo extends AbstractMojo {
         final LocationClassConverter converter = new LocationClassConverter(getProjectDependencies());
 
         try {
-            final Set<Path> staleClassFiles = getClassFileInclusionScanner().getIncludedClassFiles(sourceDirectory,
-                    outputDirectory);
+            final Set<Path> staleClassFiles =
+                    getClassFileInclusionScanner().getIncludedClassFiles(sourceDirectory, outputDirectory);
             staleClassFiles.stream()
                     .collect(Collectors.groupingBy(LocationCacheGenerator::getCacheClassFile))
                     .values()
@@ -126,8 +128,8 @@ public class LocationMojo extends AbstractMojo {
         }
     }
 
-    private void convertClassfiles(List<Path> classFiles, LocationClassConverter converter,
-            LocationCacheGenerator locationCache) {
+    private void convertClassfiles(
+            List<Path> classFiles, LocationClassConverter converter, LocationCacheGenerator locationCache) {
         final Path sourceDirectory = this.sourceDirectory.toPath();
         classFiles.sort(Path::compareTo);
         final ByteArrayOutputStream buf = new ByteArrayOutputStream();
@@ -185,12 +187,10 @@ public class LocationMojo extends AbstractMojo {
         private WrappedIOException(IOException cause) {
             super(cause);
         }
-
     }
 
     private void validateLog4jVersion() throws MojoExecutionException {
-        Artifact log4jApi = project.getArtifacts()
-                .stream()
+        Artifact log4jApi = project.getArtifacts().stream()
                 .filter(a -> LOG4J_GROUP_ID.equals(a.getGroupId()) && LOG4J_API_ARTIFACT_ID.equals(a.getArtifactId()))
                 .findAny()
                 .orElseThrow(() -> new MojoExecutionException("Missing `log4j-api` dependency."));
@@ -221,5 +221,4 @@ public class LocationMojo extends AbstractMojo {
         }
         return new URLClassLoader(urls.toArray(EMPTY_URL_ARRAY));
     }
-
 }

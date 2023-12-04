@@ -16,8 +16,6 @@
  */
 package org.apache.logging.log4j.weaver;
 
-import org.objectweb.asm.Type;
-
 import static org.apache.logging.log4j.weaver.Constants.ENTRY_MESSAGE_TYPE;
 import static org.apache.logging.log4j.weaver.Constants.LOGGER_TYPE;
 import static org.apache.logging.log4j.weaver.Constants.MESSAGE_SUPPLIER_TYPE;
@@ -27,6 +25,8 @@ import static org.apache.logging.log4j.weaver.Constants.OBJECT_TYPE;
 import static org.apache.logging.log4j.weaver.Constants.STRING_TYPE;
 import static org.apache.logging.log4j.weaver.Constants.SUPPLIER_ARRAY_TYPE;
 import static org.apache.logging.log4j.weaver.Constants.SUPPLIER_TYPE;
+
+import org.objectweb.asm.Type;
 
 /**
  * An enumeration of {@code org.apache.logging.log4j.util.Supplier<Message>} lambdas, named after the type of message and parameter types.

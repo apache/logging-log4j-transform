@@ -16,6 +16,14 @@
  */
 package org.apache.logging.log4j.maven.plugins.shade.transformer;
 
+import static java.util.Collections.enumeration;
+import static java.util.Collections.singletonList;
+import static org.apache.logging.log4j.core.config.plugins.processor.PluginProcessor.PLUGIN_CACHE_FILE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,7 +34,6 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.core.config.plugins.processor.PluginCache;
 import org.apache.logging.log4j.core.config.plugins.processor.PluginEntry;
@@ -36,16 +43,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static java.util.Collections.enumeration;
-import static java.util.Collections.singletonList;
-
-import static org.apache.logging.log4j.core.config.plugins.processor.PluginProcessor.PLUGIN_CACHE_FILE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
-
 final class Log4j2PluginCacheFileTransformerTest {
 
     private static URL pluginUrl;
@@ -54,7 +51,6 @@ final class Log4j2PluginCacheFileTransformerTest {
     public static void setUp() {
         pluginUrl = Log4j2PluginCacheFileTransformerTest.class.getClassLoader().getResource(PLUGIN_CACHE_FILE);
     }
-
 
     @Test
     public void testCanTransformResource() {
@@ -74,14 +70,15 @@ final class Log4j2PluginCacheFileTransformerTest {
         assertFalse(transformer.hasTransformedResource());
 
         long expectedYoungestResourceTime = 1605922127000L; // Sat Nov 21 2020 01:28:47
-        try (InputStream log4jCacheFileInputStream = getClass().getClassLoader()
-                .getResourceAsStream(PLUGIN_CACHE_FILE)) {
-            transformer.processResource(PLUGIN_CACHE_FILE, log4jCacheFileInputStream, null, expectedYoungestResourceTime);
+        try (InputStream log4jCacheFileInputStream =
+                getClass().getClassLoader().getResourceAsStream(PLUGIN_CACHE_FILE)) {
+            transformer.processResource(
+                    PLUGIN_CACHE_FILE, log4jCacheFileInputStream, null, expectedYoungestResourceTime);
         }
         assertTrue(transformer.hasTransformedResource());
 
-        try (InputStream log4jCacheFileInputStream = getClass().getClassLoader()
-                .getResourceAsStream(PLUGIN_CACHE_FILE)) {
+        try (InputStream log4jCacheFileInputStream =
+                getClass().getClassLoader().getResourceAsStream(PLUGIN_CACHE_FILE)) {
             transformer.processResource(PLUGIN_CACHE_FILE, log4jCacheFileInputStream, null, 2000L);
         }
         assertTrue(transformer.hasTransformedResource());
@@ -92,18 +89,19 @@ final class Log4j2PluginCacheFileTransformerTest {
     private void assertTransformedCacheFile(
             @SuppressWarnings("SameParameterValue") Log4j2PluginCacheFileTransformer transformer,
             @SuppressWarnings("SameParameterValue") long expectedTime,
-            @SuppressWarnings("SameParameterValue") long expectedHash) throws IOException {
+            @SuppressWarnings("SameParameterValue") long expectedHash)
+            throws IOException {
         final ByteArrayOutputStream jarBuff = new ByteArrayOutputStream();
-        try(final JarOutputStream out = new JarOutputStream(jarBuff)) {
+        try (final JarOutputStream out = new JarOutputStream(jarBuff)) {
             transformer.modifyOutputStream(out);
         }
 
-        try(JarInputStream in = new JarInputStream(new ByteArrayInputStream(jarBuff.toByteArray()))) {
-            for (;;) {
+        try (JarInputStream in = new JarInputStream(new ByteArrayInputStream(jarBuff.toByteArray()))) {
+            for (; ; ) {
                 final JarEntry jarEntry = in.getNextJarEntry();
-                if(jarEntry == null) {
+                if (jarEntry == null) {
                     fail("No expected resource in the output jar");
-                } else if(jarEntry.getName().equals(PLUGIN_CACHE_FILE)) {
+                } else if (jarEntry.getName().equals(PLUGIN_CACHE_FILE)) {
                     assertEquals(expectedTime, jarEntry.getTime());
                     assertEquals(expectedHash, Arrays.hashCode(IOUtils.toByteArray(in)));
                     break;
@@ -111,7 +109,6 @@ final class Log4j2PluginCacheFileTransformerTest {
             }
         }
     }
-
 
     @Test
     public void testRelocation() throws IOException {
@@ -130,7 +127,8 @@ final class Log4j2PluginCacheFileTransformerTest {
 
         transformer.relocatePlugin(singletonList(log4jRelocator), aggregator.getAllCategories());
 
-        for (final Map<String, PluginEntry> pluginEntryMap : aggregator.getAllCategories().values()) {
+        for (final Map<String, PluginEntry> pluginEntryMap :
+                aggregator.getAllCategories().values()) {
             for (final PluginEntry entry : pluginEntryMap.values()) {
                 assertTrue(entry.getClassName().startsWith(target));
             }

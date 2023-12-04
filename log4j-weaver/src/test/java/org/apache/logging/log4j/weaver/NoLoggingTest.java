@@ -16,12 +16,11 @@
  */
 package org.apache.logging.log4j.weaver;
 
-import java.lang.reflect.Method;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import java.lang.reflect.Method;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test a class that needs no conversion at all.
