@@ -62,7 +62,7 @@ public class LoggerConversionHandlerExample {
 
     private static final Logger logger = LogManager.getLogger();
 
-    private static final int referenceLine = 63;
+    private static final int referenceLine = 65;
 
     public void testFatal(final ListAppender app) {
         app.clear();
