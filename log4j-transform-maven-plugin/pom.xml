@@ -33,7 +33,7 @@
   <description>The Apache Log4j Transform Maven plugin</description>
 
   <properties>
-    <bnd.skip>true</bnd.skip>
+    <bnd.packagingTypes>maven-plugin</bnd.packagingTypes>
   </properties>
 
   <dependencies>
