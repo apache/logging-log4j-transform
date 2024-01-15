@@ -60,6 +60,7 @@ This is the second release of the project.
 
 ==== Updated
 
+* Update `apache/logging-parent` to version `` (https://github.com/apache/logging-log4j-transform/pull/80[80])
 * Update `org.apache.logging.log4j:log4j-bom` to version `2.22.1` (https://github.com/apache/logging-log4j-transform/pull/74[74])
 * Update `org.apache.logging:logging-parent` to version `10.5.0` (https://github.com/apache/logging-log4j-transform/pull/72[72])
 * Update `org.assertj:assertj-core` to version `3.25.1` (https://github.com/apache/logging-log4j-transform/pull/77[77])
