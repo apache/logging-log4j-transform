@@ -65,4 +65,4 @@ This is the second release of the project.
 * Update `org.assertj:assertj-core` to version `3.25.3` (https://github.com/apache/logging-log4j-transform/pull/83[83])
 * Update `org.jacoco:jacoco-maven-plugin` to version `0.8.11` (https://github.com/apache/logging-log4j-transform/pull/61[61])
 * Update `org.junit:junit-bom` to version `5.10.2` (https://github.com/apache/logging-log4j-transform/pull/82[82])
-* Update `org.slf4j:slf4j-api` to version `2.0.11` (https://github.com/apache/logging-log4j-transform/pull/78[78])
+* Update `org.slf4j:slf4j-api` to version `2.0.12` (https://github.com/apache/logging-log4j-transform/pull/84[84])
