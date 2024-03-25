@@ -54,7 +54,6 @@ This is the second release of the project.
 * Update `org.apache.commons:commons-lang3` to version `3.14.0` (https://github.com/apache/logging-log4j-transform/pull/69[69])
 * Update `org.apache.maven:maven-core` to version `3.9.6` (https://github.com/apache/logging-log4j-transform/pull/65[65])
 * Update `org.apache.maven.plugins:maven-invoker-plugin` to version `3.6.0` (https://github.com/apache/logging-log4j-transform/pull/68[68])
-* Update `org.ow2.asm:asm-bom` to version `9.6`
 
 ==== Updated
 
@@ -65,4 +64,5 @@ This is the second release of the project.
 * Update `org.assertj:assertj-core` to version `3.25.3` (https://github.com/apache/logging-log4j-transform/pull/83[83])
 * Update `org.jacoco:jacoco-maven-plugin` to version `0.8.11` (https://github.com/apache/logging-log4j-transform/pull/61[61])
 * Update `org.junit:junit-bom` to version `5.10.2` (https://github.com/apache/logging-log4j-transform/pull/82[82])
+* Update `org.ow2.asm:asm-bom` to version `9.7` (https://github.com/apache/logging-log4j-transform/pull/89[89])
 * Update `org.slf4j:slf4j-api` to version `2.0.12` (https://github.com/apache/logging-log4j-transform/pull/84[84])
