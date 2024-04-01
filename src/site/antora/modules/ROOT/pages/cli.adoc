@@ -1,0 +1,76 @@
+////
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+////
+
+= Log4j Transform CLI Tools
+
+The Log4j Transform CLI Tools are a set of command line tools to help users with various Log4j-related formats.
+
+[#log4j-codegen]
+== `log4j-codegen`
+
+The `log4j-codegen` tool is a small command line application that generates
+{logging-services-url}/log4j/2.x/javadoc/log4j-api/org/apache/logging/log4j/Logger.html[`Logger`]
+wrappers with custom log levels.
+
+[#log4j-codegen-syntax]
+=== Syntax
+
+The general syntax of the tool is:
+
+[source,subs="+attributes"]
+----
+java -jar log4j-codegen-{project-version}.jar [-f=<outputFile>] <command> <className> [<level>...]
+----
+
+where the elements have the following meaning:
+
+`<outputFile>`::
+The name of the output file.
+By default, the output is printed on the standard output.
+
+`<command>`::
+This can be one of:
+
+extendedLogger:::
+Generates a logger class that supports the
+{logging-services-url}/log4j/2.x/manual/customloglevels.html[standard log levels]
+and some additional ones.
+
+customLogger:::
+Generates a logger class that supports only the levels specified on the command line.
+
+`<className>`::
+The fully qualified name of the `Logger` class to generate.
+
+`<level>`::
+A string of the form `<levelName>=<levelPriority>`, where:
+
+`<levelName>`:::
+The name of the level, e.g. `CONFIG`, `AUDIT`.
+
+`<levelPriority>`:::
+An integer that specifies the severity of each level.
+For a list of standard priorities see
+{logging-services-url}/log4j/2.x/manual/customloglevels.html[Levels].
+
+[#log4j-codegen-examples]
+=== Usage examples
+
+[source,subs="+attributes"]
+----
+java -jar log4j-codegen-{project-version}.jar extendedLogger DIAG=350 NOTICE=450 VERBOSE=550
+----

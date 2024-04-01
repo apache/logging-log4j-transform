@@ -14,17 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.logging.log4j.core.tools;
+package org.apache.logging.log4j.codegen;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,9 +41,11 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.core.test.TestConstants;
+import org.apache.logging.log4j.codegen.Generate.LevelInfo;
+import org.apache.logging.log4j.codegen.Generate.Type;
 import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.message.MessageFactory;
+import org.apache.logging.log4j.spi.ExtendedLogger;
 import org.apache.logging.log4j.test.TestLogger;
 import org.apache.logging.log4j.util.MessageSupplier;
 import org.apache.logging.log4j.util.Strings;
@@ -52,11 +57,11 @@ import org.junitpioneer.jupiter.SetSystemProperty;
 
 @Tag("functional")
 @SetSystemProperty(
-        key = TestConstants.LOGGER_CONTEXT_FACTORY,
+        key = "log4j2.loggerContextFactory",
         value = "org.apache.logging.log4j.test.TestLoggerContextFactory")
-public class GenerateCustomLoggerTest {
+public class GenerateExtendedLoggerTest {
 
-    private static final String TEST_SOURCE = "target/test-classes/org/apache/logging/log4j/core/MyCustomLogger.java";
+    private static final String TEST_SOURCE = "target/test-classes/org/apache/logging/log4j/core/MyExtendedLogger.java";
 
     @AfterAll
     public static void afterClass() {
@@ -65,7 +70,7 @@ public class GenerateCustomLoggerTest {
         if (file.exists()) {
             file.delete();
         }
-        file = new File(parent, "MyCustomLogger.class");
+        file = new File(parent, "MyExtendedLogger.class");
         if (file.exists()) {
             file.delete();
         }
@@ -74,16 +79,15 @@ public class GenerateCustomLoggerTest {
     @Test
     @SuppressWarnings("ReturnValueIgnored")
     public void testGenerateSource() throws Exception {
-        final String CLASSNAME = "org.apache.logging.log4j.core.MyCustomLogger";
+        final String CLASSNAME = "org.apache.logging.log4j.core.MyExtendedLogger";
 
         // generate custom logger source
-        final List<String> values = Arrays.asList("DEFCON1=350 DEFCON2=450 DEFCON3=550".split(" "));
-        final List<Generate.LevelInfo> levels = Generate.LevelInfo.parse(values, Generate.CustomLogger.class);
-        final String src = Generate.generateSource(CLASSNAME, levels, Generate.Type.CUSTOM);
-        final File f = new File(TEST_SOURCE);
-        f.getParentFile().mkdirs();
-        try (final FileOutputStream out = new FileOutputStream(f)) {
-            out.write(src.getBytes(Charset.defaultCharset()));
+        final List<LevelInfo> levels =
+                Arrays.asList(new LevelInfo("DIAG", 350), new LevelInfo("NOTICE", 450), new LevelInfo("VERBOSE", 550));
+        final Path testSource = Paths.get(TEST_SOURCE);
+        Files.createDirectories(testSource.getParent());
+        try (final BufferedWriter writer = Files.newBufferedWriter(testSource, UTF_8)) {
+            Generate.generateSource(Type.EXTEND, CLASSNAME, levels, writer);
         }
 
         // set up compiler
@@ -92,7 +96,7 @@ public class GenerateCustomLoggerTest {
         final List<String> errors = new ArrayList<>();
         try (final StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null)) {
             final Iterable<? extends JavaFileObject> compilationUnits =
-                    fileManager.getJavaFileObjectsFromFiles(Collections.singletonList(f));
+                    fileManager.getJavaFileObjectsFromFiles(Collections.singletonList(testSource.toFile()));
             final String classPath = System.getProperty("jdk.module.path");
             final List<String> optionList = new ArrayList<>();
             if (Strings.isNotBlank(classPath)) {
@@ -130,9 +134,9 @@ public class GenerateCustomLoggerTest {
         assertTrue(Modifier.isStatic(cls.getDeclaredMethod("create", String.class, MessageFactory.class)
                 .getModifiers()));
 
-        // check that all log methods exist
-        final String[] logMethods = {"defcon1", "defcon2", "defcon3"};
-        for (final String name : logMethods) {
+        // check that the extended log methods exist
+        final String[] extendedMethods = {"diag", "notice", "verbose"};
+        for (final String name : extendedMethods) {
             assertDoesNotThrow(() -> {
                 cls.getDeclaredMethod(name, Marker.class, Message.class, Throwable.class);
                 cls.getDeclaredMethod(name, Marker.class, Object.class, Throwable.class);
@@ -165,17 +169,41 @@ public class GenerateCustomLoggerTest {
 
         // now see if it actually works...
         final Method create = cls.getDeclaredMethod("create", String.class);
-        final Object customLogger = create.invoke(null, "X.Y.Z");
+        final Object extendedLogger = create.invoke(null, "X.Y.Z");
         int n = 0;
-        for (final String name : logMethods) {
+        for (final String name : extendedMethods) {
             final Method method = cls.getDeclaredMethod(name, String.class);
-            method.invoke(customLogger, "This is message " + n++);
+            method.invoke(extendedLogger, "This is message " + n++);
         }
 
         final TestLogger underlying = (TestLogger) LogManager.getLogger("X.Y.Z");
-        final List<String> lines = underlying.getEntries();
-        for (int i = 0; i < lines.size(); i++) {
-            assertEquals(" " + levels.get(i).name + " This is message " + i, lines.get(i));
+
+        try {
+            // This logger extends o.a.l.log4j.spi.ExtendedLogger,
+            // so all the standard logging methods can be used as well
+            final ExtendedLogger logger = (ExtendedLogger) extendedLogger;
+            logger.trace("trace message");
+            logger.debug("debug message");
+            logger.info("info message");
+            logger.warn("warn message");
+            logger.error("error message");
+            logger.fatal("fatal message");
+
+            final List<String> lines = underlying.getEntries();
+            for (int i = 0; i < lines.size() - 6; i++) {
+                assertEquals(" " + levels.get(i).name + " This is message " + i, lines.get(i));
+            }
+
+            // test that the standard logging methods still work
+            int i = lines.size() - 6;
+            assertEquals(" TRACE trace message", lines.get(i++));
+            assertEquals(" DEBUG debug message", lines.get(i++));
+            assertEquals(" INFO info message", lines.get(i++));
+            assertEquals(" WARN warn message", lines.get(i++));
+            assertEquals(" ERROR error message", lines.get(i++));
+            assertEquals(" FATAL fatal message", lines.get(i++));
+        } finally {
+            underlying.getEntries().clear();
         }
     }
 }

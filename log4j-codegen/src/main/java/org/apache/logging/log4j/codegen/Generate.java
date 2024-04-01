@@ -14,35 +14,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.logging.log4j.core.tools;
+package org.apache.logging.log4j.codegen;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.FilterWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Model.CommandSpec;
+import picocli.CommandLine.Option;
+import picocli.CommandLine.ParameterException;
+import picocli.CommandLine.Parameters;
+import picocli.CommandLine.Spec;
 
 /**
  * Generates source code for custom or extended logger wrappers.
+ * <h2>Usage</h2>
+ * <h3>Extended logger</h3>
  * <p>
- * Usage:
- * <p>
- * To generate source code for an extended logger that adds custom log levels to the existing ones: <br>
- * {@code java org.apache.logging.log4j.core.tools.Generate$ExtendedLogger <logger.class.name> <CUSTOMLEVEL>=<WEIGHT>
+ * To generate source code for an extended logger that adds custom log levels to the existing ones run:
+ * </p>
+ * <pre>
+ * {@code java -jar log4j-generator.jar extendedLogger <logger.class.name> <CUSTOMLEVEL>=<WEIGHT>
  * [CUSTOMLEVEL2=WEIGHT2 [CUSTOMLEVEL3=WEIGHT3] ...]}
+ * </pre>
  * <p>
- * Example of creating an extended logger:<br>
- * {@code java org.apache.logging.log4j.core.tools.Generate$ExtendedLogger com.mycomp.ExtLogger DIAG=350 NOTICE=450
- * VERBOSE=550}
+ * Example:
+ * </p>
+ * <pre>
+ * {@code java -jar log4j-generator.jar extendedLogger com.mycomp.ExtLogger DIAG=350 NOTICE=450 VERBOSE=550}
+ * </pre>
+ * <h3>Custom logger</h3>
  * <p>
- * To generate source code for a custom logger that replaces the existing log levels with custom ones: <br>
- * {@code java org.apache.logging.log4j.core.tools.Generate$CustomLogger <logger.class.name> <CUSTOMLEVEL>=<WEIGHT>
+ * To generate source code for a custom logger that replaces the existing log levels with custom ones run:
+ * </p>
+ * <pre>
+ * {@code java -jar log4j-generator.jar customLogger <logger.class.name> <CUSTOMLEVEL>=<WEIGHT>
  * [CUSTOMLEVEL2=WEIGHT2 [CUSTOMLEVEL3=WEIGHT3] ...]}
+ * </pre>
  * <p>
- * Example of creating a custom logger:<br>
- * {@code java org.apache.logging.log4j.core.tools.Generate$CustomLogger com.mycomp.MyLogger DEFCON1=350 DEFCON2=450
- * DEFCON3=550}
+ * Example:
+ * </p>
+ * {@code java -jar log4j-generator.jar customLogger com.mycomp.MyLogger DEFCON1=350 DEFCON2=450 DEFCON3=550}
  */
+@Command(name = "generate")
 public final class Generate {
     // Implementation note:
     // The generated code is in the user's namespace which has its own versioning scheme, so
@@ -62,7 +84,7 @@ public final class Generate {
                         + "import org.apache.logging.log4j.Marker;%n"
                         + "import org.apache.logging.log4j.message.Message;%n"
                         + "import org.apache.logging.log4j.message.MessageFactory;%n"
-                        + "import org.apache.logging.log4j.spi.ExtendedLogger;%n"
+                        + "import org.apache.logging.log4j.spi.AbstractLogger;%n"
                         + "import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;%n"
                         + "import org.apache.logging.log4j.util.MessageSupplier;%n"
                         + "import org.apache.logging.log4j.util.Supplier;%n"
@@ -91,15 +113,10 @@ public final class Generate {
                 return ""
                         + "%n"
                         + "    private %s(final Logger logger) {%n"
-                        + "        this.logger = new ExtendedLoggerWrapper((ExtendedLogger) logger, logger.getName(), "
+                        + "        this.logger = new ExtendedLoggerWrapper((AbstractLogger) logger, logger.getName(), "
                         + "logger.getMessageFactory());%n"
                         + "    }%n";
                 // @formatter:on
-            }
-
-            @Override
-            Class<?> generator() {
-                return CustomLogger.class;
             }
         },
         EXTEND {
@@ -113,7 +130,7 @@ public final class Generate {
                         + "import org.apache.logging.log4j.Marker;%n"
                         + "import org.apache.logging.log4j.message.Message;%n"
                         + "import org.apache.logging.log4j.message.MessageFactory;%n"
-                        + "import org.apache.logging.log4j.spi.ExtendedLogger;%n"
+                        + "import org.apache.logging.log4j.spi.AbstractLogger;%n"
                         + "import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;%n"
                         + "import org.apache.logging.log4j.util.MessageSupplier;%n"
                         + "import org.apache.logging.log4j.util.Supplier;%n"
@@ -143,15 +160,10 @@ public final class Generate {
                 return ""
                         + "%n"
                         + "    private %s(final Logger logger) {%n"
-                        + "        super((ExtendedLogger) logger, logger.getName(), logger.getMessageFactory());%n"
+                        + "        super((AbstractLogger) logger, logger.getName(), logger.getMessageFactory());%n"
                         + "        this.logger = this;%n"
                         + "    }%n";
                 // @formatter:on
-            }
-
-            @Override
-            Class<?> generator() {
-                return ExtendedLogger.class;
             }
         };
 
@@ -160,8 +172,6 @@ public final class Generate {
         abstract String declaration();
 
         abstract String constructor();
-
-        abstract Class<?> generator();
     }
 
     static final String FQCN_FIELD = "" + "    private static final String FQCN = %s.class.getName();%n";
@@ -985,152 +995,136 @@ public final class Generate {
             + "    }%n";
     // @formatter:on
 
+    @Option(names = "-f", description = "Output file.")
+    private Path outputFile;
+
+    @Spec
+    private CommandSpec spec;
+
     private Generate() {}
 
-    /**
-     * Generates source code for custom logger wrappers that only provide convenience methods for the specified custom
-     * levels, not for the standard built-in levels.
-     */
-    public static final class CustomLogger {
-        /**
-         * Generates source code for custom logger wrappers that only provide convenience methods for the specified
-         * custom levels, not for the standard built-in levels.
-         *
-         * @param args className of the custom logger to generate, followed by a NAME=intLevel pair for each custom log
-         *            level to generate convenience methods for
-         */
-        public static void main(final String[] args) {
-            generate(args, Type.CUSTOM);
-        }
-
-        private CustomLogger() {}
-    }
-
-    /**
-     * Generates source code for extended logger wrappers that provide convenience methods for the specified custom
-     * levels, and by extending {@code org.apache.logging.log4j.spi.ExtendedLoggerWrapper}, inherit the convenience
-     * methods for the built-in levels provided by the {@code Logger} interface.
-     */
-    public static final class ExtendedLogger {
-        /**
-         * Generates source code for extended logger wrappers that provide convenience methods for the specified custom
-         * levels.
-         *
-         * @param args className of the custom logger to generate, followed by a NAME=intLevel pair for each custom log
-         *            level to generate convenience methods for
-         */
-        public static void main(final String[] args) {
-            generate(args, Type.EXTEND);
-        }
-
-        private ExtendedLogger() {}
-    }
-
-    static class LevelInfo {
+    public static class LevelInfo {
         final String name;
         final int intLevel;
 
-        LevelInfo(final String description) {
-            final String[] parts = description.split("=");
-            name = parts[0];
-            intLevel = Integer.parseInt(parts[1]);
-        }
-
-        public static List<LevelInfo> parse(final List<String> values, final Class<?> generator) {
-            final List<LevelInfo> result = new ArrayList<>(values.size());
-            for (int i = 0; i < values.size(); i++) {
-                try {
-                    result.add(new LevelInfo(values.get(i)));
-                } catch (final Exception ex) {
-                    System.err.println("Cannot parse custom level '" + values.get(i) + "': " + ex.toString());
-                    usage(System.err, generator);
-                    System.exit(-1);
-                }
-            }
-            return result;
+        LevelInfo(final String name, final int intLevel) {
+            this.name = name;
+            this.intLevel = intLevel;
         }
     }
 
-    private static void generate(final String[] args, final Type type) {
-        generate(args, type, System.out);
+    public static void main(final String[] args) {
+        final Generate command = new Generate();
+        new CommandLine(command)
+                .registerConverter(LevelInfo.class, command::convertLevelInfo)
+                .execute(args);
+    }
+
+    private LevelInfo convertLevelInfo(final String value) {
+        final String[] parts = value.split("=", 2);
+        if (parts.length == 2) {
+            try {
+                final int intLevel = Integer.parseInt(parts[1]);
+                return new LevelInfo(parts[0], intLevel);
+            } catch (final NumberFormatException ignored) {
+                // Fall through to throw instruction
+            }
+        }
+        throw new ParameterException(
+                spec.commandLine(),
+                String.format("Invalid level value '%s'; expected form CUSTOMLEVEL=WEIGHT%nE.g. AUDIT=50", value));
+    }
+
+    private Writer getWriter() throws IOException {
+        if (outputFile != null) {
+            return Files.newBufferedWriter(outputFile, UTF_8);
+        }
+        return new FilterWriter(new OutputStreamWriter(System.out, UTF_8)) {
+
+            @Override
+            public void close() throws IOException {
+                // Don't close the standard output.
+            }
+        };
+    }
+
+    private void validateLevels(final List<LevelInfo> levels) {
+        if (levels == null || levels.isEmpty()) {
+            throw new ParameterException(spec.commandLine(), "At least one level parameter is required");
+        }
     }
 
     /**
      * Generates source code for extended logger wrappers that provide convenience methods for the specified custom
      * levels.
      *
-     * @param args className of the custom logger to generate, followed by a NAME=intLevel pair for each custom log
+     * @param classNameFQN className of the custom logger to generate
+     * @param levels a list of NAME=intLevel pair for each custom log
      *            level to generate convenience methods for
-     * @param printStream the stream to write the generated source code to
      */
-    public static void generateExtend(final String[] args, final PrintStream printStream) {
-        generate(args, Type.EXTEND, printStream);
+    @Command(name = "extendedLogger", description = "Generates a logger with additional log levels.")
+    public void generateExtend(
+            final @Parameters(description = "Class name to generate", paramLabel = "<className>") String classNameFQN,
+            final @Parameters(description = "Additional log levels", paramLabel = "<level>") List<LevelInfo> levels)
+            throws IOException {
+        validateLevels(levels);
+        try (final Writer writer = getWriter()) {
+            generateSource(Type.EXTEND, classNameFQN, levels, writer);
+            writer.flush();
+        }
     }
 
     /**
      * Generates source code for custom logger wrappers that only provide convenience methods for the specified
      * custom levels, not for the standard built-in levels.
      *
-     * @param args className of the custom logger to generate, followed by a NAME=intLevel pair for each custom log
+     * @param classNameFQN className of the custom logger to generate
+     * @param levels a list of NAME=intLevel pair for each custom log
      *            level to generate convenience methods for
-     * @param printStream the stream to write the generated source code to
      */
-    public static void generateCustom(final String[] args, final PrintStream printStream) {
-        generate(args, Type.CUSTOM, printStream);
-    }
-
-    static void generate(final String[] args, final Type type, final PrintStream printStream) {
-        if (!validate(args)) {
-            usage(printStream, type.generator());
-            System.exit(-1);
+    @Command(name = "customLogger", description = "Generates a logger with custom log methods.")
+    public void generateCustom(
+            final @Parameters(description = "Class name to generate", paramLabel = "<className>") String classNameFQN,
+            final @Parameters(description = "Log levels", paramLabel = "<level>") List<LevelInfo> levels)
+            throws IOException {
+        validateLevels(levels);
+        try (final Writer writer = getWriter()) {
+            generateSource(Type.CUSTOM, classNameFQN, levels, writer);
+            writer.flush();
         }
-        final List<String> values = new ArrayList<>(Arrays.asList(args));
-        final String classFQN = values.remove(0);
-        final List<LevelInfo> levels = LevelInfo.parse(values, type.generator());
-        printStream.println(generateSource(classFQN, levels, type));
-    }
-
-    static boolean validate(final String[] args) {
-        return args.length >= 2;
-    }
-
-    private static void usage(final PrintStream out, final Class<?> generator) {
-        out.println("Usage: java " + generator.getName() + " className LEVEL1=intLevel1 [LEVEL2=intLevel2...]");
-        out.println("       Where className is the fully qualified class name of the custom/extended logger");
-        out.println("       to generate, followed by a space-separated list of custom log levels.");
-        out.println("       For each custom log level, specify NAME=intLevel (without spaces).");
     }
 
     @SuppressFBWarnings(
             value = "FORMAT_STRING_MANIPULATION",
             justification = "The format strings come from constants. The replacement is done for readability.")
-    static String generateSource(final String classNameFQN, final List<LevelInfo> levels, final Type type) {
-        final StringBuilder sb = new StringBuilder(10000 * levels.size());
+    static String generateSource(
+            final Type type, final String classNameFQN, final List<LevelInfo> levels, final Writer writer)
+            throws IOException {
         final int lastDot = classNameFQN.lastIndexOf('.');
         final String pkg = classNameFQN.substring(0, Math.max(lastDot, 0));
         if (!pkg.isEmpty()) {
-            sb.append(String.format(PACKAGE_DECLARATION, pkg));
+            writer.append(String.format(PACKAGE_DECLARATION, pkg));
         }
-        sb.append(String.format(type.imports(), ""));
+        writer.append(String.format(type.imports(), ""));
         final String className = classNameFQN.substring(classNameFQN.lastIndexOf('.') + 1);
         final String javadocDescr = javadocDescription(levels);
-        sb.append(String.format(type.declaration(), javadocDescr, className));
-        sb.append(String.format(FQCN_FIELD, className));
+        writer.append(String.format(type.declaration(), javadocDescr, className));
+        writer.append(String.format(FQCN_FIELD, className));
         for (final LevelInfo level : levels) {
-            sb.append(String.format(LEVEL_FIELD, level.name, level.name, level.intLevel));
+            writer.append(String.format(LEVEL_FIELD, level.name, level.name, level.intLevel));
         }
-        sb.append(String.format(type.constructor(), className));
-        sb.append(String.format(FACTORY_METHODS.replaceAll("CLASSNAME", className), ""));
+        writer.append(String.format(type.constructor(), className));
+        writer.append(String.format(FACTORY_METHODS.replaceAll("CLASSNAME", className), ""));
         for (final LevelInfo level : levels) {
             final String methodName = camelCase(level.name);
             final String phase1 = METHODS.replaceAll("CUSTOM_LEVEL", level.name);
             final String phase2 = phase1.replaceAll("methodName", methodName);
-            sb.append(String.format(phase2, ""));
+            writer.append(String.format(phase2, ""));
         }
 
-        sb.append('}');
-        sb.append(System.getProperty("line.separator"));
-        return sb.toString();
+        writer.append('}');
+        writer.append(System.getProperty("line.separator"));
+        return writer.toString();
     }
 
     static String javadocDescription(final List<LevelInfo> levels) {

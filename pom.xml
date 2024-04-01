@@ -73,6 +73,7 @@
     <module>log4j-transform-parent</module>
 
     <!-- Modules here must have a corresponding entry in `dependencyManagement > dependencies` block below! -->
+    <module>log4j-codegen</module>
     <module>log4j-transform-maven-plugin</module>
     <module>log4j-transform-maven-shade-plugin-extensions</module>
     <module>log4j-weaver</module>
@@ -103,7 +104,7 @@
   <properties>
 
     <!-- project version -->
-    <revision>0.2.0-SNAPSHOT</revision>
+    <revision>0.3.0-SNAPSHOT</revision>
 
     <!-- disable `maven-site-plugin`-->
     <maven.site.skip>true</maven.site.skip>
@@ -115,6 +116,12 @@
        Modules here must have a corresponding entry in `modules` block above! -->
   <dependencyManagement>
     <dependencies>
+
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-codegen</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
