@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.logging.log4j.core.tools;
+package org.apache.logging.log4j.codegen;
 
 /**
  * Wrapper around {@link Generate.CustomLogger}.

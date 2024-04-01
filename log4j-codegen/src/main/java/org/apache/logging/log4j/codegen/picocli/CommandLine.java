@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.logging.log4j.core.tools.picocli;
+package org.apache.logging.log4j.codegen.picocli;
 
-import static org.apache.logging.log4j.core.tools.picocli.CommandLine.Help.Column.Overflow.SPAN;
-import static org.apache.logging.log4j.core.tools.picocli.CommandLine.Help.Column.Overflow.TRUNCATE;
-import static org.apache.logging.log4j.core.tools.picocli.CommandLine.Help.Column.Overflow.WRAP;
+import static org.apache.logging.log4j.codegen.picocli.CommandLine.Help.Column.Overflow.SPAN;
+import static org.apache.logging.log4j.codegen.picocli.CommandLine.Help.Column.Overflow.TRUNCATE;
+import static org.apache.logging.log4j.codegen.picocli.CommandLine.Help.Column.Overflow.WRAP;
 import static org.apache.logging.log4j.util.Strings.toRootLowerCase;
 import static org.apache.logging.log4j.util.Strings.toRootUpperCase;
 
@@ -70,9 +70,9 @@ import java.util.TreeSet;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
-import org.apache.logging.log4j.core.tools.picocli.CommandLine.Help.Ansi.IStyle;
-import org.apache.logging.log4j.core.tools.picocli.CommandLine.Help.Ansi.Style;
-import org.apache.logging.log4j.core.tools.picocli.CommandLine.Help.Ansi.Text;
+import org.apache.logging.log4j.codegen.picocli.CommandLine.Help.Ansi.IStyle;
+import org.apache.logging.log4j.codegen.picocli.CommandLine.Help.Ansi.Style;
+import org.apache.logging.log4j.codegen.picocli.CommandLine.Help.Ansi.Text;
 
 /**
  * <p>

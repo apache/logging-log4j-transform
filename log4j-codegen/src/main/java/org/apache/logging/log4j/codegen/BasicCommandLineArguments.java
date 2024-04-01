@@ -14,17 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.logging.log4j.core.tools;
+package org.apache.logging.log4j.codegen;
 
-/**
- * Wrapper around {@link Generate.ExtendedLogger}.
- */
-public class ExtendedLoggerGenerator {
-    /**
-     * Delegates to {@link Generate.ExtendedLogger#main(String[])}
-     * @param args the command line arguments to pass on
-     */
-    public static void main(final String[] args) {
-        Generate.ExtendedLogger.main(args);
+import org.apache.logging.log4j.codegen.picocli.CommandLine;
+
+public class BasicCommandLineArguments {
+
+    @CommandLine.Option(
+            names = {"--help", "-?", "-h"},
+            usageHelp = true,
+            description = "Prints this help and exits.")
+    private boolean help;
+
+    public boolean isHelp() {
+        return help;
+    }
+
+    public void setHelp(final boolean help) {
+        this.help = help;
     }
 }
