@@ -45,7 +45,7 @@
 
     <!-- plugin versions -->
     <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
-    <maven-invoker-plugin.version>3.6.0</maven-invoker-plugin.version>
+    <maven-invoker-plugin.version>3.6.1</maven-invoker-plugin.version>
     <maven-shade-plugin.version>3.5.0</maven-shade-plugin.version>
     <surefire.version>3.0.0-M7</surefire.version>
 
