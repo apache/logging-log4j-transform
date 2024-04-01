@@ -16,19 +16,24 @@
  */
 package org.apache.logging.log4j.codegen;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import javax.tools.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.codegen.Generate.LevelInfo;
+import org.apache.logging.log4j.codegen.Generate.Type;
 import org.apache.logging.log4j.core.test.TestConstants;
 import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.message.MessageFactory;
@@ -68,16 +73,12 @@ public class GenerateCustomLoggerTest {
         final String CLASSNAME = "org.apache.logging.log4j.core.MyCustomLogger";
 
         // generate custom logger source
-        final List<String> values = Arrays.asList("DEFCON1=351 DEFCON2=451 DEFCON3=551".split(" "));
-        final List<org.apache.logging.log4j.codegen.Generate.LevelInfo> levels =
-                org.apache.logging.log4j.codegen.Generate.LevelInfo.parse(
-                        values, org.apache.logging.log4j.codegen.Generate.CustomLogger.class);
-        final String src =
-                org.apache.logging.log4j.codegen.Generate.generateSource(CLASSNAME, levels, Generate.Type.CUSTOM);
-        final File f = new File(TEST_SOURCE);
-        f.getParentFile().mkdirs();
-        try (final FileOutputStream out = new FileOutputStream(f)) {
-            out.write(src.getBytes(Charset.defaultCharset()));
+        final List<LevelInfo> levels = Arrays.asList(
+                new LevelInfo("DEFCON1", 350), new LevelInfo("DEFCON2", 450), new LevelInfo("DEFCON3", 550));
+        final Path testSource = Paths.get(TEST_SOURCE);
+        Files.createDirectories(testSource.getParent());
+        try (final BufferedWriter writer = Files.newBufferedWriter(testSource, UTF_8)) {
+            Generate.generateSource(Type.CUSTOM, CLASSNAME, levels, writer);
         }
 
         // set up compiler
@@ -86,7 +87,7 @@ public class GenerateCustomLoggerTest {
         final List<String> errors = new ArrayList<>();
         try (final StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null)) {
             final Iterable<? extends JavaFileObject> compilationUnits =
-                    fileManager.getJavaFileObjectsFromFiles(Collections.singletonList(f));
+                    fileManager.getJavaFileObjectsFromFiles(Collections.singletonList(testSource.toFile()));
             final String classPath = System.getProperty("jdk.module.path");
             final List<String> optionList = new ArrayList<>();
             if (Strings.isNotBlank(classPath)) {

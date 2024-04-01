@@ -29,6 +29,9 @@
   <description>Generates wrappers for Log4j code loggers.</description>
 
   <properties>
+    <!-- Disabling `bnd-baseline-maven-plugin`, since we don't have a release yet to compare against. -->
+    <bnd.baseline.fail.on.missing>false</bnd.baseline.fail.on.missing>
+
     <Main-Class>org.apache.logging.log4j.codegen.Generate</Main-Class>
 
     <!-- Plugin versions -->
