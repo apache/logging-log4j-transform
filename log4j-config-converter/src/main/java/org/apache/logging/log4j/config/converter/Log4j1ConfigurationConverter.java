@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.log4j.config;
+package org.apache.logging.log4j.config.converter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -34,10 +34,9 @@ import org.apache.logging.log4j.core.config.ConfigurationException;
 import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
 import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 import org.apache.logging.log4j.core.config.builder.impl.DefaultConfigurationBuilder;
-import org.apache.logging.log4j.core.tools.BasicCommandLineArguments;
-import org.apache.logging.log4j.core.tools.picocli.CommandLine;
-import org.apache.logging.log4j.core.tools.picocli.CommandLine.Command;
-import org.apache.logging.log4j.core.tools.picocli.CommandLine.Option;
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 /**
  * Tool for converting a Log4j 1.x properties configuration file to Log4j 2.x XML configuration file.
@@ -51,142 +50,132 @@ import org.apache.logging.log4j.core.tools.picocli.CommandLine.Option;
  * </p>
  *
  * <pre>
- * java org.apache.log4j.config.Log4j1ConfigurationConverter --recurse
+ * java org.apache.logging.log4j.cli.converter.Log4j1ConfigurationConverter --recurse
  * E:\vcs\git\apache\logging\logging-log4j2\log4j-1.2-api\src\test\resources\config-1.2\hadoop --in log4j.properties --verbose
  * </pre>
  */
-public final class Log4j1ConfigurationConverter {
+@Command(name = "convert")
+public final class Log4j1ConfigurationConverter implements Runnable {
 
-    @Command(name = "Log4j1ConfigurationConverter")
-    public static class CommandLineArguments extends BasicCommandLineArguments implements Runnable {
+    @Option(
+            names = {"--help", "-h"},
+            usageHelp = true,
+            description = "Usage help.")
+    private boolean help;
 
-        @Option(
-                names = {"--failfast", "-f"},
-                description = "Fails on the first failure in recurse mode.")
-        private boolean failFast;
+    @Option(
+            names = {"--failfast", "-f"},
+            description = "Fails on the first failure in recurse mode.")
+    private boolean failFast;
 
-        @Option(
-                names = {"--in", "-i"},
-                description = "Specifies the input file.")
-        private Path pathIn;
+    @Option(
+            names = {"--in", "-i"},
+            description = "Specifies the input file.")
+    private Path pathIn;
 
-        @Option(
-                names = {"--out", "-o"},
-                description = "Specifies the output file.")
-        private Path pathOut;
+    @Option(
+            names = {"--out", "-o"},
+            description = "Specifies the output file.")
+    private Path pathOut;
 
-        @Option(
-                names = {"--recurse", "-r"},
-                description = "Recurses into this folder looking for the input file")
-        private Path recurseIntoPath;
+    @Option(
+            names = {"--recurse", "-r"},
+            description = "Recurses into this folder looking for the input file")
+    private Path recurseIntoPath;
 
-        @Option(
-                names = {"--verbose", "-v"},
-                description = "Be verbose.")
-        private boolean verbose;
+    @Option(
+            names = {"--verbose", "-v"},
+            description = "Be verbose.")
+    private boolean verbose;
 
-        public Path getPathIn() {
-            return pathIn;
-        }
+    private Log4j1ConfigurationConverter() {}
 
-        public Path getPathOut() {
-            return pathOut;
-        }
+    public boolean isHelp() {
+        return help;
+    }
 
-        public Path getRecurseIntoPath() {
-            return recurseIntoPath;
-        }
+    public Path getPathIn() {
+        return pathIn;
+    }
 
-        public boolean isFailFast() {
-            return failFast;
-        }
+    public Path getPathOut() {
+        return pathOut;
+    }
 
-        public boolean isVerbose() {
-            return verbose;
-        }
+    public Path getRecurseIntoPath() {
+        return recurseIntoPath;
+    }
 
-        public void setFailFast(final boolean failFast) {
-            this.failFast = failFast;
-        }
+    public boolean isFailFast() {
+        return failFast;
+    }
 
-        public void setPathIn(final Path pathIn) {
-            this.pathIn = pathIn;
-        }
+    public boolean isVerbose() {
+        return verbose;
+    }
 
-        public void setPathOut(final Path pathOut) {
-            this.pathOut = pathOut;
-        }
+    public void setHelp(boolean help) {
+        this.help = help;
+    }
 
-        public void setRecurseIntoPath(final Path recurseIntoPath) {
-            this.recurseIntoPath = recurseIntoPath;
-        }
+    public void setFailFast(final boolean failFast) {
+        this.failFast = failFast;
+    }
 
-        public void setVerbose(final boolean verbose) {
-            this.verbose = verbose;
-        }
+    public void setPathIn(final Path pathIn) {
+        this.pathIn = pathIn;
+    }
 
-        @Override
-        public void run() {
-            if (isHelp()) {
-                CommandLine.usage(this, System.err);
-                return;
-            }
-            new Log4j1ConfigurationConverter(this).run();
-        }
+    public void setPathOut(final Path pathOut) {
+        this.pathOut = pathOut;
+    }
 
-        @Override
-        public String toString() {
-            return "CommandLineArguments [recurseIntoPath=" + recurseIntoPath + ", verbose=" + verbose + ", pathIn="
-                    + pathIn + ", pathOut=" + pathOut + "]";
-        }
+    public void setRecurseIntoPath(final Path recurseIntoPath) {
+        this.recurseIntoPath = recurseIntoPath;
+    }
+
+    public void setVerbose(final boolean verbose) {
+        this.verbose = verbose;
     }
 
     private static final String FILE_EXT_XML = ".xml";
 
     public static void main(final String[] args) {
-        CommandLine.run(new CommandLineArguments(), System.err, args);
+        final Log4j1ConfigurationConverter command = new Log4j1ConfigurationConverter();
+        new CommandLine(command).execute(args);
     }
 
-    public static Log4j1ConfigurationConverter run(final CommandLineArguments cla) {
-        final Log4j1ConfigurationConverter log4j1ConfigurationConverter = new Log4j1ConfigurationConverter(cla);
-        log4j1ConfigurationConverter.run();
-        return log4j1ConfigurationConverter;
-    }
-
-    private final CommandLineArguments cla;
-
-    private Log4j1ConfigurationConverter(final CommandLineArguments cla) {
-        this.cla = cla;
-    }
-
-    protected void convert(final InputStream input, final OutputStream output) throws IOException {
+    private void convert(final InputStream input, final OutputStream output) throws IOException {
         final ConfigurationBuilder<BuiltConfiguration> builder =
                 new Log4j1ConfigurationParser().buildConfigurationBuilder(input);
         builder.writeXmlConfiguration(output);
     }
 
-    InputStream getInputStream() throws IOException {
-        final Path pathIn = cla.getPathIn();
+    private InputStream getInputStream() throws IOException {
+        final Path pathIn = getPathIn();
         return pathIn == null ? System.in : new InputStreamWrapper(Files.newInputStream(pathIn), pathIn.toString());
     }
 
-    OutputStream getOutputStream() throws IOException {
-        final Path pathOut = cla.getPathOut();
+    private OutputStream getOutputStream() throws IOException {
+        final Path pathOut = getPathOut();
         return pathOut == null ? System.out : Files.newOutputStream(pathOut);
     }
 
-    private void run() {
-        if (cla.getRecurseIntoPath() != null) {
+    @Override
+    public void run() {
+        final Path recurseIntoPath = getRecurseIntoPath();
+        final Path pathIn = getPathIn();
+        if (recurseIntoPath != null) {
             final AtomicInteger countOKs = new AtomicInteger();
             final AtomicInteger countFails = new AtomicInteger();
             try {
-                Files.walkFileTree(cla.getRecurseIntoPath(), new SimpleFileVisitor<Path>() {
+                Files.walkFileTree(recurseIntoPath, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
                             throws IOException {
-                        if (cla.getPathIn() == null || file.getFileName().equals(cla.getPathIn())) {
+                        if (pathIn == null || pathIn.equals(file.getFileName())) {
                             verbose("Reading %s", file);
-                            String newFile = file.getFileName().toString();
+                            String newFile = String.valueOf(file.getFileName());
                             final int lastIndex = newFile.lastIndexOf(".");
                             newFile = lastIndex < 0
                                     ? newFile + FILE_EXT_XML
@@ -205,13 +194,13 @@ public final class Log4j1ConfigurationConverter {
                                     countOKs.incrementAndGet();
                                 } catch (ConfigurationException | IOException e) {
                                     countFails.incrementAndGet();
-                                    if (cla.isFailFast()) {
+                                    if (isFailFast()) {
                                         throw e;
                                     }
                                     e.printStackTrace();
                                 } catch (TransformerException e) {
                                     countFails.incrementAndGet();
-                                    if (cla.isFailFast()) {
+                                    if (isFailFast()) {
                                         throw new IOException(e);
                                     }
                                     e.printStackTrace();
@@ -230,19 +219,19 @@ public final class Log4j1ConfigurationConverter {
                         countOKs.get(), countFails.get(), countOKs.get() + countFails.get());
             }
         } else {
-            verbose("Reading %s", cla.getPathIn());
+            verbose("Reading %s", pathIn);
             try (final InputStream input = getInputStream();
                     final OutputStream output = getOutputStream()) {
                 convert(input, output);
             } catch (final IOException e) {
                 throw new ConfigurationException(e);
             }
-            verbose("Wrote %s", cla.getPathOut());
+            verbose("Wrote %s", getPathOut());
         }
     }
 
     private void verbose(final String template, final Object... args) {
-        if (cla.isVerbose()) {
+        if (isVerbose()) {
             System.err.println(String.format(template, args));
         }
     }

@@ -14,16 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.log4j.config;
+package org.apache.logging.log4j.config.converter;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.TreeMap;
+import java.util.*;
+import org.apache.log4j.config.PropertiesConfiguration;
 import org.apache.log4j.helpers.OptionConverter;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Filter.Result;
@@ -32,13 +28,7 @@ import org.apache.logging.log4j.core.appender.FileAppender;
 import org.apache.logging.log4j.core.appender.NullAppender;
 import org.apache.logging.log4j.core.appender.RollingFileAppender;
 import org.apache.logging.log4j.core.config.ConfigurationException;
-import org.apache.logging.log4j.core.config.builder.api.AppenderComponentBuilder;
-import org.apache.logging.log4j.core.config.builder.api.ComponentBuilder;
-import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
-import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory;
-import org.apache.logging.log4j.core.config.builder.api.LayoutComponentBuilder;
-import org.apache.logging.log4j.core.config.builder.api.LoggerComponentBuilder;
-import org.apache.logging.log4j.core.config.builder.api.RootLoggerComponentBuilder;
+import org.apache.logging.log4j.core.config.builder.api.*;
 import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 import org.apache.logging.log4j.status.StatusLogger;
 import org.apache.logging.log4j.util.Strings;
@@ -85,8 +75,7 @@ public class Log4j1ConfigurationParser {
      * @throws ConfigurationException
      *             if the input does not contain a valid configuration
      */
-    public ConfigurationBuilder<BuiltConfiguration> buildConfigurationBuilder(final InputStream input)
-            throws IOException {
+    ConfigurationBuilder<BuiltConfiguration> buildConfigurationBuilder(final InputStream input) throws IOException {
         try {
             properties.load(input);
             final String rootCategoryValue = getLog4jValue(ROOTCATEGORY);
@@ -299,32 +288,12 @@ public class Log4j1ConfigurationParser {
             switch (layoutClass) {
                 case "org.apache.log4j.PatternLayout":
                 case "org.apache.log4j.EnhancedPatternLayout": {
-                    String pattern = getLog4jAppenderValue(name, "layout.ConversionPattern", null);
-                    if (pattern != null) {
-                        pattern = pattern
-                                // Log4j 2 and Log4j 1 level names differ for custom levels
-                                .replaceAll("%([-\\.\\d]*)p(?!\\w)", "%$1v1Level")
-                                // Log4j 2's %x (NDC) is not compatible with Log4j 1's
-                                // %x
-                                // Log4j 1: "foo bar baz"
-                                // Log4j 2: "[foo, bar, baz]"
-                                // Use %ndc to get the Log4j 1 format
-                                .replaceAll("%([-\\.\\d]*)x(?!\\w)", "%$1ndc")
-
-                                // Log4j 2's %X (MDC) is not compatible with Log4j 1's
-                                // %X
-                                // Log4j 1: "{{foo,bar}{hoo,boo}}"
-                                // Log4j 2: "{foo=bar,hoo=boo}"
-                                // Use %properties to get the Log4j 1 format
-                                .replaceAll("%([-\\.\\d]*)X(?!\\w)", "%$1properties");
-                    } else {
-                        pattern = "%m%n";
-                    }
-                    appenderBuilder.add(newPatternLayout(pattern));
+                    final String pattern = getLog4jAppenderValue(name, "layout.ConversionPattern", null);
+                    appenderBuilder.add(newPatternLayout(pattern != null ? pattern : "%m%n"));
                     break;
                 }
                 case "org.apache.log4j.SimpleLayout": {
-                    appenderBuilder.add(newPatternLayout("%v1Level - %m%n"));
+                    appenderBuilder.add(newPatternLayout("%p - %m%n"));
                     break;
                 }
                 case "org.apache.log4j.TTCCLayout": {

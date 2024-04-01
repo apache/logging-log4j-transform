@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.log4j.config;
+package org.apache.logging.log4j.config.converter;
 
 import java.io.IOException;
 import java.io.InputStream;
