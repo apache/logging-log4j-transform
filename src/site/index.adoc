@@ -25,6 +25,8 @@ include::_log4j-transform-maven-plugin.adoc[]
 
 include::_log4j-transform-maven-shade-plugin-extensions.adoc[]
 
+include::_log4j-codegen.adoc[leveloffset=+1]
+
 [#development]
 == Development
 
