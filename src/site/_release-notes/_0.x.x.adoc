@@ -69,4 +69,4 @@ This is the second release of the project.
 * Update `org.jacoco:jacoco-maven-plugin` to version `0.8.12` (https://github.com/apache/logging-log4j-transform/pull/95[95])
 * Update `org.junit:junit-bom` to version `5.10.2` (https://github.com/apache/logging-log4j-transform/pull/82[82])
 * Update `org.ow2.asm:asm-bom` to version `9.7` (https://github.com/apache/logging-log4j-transform/pull/89[89])
-* Update `org.slf4j:slf4j-api` to version `2.0.12` (https://github.com/apache/logging-log4j-transform/pull/84[84])
+* Update `org.slf4j:slf4j-api` to version `2.0.13` (https://github.com/apache/logging-log4j-transform/pull/97[97])
