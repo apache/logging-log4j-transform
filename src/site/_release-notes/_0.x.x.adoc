@@ -66,6 +66,7 @@ This is the second release of the project.
 * Update `org.apache.maven.plugins:maven-invoker-plugin` to version `3.6.1` (https://github.com/apache/logging-log4j-transform/pull/94[94])
 * Update `org.apache.maven.plugins:maven-shade-plugin` to version `3.5.2` (https://github.com/apache/logging-log4j-transform/pull/85[85])
 * Update `org.assertj:assertj-core` to version `3.25.3` (https://github.com/apache/logging-log4j-transform/pull/83[83])
+* Update `org.codehaus.plexus:plexus-utils` to version `4.0.1` (https://github.com/apache/logging-log4j-transform/pull/98[98])
 * Update `org.jacoco:jacoco-maven-plugin` to version `0.8.12` (https://github.com/apache/logging-log4j-transform/pull/95[95])
 * Update `org.junit:junit-bom` to version `5.10.2` (https://github.com/apache/logging-log4j-transform/pull/82[82])
 * Update `org.ow2.asm:asm-bom` to version `9.7` (https://github.com/apache/logging-log4j-transform/pull/89[89])
