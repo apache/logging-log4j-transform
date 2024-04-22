@@ -14,14 +14,14 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 ////
-[#log4j-transform-maven-plugin]
-== Log4j Transform Maven Plugin
+
+= Log4j Transform Maven Plugin
 
 The Transform Plugin is used to postprocess the compiled classes of your project and replace all Log4j 2.x API calls with https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/LogBuilder.html[`LogBuilder`] calls with a statically precomputed location.
 This allows you to use location information in your logs without incurring in the *expensive* runtime calls usually used to acquire it.
 
-[#log4j-transform-maven-plugin-why]
-=== Why do we need it
+[#why]
+== Why do we need it
 
 Finding the location of a logging call is a very expensive operation (a couple of microseconds).
 
@@ -143,8 +143,8 @@ By comparison, *disabling* location information on the same machine gives:
 
 |===
 
-[#log4j-transform-maven-plugin-how]
-=== How it works
+[#how]
+== How it works
 
 The working principle is very simple: every call to the Log4j 2.x API like
 [source,java]
@@ -170,16 +170,16 @@ public void helloLog() {
 
 In the current implementation locations are stored in classes whose name ends in `+++$$Log4j2$$Cache+++`, so they can not accidentally be used by XML/JSON serializers.
 
-[#log4j-transform-maven-plugin-goals]
-=== Goals
+[#goals]
+== Goals
 
 This plugin consists of a single goal:
 
-xref:#log4j-transform-maven-plugin-process-classes[`log4j-transform:process-classes`]::
+xref:#process-classes[`log4j-transform:process-classes`]::
 is bound to the process-classes phase and weaves your classes to include precomputed location information.
 
-[#log4j-transform-maven-plugin-process-classes]
-==== `log4j-transform:process-classes`
+[#process-classes]
+=== `log4j-transform:process-classes`
 
 Full name::
 
@@ -197,8 +197,8 @@ Attributes::
 * The goal is thread-safe and supports parallel builds
 * Binds by default to the http://maven.apache.org/ref/current/maven-core/lifecycles.html[lifecycle phase]: `process-classes`.
 
-[#log4j-transform-maven-plugin-process-classes-required-parameters]
-===== Required Parameters
+[#process-classes-required-parameters]
+==== Required Parameters
 
 [cols="3,3,10"]
 |===
@@ -215,8 +215,8 @@ It defaults to `${project.build.outputDirectory}`.
 It defaults to `${project.build.outputDirectory}`.
 |===
 
-[#log4j-transform-maven-plugin-process-classes-optional-parameters]
-===== Optional Parameters
+[#process-classes-optional-parameters]
+==== Optional Parameters
 
 [cols="3,3,10"]
 |===
@@ -236,8 +236,8 @@ It defaults to `${project.build.outputDirectory}`.
 It defaults to `0` and can be configured using the `lastModGranularityMs` property.
 |===
 
-[#log4j-transform-maven-plugin-usage]
-=== Usage
+[#usage]
+== Usage
 
 To use the plugin you need to declare a dependency on https://central.sonatype.com/artifact/org.apache.logging.log4j/log4j-api/2.20.0[`log4j-api`] version 2.20.0 or newer.
 

@@ -16,7 +16,8 @@
  */
 package org.apache.logging.log4j.weaver;
 
-import static org.apache.logging.log4j.weaver.Constants.*;
+import static org.apache.logging.log4j.weaver.Constants.MESSAGE_SUPPLIER_TYPE;
+import static org.apache.logging.log4j.weaver.Constants.MESSAGE_TYPE;
 
 import java.util.Collections;
 import java.util.HashMap;

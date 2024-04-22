@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entry xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://logging.apache.org/log4j/changelog"
-       xsi:schemaLocation="http://logging.apache.org/log4j/changelog https://logging.apache.org/log4j/changelog-0.1.2.xsd"
+       xmlns="https://logging.apache.org/xml/ns"
+       xsi:schemaLocation="https://logging.apache.org/xml/ns https://logging.apache.org/xml/ns/log4j-changelog-0.xsd"
        type="changed">
-  <author id="github:ppkarwasz"/>
-  <author id="github:vy"/>
-  <description format="asciidoc">Migrated `logging-parent` to version `10.2.0` and adopted its CI and `pom.xml` infrastructure</description>
+  <description format="asciidoc">Adopted the CI and `pom.xml` infrastructure from `logging-parent`</description>
 </entry>

@@ -29,8 +29,13 @@ import static org.apache.logging.log4j.weaver.Constants.STRING_TYPE;
 import static org.apache.logging.log4j.weaver.Constants.SUPPLIER_ARRAY_TYPE;
 
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;

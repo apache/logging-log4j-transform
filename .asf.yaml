@@ -17,15 +17,23 @@
 
 # `.asf.yaml` documentation: https://cwiki.apache.org/confluence/display/INFRA/Git+-+.asf.yaml+features
 
+notifications:
+  # GitHub already provides notifications for PRs and issues.
+  # Please don't duplicate that noise here!
+  commits: commits@logging.apache.org
+  pullrequests_bot_dependabot: robots@logging.apache.org
+
 github:
   description: "Tools for binary post-processing of projects using Apache Log4j."
-  homepage: https://logging.apache.org/log4j/2.x/
+  homepage: https://logging.apache.org/log4j/transform
   labels:
     - apache
     - java
     - log4j
     - log4j2
     - logging
+
+  del_branch_on_merge: true
 
   features:
     issues: true

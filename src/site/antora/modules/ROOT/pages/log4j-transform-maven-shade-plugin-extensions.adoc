@@ -14,13 +14,13 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 ////
-[#maven-shade-plugin-extensions]
-== Maven Shade Plugin Extensions
+
+= Maven Shade Plugin Extensions
 
 This project contains a collection of https://maven.apache.org/plugins/maven-shade-plugin/examples/resource-transformers.html[resource transformer]s for the Apache Maven Shade Plugin that allows you to use additional Log4j 2.x Core component modules.
 
 [#log4j-plugin-cache-transformer]
-=== Log4j Plugin Cache Transformer
+== Log4j Plugin Cache Transformer
 
 A
 https://maven.apache.org/plugins/maven-shade-plugin/examples/resource-transformers.html[resource transformer]
@@ -33,7 +33,7 @@ https://github.com/edwgiz/maven-shaded-log4j-transformer[edwgiz/maven-shaded-log
 and was donated to the Apache Software Foundation by its author.
 
 [#log4j-plugin-cache-transformer-usage]
-==== Usage
+=== Usage
 
 This resource transformer is usually used together with the `ManifestResourceTransformer` and `ServicesResourceTransformer` to integrate Log4j 2.x libraries in a shaded JAR.
 
