@@ -25,7 +25,7 @@ This allows you to use location information in your logs without incurring in th
 
 Finding the location of a logging call is a very expensive operation (a couple of microseconds).
 
-Running xref:../log4j-transform-perf/src/main/java/org/apache/logging/log4j/transform/perf/LocationBenchmark.java[`LocationBenchmark`] on a Ryzen 7 2700U laptop with Java 17 gives the following results:
+Running {project-github-url}/tree/main/log4j-transform-perf/src/main/java/org/apache/logging/log4j/transform/perf/LocationBenchmark.java[`LocationBenchmark`] on a Ryzen 7 2700U laptop with Java 17 gives the following results:
 
 [cols="1,1,1,1,1,1,1"]
 |===
