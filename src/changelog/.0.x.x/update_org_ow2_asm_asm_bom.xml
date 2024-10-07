@@ -3,6 +3,6 @@
        xmlns="https://logging.apache.org/xml/ns"
        xsi:schemaLocation="https://logging.apache.org/xml/ns https://logging.apache.org/xml/ns/log4j-changelog-0.xsd"
        type="updated">
-  <issue id="89" link="https://github.com/apache/logging-log4j-transform/pull/89"/>
-  <description format="asciidoc">Update `org.ow2.asm:asm-bom` to version `9.7`</description>
+  <issue id="133" link="https://github.com/apache/logging-log4j-transform/pull/133"/>
+  <description format="asciidoc">Update `org.ow2.asm:asm-bom` to version `9.7.1`</description>
 </entry>
