@@ -200,7 +200,7 @@ public class LocationMojo extends AbstractMojo {
         if (artifact.isPresent()) {
             log4jApi = artifact.get();
         } else {
-            getLog().info("Skipping project. Log4j is not being used.");
+            getLog().info("Skipping project. Log4j API is not being used.");
             return false;
         }
         try {
