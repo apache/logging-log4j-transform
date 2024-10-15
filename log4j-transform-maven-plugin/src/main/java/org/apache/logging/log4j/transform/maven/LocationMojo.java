@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.transform.maven.scan.ClassFileInclusionScanner;
@@ -106,7 +107,9 @@ public class LocationMojo extends AbstractMojo {
             getLog().info("Skipping project with packaging \"pom\".");
             return;
         }
-        validateLog4jVersion();
+        if (!validateLog4jVersion()) {
+            return;
+        }
 
         final Path sourceDirectory = this.sourceDirectory.toPath();
         final Path outputDirectory = this.outputDirectory.toPath();
@@ -189,23 +192,32 @@ public class LocationMojo extends AbstractMojo {
         }
     }
 
-    private void validateLog4jVersion() throws MojoExecutionException {
-        Artifact log4jApi = project.getArtifacts().stream()
+    private boolean validateLog4jVersion() throws MojoExecutionException {
+        Optional<Artifact> artifact = project.getArtifacts().stream()
                 .filter(a -> LOG4J_GROUP_ID.equals(a.getGroupId()) && LOG4J_API_ARTIFACT_ID.equals(a.getArtifactId()))
-                .findAny()
-                .orElseThrow(() -> new MojoExecutionException("Missing `log4j-api` dependency."));
+                .findAny();
+        Artifact log4jApi;
+        if (artifact.isPresent()) {
+            log4jApi = artifact.get();
+        } else {
+            getLog().info("Skipping project. Log4j API is not being used.");
+            return false;
+        }
         try {
             if (MIN_SUPPORTED_VERSION.compareTo(log4jApi.getSelectedVersion()) > 0) {
-                throw new MojoExecutionException("Log4j2 API version " + MIN_SUPPORTED_VERSION
-                        + " required. Selected version: " + log4jApi.getSelectedVersion());
+                getLog().error("Log4j2 API version " + MIN_SUPPORTED_VERSION + " required. Selected version: "
+                        + log4jApi.getSelectedVersion());
+                return false;
             }
             // Transitive dependency
             if (!project.getDependencyArtifacts().contains(log4jApi)) {
                 getLog().warn("Log4j2 API should not be a transitive dependency.");
             }
         } catch (OverConstrainedVersionException e) {
-            throw new MojoExecutionException("Can not determine `log4j-api` version.", e);
+            getLog().error("Can not determine `log4j-api` version. " + e.getMessage());
+            return false;
         }
+        return true;
     }
 
     private ClassLoader getProjectDependencies() throws MojoExecutionException {
