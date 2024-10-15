@@ -205,15 +205,17 @@ public class LocationMojo extends AbstractMojo {
         }
         try {
             if (MIN_SUPPORTED_VERSION.compareTo(log4jApi.getSelectedVersion()) > 0) {
-                throw new MojoExecutionException("Log4j2 API version " + MIN_SUPPORTED_VERSION
-                        + " required. Selected version: " + log4jApi.getSelectedVersion());
+                getLog().error("Log4j2 API version " + MIN_SUPPORTED_VERSION + " required. Selected version: "
+                        + log4jApi.getSelectedVersion());
+                return false;
             }
             // Transitive dependency
             if (!project.getDependencyArtifacts().contains(log4jApi)) {
                 getLog().warn("Log4j2 API should not be a transitive dependency.");
             }
         } catch (OverConstrainedVersionException e) {
-            throw new MojoExecutionException("Can not determine `log4j-api` version.", e);
+            getLog().error("Can not determine `log4j-api` version. " + e.getMessage());
+            return false;
         }
         return true;
     }
