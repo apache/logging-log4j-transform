@@ -35,7 +35,7 @@
     <Main-Class>org.apache.logging.log4j.codegen.Generate</Main-Class>
 
     <!-- Plugin versions -->
-    <maven-shade-plugin.version>3.4.1</maven-shade-plugin.version>
+    <maven-shade-plugin.version>3.6.0</maven-shade-plugin.version>
 
     <!-- Dependencies -->
     <picocli.version>4.7.5</picocli.version>
