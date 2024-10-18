@@ -38,7 +38,7 @@
     <maven-shade-plugin.version>3.4.1</maven-shade-plugin.version>
 
     <!-- Dependencies -->
-    <picocli.version>4.7.5</picocli.version>
+    <picocli.version>4.7.6</picocli.version>
   </properties>
 
   <dependencies>
