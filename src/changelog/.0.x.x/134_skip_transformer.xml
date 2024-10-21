@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="https://logging.apache.org/xml/ns"
+       xsi:schemaLocation="https://logging.apache.org/xml/ns https://logging.apache.org/xml/ns/log4j-changelog-0.xsd"
+       type="fixed">
+  <issue id="134" link="https://github.com/apache/logging-log4j-transform/pull/134"/>
+  <description format="asciidoc">Instead of throwing an exception, change the transformer to log an
+    info or warn message when log4j-api is missing or is the wrong version.</description>
+</entry>
