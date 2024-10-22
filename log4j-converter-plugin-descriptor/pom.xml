@@ -24,40 +24,25 @@
     <relativePath>../log4j-transform-parent</relativePath>
   </parent>
 
-  <artifactId>log4j-codegen</artifactId>
-  <name>Apache Log4j Code generator</name>
-  <description>Generates wrappers for Log4j code loggers.</description>
+  <artifactId>log4j-converter-plugins-cache</artifactId>
+  <name>Apache Log4j plugins cache to JSON converter</name>
+  <description>Converts `Log4j2Plugins.dat` files from and to JSON.</description>
 
   <properties>
     <!-- Disabling `bnd-baseline-maven-plugin`, since we don't have a release yet to compare against. -->
     <bnd.baseline.fail.on.missing>false</bnd.baseline.fail.on.missing>
 
-    <Main-Class>org.apache.logging.log4j.codegen.Generate</Main-Class>
+    <Main-Class>org.apache.logging.log4j.converter.plugins.PluginCacheConverter</Main-Class>
 
-    <!-- Plugin versions -->
-    <maven-shade-plugin.version>3.4.1</maven-shade-plugin.version>
-
-    <!-- Dependencies -->
-    <picocli.version>4.7.6</picocli.version>
+    <!-- Dependency versions -->
+    <jackson.version>2.18.0</jackson.version>
   </properties>
 
   <dependencies>
 
     <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.annotation.bundle</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.annotation.versioning</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.github.spotbugs</groupId>
-      <artifactId>spotbugs-annotations</artifactId>
+      <groupId>org.jspecify</groupId>
+      <artifactId>jspecify</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -67,23 +52,16 @@
       <artifactId>picocli</artifactId>
     </dependency>
 
-    <!-- Test dependencies -->
     <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <scope>test</scope>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <scope>test</scope>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
     </dependency>
 
   </dependencies>
