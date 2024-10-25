@@ -48,6 +48,11 @@
 
     <!-- Compile dependencies: the artifact is shaded, so limit these. -->
     <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>info.picocli</groupId>
       <artifactId>picocli</artifactId>
     </dependency>
@@ -66,4 +71,55 @@
 
   </dependencies>
 
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>create-shaded-resources</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>prepare-package</phase>
+            <configuration>
+              <inlineDescriptors>
+                <assembly>
+                  <id>shaded-resources</id>
+                  <formats>
+                    <format>jar</format>
+                  </formats>
+                  <baseDirectory>/</baseDirectory>
+                  <fileSets>
+                    <fileSet>
+                      <directory>src/main/shaded-resources</directory>
+                      <outputDirectory>/</outputDirectory>
+                    </fileSet>
+                  </fileSets>
+                </assembly>
+              </inlineDescriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>shade-jar-with-dependencies</id>
+            <configuration>
+              <extraJars>
+                <jar>${project.build.directory}/${project.build.finalName}-shaded-resources.jar</jar>
+              </extraJars>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
 </project>

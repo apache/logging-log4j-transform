@@ -45,12 +45,16 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Stream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class PluginDescriptors {
 
     private static final String PLUGIN_BUILDER_FACTORY =
             "org.apache.logging.log4j.core.config.plugins.PluginBuilderFactory";
     private static final String PLUGIN_FACTORY = "org.apache.logging.log4j.core.config.plugins.PluginFactory";
+
+    private static final Logger LOGGER = LogManager.getLogger(PluginDescriptors.class);
 
     public static final class PluginDescriptor {
         private final Map<String, Namespace> namespacesByName;
@@ -186,9 +190,20 @@ public final class PluginDescriptors {
         }
 
         Namespace withBuilderHierarchy(final ClassLoader classLoader) {
-            final Map<String, Plugin> pluginsByClassName = new TreeMap<>(this.pluginsByClassName);
-            pluginsByClassName.replaceAll((k, v) -> v.withBuilderHierarchy(classLoader));
-            return new Namespace(name, Collections.unmodifiableMap(pluginsByClassName));
+            final Map<String, Plugin> newPluginsByClassName = new TreeMap<>();
+            pluginsByClassName.forEach((k, v) -> {
+                try {
+                    newPluginsByClassName.put(k, v.withBuilderHierarchy(classLoader));
+                } catch (final PluginNotFoundException e) {
+                    // No need to bother the user with the full cause
+                    // Since we use Simple Logger, we only print the NoClassDefFound message.
+                    LOGGER.warn(
+                            "Skipping plugin {} because it can not be loaded: {}",
+                            e.getMessage(),
+                            e.getCause().toString());
+                }
+            });
+            return new Namespace(name, Collections.unmodifiableMap(newPluginsByClassName));
         }
 
         private int countPluginNames(final Collection<Plugin> plugins) {
@@ -372,8 +387,7 @@ public final class PluginDescriptors {
          * @return A new plugin with the computed builder hierarchy.
          */
         public Plugin withBuilderHierarchy(final ClassLoader classLoader) {
-            final List<String> builderHierarchy =
-                    Collections.unmodifiableList(findBuilderClassHierarchy(classLoader, className));
+            final List<String> builderHierarchy = Collections.unmodifiableList(findBuilderClassHierarchy(classLoader));
             return new Plugin(pluginNames, elementName, className, printable, defer, builderHierarchy);
         }
 
@@ -388,7 +402,7 @@ public final class PluginDescriptors {
                     + builderHierarchy + '}';
         }
 
-        private static List<String> findBuilderClassHierarchy(final ClassLoader classLoader, final String className) {
+        private List<String> findBuilderClassHierarchy(final ClassLoader classLoader) {
             try {
                 final Class<?> pluginClass = classLoader.loadClass(className);
                 for (final Method method : pluginClass.getMethods()) {
@@ -403,8 +417,8 @@ public final class PluginDescriptors {
                     }
                 }
                 return Collections.emptyList();
-            } catch (final ClassNotFoundException e) {
-                throw new IllegalArgumentException("Unable to find class " + className, e);
+            } catch (final ClassNotFoundException | LinkageError e) {
+                throw new PluginNotFoundException(pluginNames, e);
             }
         }
 
@@ -438,6 +452,13 @@ public final class PluginDescriptors {
                 output.add(parser.getText());
             }
             assertArrayEnd(parser);
+        }
+    }
+
+    private static final class PluginNotFoundException extends RuntimeException {
+
+        private PluginNotFoundException(final Set<String> pluginNames, final Throwable cause) {
+            super(pluginNames.toString(), cause);
         }
     }
 }
