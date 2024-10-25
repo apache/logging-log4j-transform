@@ -256,7 +256,7 @@ public final class PluginDescriptors {
         }
 
         public Set<String> getPluginNames() {
-            return pluginNames;
+            return Collections.unmodifiableSet(pluginNames);
         }
 
         public String getClassName() {
@@ -264,7 +264,7 @@ public final class PluginDescriptors {
         }
 
         public List<String> getBuilderHierarchy() {
-            return builderHierarchy;
+            return Collections.unmodifiableList(builderHierarchy);
         }
 
         static Plugin fromDataInput(final DataInput dataInput) throws IOException {

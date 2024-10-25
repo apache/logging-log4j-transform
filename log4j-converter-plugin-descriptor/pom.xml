@@ -24,9 +24,9 @@
     <relativePath>../log4j-transform-parent</relativePath>
   </parent>
 
-  <artifactId>log4j-converter-plugins-cache</artifactId>
-  <name>Apache Log4j plugins cache to JSON converter</name>
-  <description>Converts `Log4j2Plugins.dat` files from and to JSON.</description>
+  <artifactId>log4j-converter-plugin-descriptor</artifactId>
+  <name>Apache Log4j plugin descriptor tools</name>
+  <description>Tools to manipulate `Log4j2Plugins.dat` plugin descriptors and synchronize them with GraalVM reachability metadata.</description>
 
   <properties>
     <!-- Disabling `bnd-baseline-maven-plugin`, since we don't have a release yet to compare against. -->

@@ -24,6 +24,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 
 public class ReflectConfigFilter {
@@ -33,7 +34,7 @@ public class ReflectConfigFilter {
     private final Set<String> includeClassNames;
 
     public ReflectConfigFilter(final Set<String> includeClassNames) {
-        this.includeClassNames = includeClassNames;
+        this.includeClassNames = new HashSet<>(includeClassNames);
     }
 
     public void filter(final JsonParser input, final JsonGenerator output) throws IOException {
@@ -47,6 +48,7 @@ public class ReflectConfigFilter {
                 final String name = nameNode.asText();
                 // Include all the plugin visitors
                 if (name.startsWith("org.apache.logging.log4j.core.config.plugins.visitors")
+                        || name.startsWith("org.apache.logging.log4j.core.config.plugins.validation.validators")
                         || includeClassNames.contains(name)) {
                     output.writeTree(node);
                 }
