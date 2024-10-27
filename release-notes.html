@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Release notes :: Apache Log4j Transform</title>
+    <link rel="canonical" href="https://logging.apache.org/log4j/transform/release-notes.html">
+    <meta name="generator" content="Antora 3.2.0-alpha.6">
+<link rel="stylesheet" href="./_/css/site.css">
+<link rel="icon" href="./_/../_images/favicon.ico" type="image/x-icon">
+<!-- `@asciidoctor/tabs` extension styles -->
+<link rel="stylesheet" href="./_/css/vendor/tabs.css">
+<style>
+  /* Swap colors of `IMPORTANT` and `WARNING` blocks */
+  .doc .admonitionblock.important .icon { background-color: #f70; }
+  .doc .admonitionblock.warning .icon { background-color: #e40046; }
+  /* Default `h4`, `h5`, and `h6` are smaller than the normal text, fix header font sizing: */
+  .doc h1 { font-size: 1.9rem; }
+  .doc h2 { font-size: 1.7rem; }
+  .doc h3 { font-size: 1.5rem; font-weight: 400; }
+  .doc h4 { font-size: 1.3rem; font-weight: 500; }
+  .doc h5 { font-size: 1.1rem; font-weight: 500; text-decoration: underline; }
+  .doc h6 { font-size: 0.9rem; font-weight: 500; text-decoration: underline; }
+  /* Default `code`, `pre`, and `.colist` (source code annotations) fonts are too big, adjust them: */
+  .doc .colist>table code, .doc p code, .doc thead code { font-size: 0.8em; }
+  .doc pre { font-size: 0.7rem; }
+  .doc .colist { font-size: 0.75rem; }
+  /* Make links more visible: */
+  .doc a { text-decoration: underline; }
+  .doc a code { text-decoration: underline; color: #1565c0; }
+  /* Tab header fonts aren't rendered good, adjusting the font weight: */
+  .tablist > ul li { font-weight: 500; }
+  /* `page-toclevels` greater than 4 are not supported by Antora UI, patching it: */
+  .toc .toc-menu li[data-level="4"] a {
+    padding-left: 2.75rem;
+  }
+  /* Replace the default highlight.js color for strings from red (unnecessarily signaling something negative) to green: */
+  .hljs-string {
+    color: #0f8532;
+  }
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <span class="navbar-item title">Apache Log4j Transform</span>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://logging.apache.org">a subproject of&nbsp;<strong>Apache Logging Services</strong></a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="ROOT" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="index.html">Home</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Components</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="log4j-transform-maven-plugin.html">Log4j Transform Maven Plugin</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="log4j-transform-maven-shade-plugin-extensions.html">Maven Shade Plugin Extensions</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="development.html">Development</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="release-notes.html">Release notes</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="https://logging.apache.org/download.html">Download</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="https://logging.apache.org/support.html">Support</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="https://logging.apache.org/security.html">Security</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="release-notes.html">Release notes</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="https://github.com/apache/logging-log4j-transform/edit/main/src/site/antora/modules/ROOT/pages/release-notes.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="1">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Release notes</h1>
+<div class="sect1">
+<h2 id="release-notes-0-2-0"><a class="anchor" href="#release-notes-0-2-0"></a>0.2.0</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Release date</dt>
+<dd>
+<p>2024-10-27</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>This is the second release of the project.</p>
+</div>
+<div class="sect2">
+<h3 id="release-notes-0-2-0-added"><a class="anchor" href="#release-notes-0-2-0-added"></a>Added</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Started generating CycloneDX SBOM with the recent update of <code>logging-parent</code> to version <code>10.2.0</code></p>
+</li>
+<li>
+<p>Started publishing <a href="https://logging.apache.org/log4j/transform">the project website</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="release-notes-0-2-0-changed"><a class="anchor" href="#release-notes-0-2-0-changed"></a>Changed</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Website is migrated to Antora (<a href="https://github.com/apache/logging-log4j2/pull/2443">apache/logging-log4j2#2443</a>)</p>
+</li>
+<li>
+<p>Adopted the CI and <code>pom.xml</code> infrastructure from <code>logging-parent</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="release-notes-0-2-0-fixed"><a class="anchor" href="#release-notes-0-2-0-fixed"></a>Fixed</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Instead of throwing an exception, change the transformer to log an info or warn message when log4j-api is missing or is the wrong version. (<a href="https://github.com/apache/logging-log4j-transform/pull/134">134</a>)</p>
+</li>
+<li>
+<p>Fixed transformation of a single <code>Log4j2Plugins.dat</code> plugin. (<a href="https://github.com/apache/logging-log4j-transform/pull/87">87</a>)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="release-notes-0-2-0-updated"><a class="anchor" href="#release-notes-0-2-0-updated"></a>Updated</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Update <code>apache/logging-parent</code> to version `` (<a href="https://github.com/apache/logging-log4j-transform/pull/128">128</a>)</p>
+</li>
+<li>
+<p>Update <code>commons-io:commons-io</code> to version <code>2.17.0</code> (<a href="https://github.com/apache/logging-log4j-transform/pull/126">126</a>)</p>
+</li>
+<li>
+<p>Update <code>commons-logging:commons-logging</code> to version <code>1.3.4</code> (<a href="https://github.com/apache/logging-log4j-transform/pull/119">119</a>)</p>
+</li>
+<li>
+<p>Update <code>org.apache.commons:commons-lang3</code> to version <code>3.17.0</code> (<a href="https://github.com/apache/logging-log4j-transform/pull/122">122</a>)</p>
+</li>
+<li>
+<p>Update <code>org.apache.logging.log4j:log4j-bom</code> to version <code>2.24.1</code> (<a href="https://github.com/apache/logging-log4j-transform/pull/131">131</a>)</p>
+</li>
+<li>
+<p>Update <code>org.apache.logging:logging-parent</code> to version <code>11.3.0</code> (<a href="https://github.com/apache/logging-log4j-transform/pull/127">127</a>)</p>
+</li>
+<li>
+<p>Update <code>org.apache.maven:maven-core</code> to version <code>3.9.9</code> (<a href="https://github.com/apache/logging-log4j-transform/pull/120">120</a>)</p>
+</li>
+<li>
+<p>Update <code>org.apache.maven.plugins:maven-invoker-plugin</code> to version <code>3.6.1</code> (<a href="https://github.com/apache/logging-log4j-transform/pull/94">94</a>)</p>
+</li>
+<li>
+<p>Update <code>org.apache.maven.plugins:maven-shade-plugin</code> to version <code>3.6.0</code> (<a href="https://github.com/apache/logging-log4j-transform/pull/108">108</a>)</p>
+</li>
+<li>
+<p>Update <code>org.assertj:assertj-core</code> to version <code>3.26.3</code> (<a href="https://github.com/apache/logging-log4j-transform/pull/112">112</a>)</p>
+</li>
+<li>
+<p>Update <code>org.codehaus.plexus:plexus-utils</code> to version <code>4.0.2</code> (<a href="https://github.com/apache/logging-log4j-transform/pull/129">129</a>)</p>
+</li>
+<li>
+<p>Update <code>org.jacoco:jacoco-maven-plugin</code> to version <code>0.8.12</code> (<a href="https://github.com/apache/logging-log4j-transform/pull/95">95</a>)</p>
+</li>
+<li>
+<p>Update <code>org.junit:junit-bom</code> to version <code>5.11.2</code> (<a href="https://github.com/apache/logging-log4j-transform/pull/132">132</a>)</p>
+</li>
+<li>
+<p>Update <code>org.ow2.asm:asm-bom</code> to version <code>9.7.1</code> (<a href="https://github.com/apache/logging-log4j-transform/pull/133">133</a>)</p>
+</li>
+<li>
+<p>Update <code>org.slf4j:slf4j-api</code> to version <code>2.0.16</code> (<a href="https://github.com/apache/logging-log4j-transform/pull/117">117</a>)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="release-notes-0-1-0"><a class="anchor" href="#release-notes-0-1-0"></a>0.1.0</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Release date</dt>
+<dd>
+<p>2023-05-05</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>This is the first release of the project.</p>
+</div>
+<div class="sect2">
+<h3 id="release-notes-0-1-0-added"><a class="anchor" href="#release-notes-0-1-0-added"></a>Added</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Added <code>log4j-transform-maven-plugin</code> bytecode transformation tool to provide location information without reflection (<a href="https://issues.apache.org/jira/browse/LOG4J2-3638">LOG4J2-3638</a>)</p>
+</li>
+<li>
+<p>Added <code>log4j-transform-maven-shade-plugin-extensions</code> resource transformer for the Maven Shade Plugin to merge <code>Log4j2Plugins.dat</code> plugin caches (<a href="https://issues.apache.org/jira/browse/LOG4J2-673">LOG4J2-673</a>)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>
+    Copyright © 1999-2024 <a href="https://www.apache.org/">The Apache Software Foundation</a>.
+    Licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache Software License, Version 2.0</a>.
+    Please read our <a href="https://privacy.apache.org/policies/privacy-policy-public.html">privacy policy</a>.
+  </p>
+  <p>
+    Apache, Log4j, and the Apache feather logo are trademarks or registered trademarks of The Apache Software Foundation.
+    Oracle and Java are registered trademarks of Oracle and/or its affiliates.
+    Other names may be trademarks of their respective owners.
+  </p>
+</footer>
+<script id="site-script" src="./_/js/site.js" data-ui-root-path="./_"></script>
+<script async src="./_/js/vendor/highlight.js"></script>
+<!-- `@asciidoctor/tabs` extension scripts -->
+<script async src="./_/js/vendor/tabs.js"></script>
+  </body>
+</html>
