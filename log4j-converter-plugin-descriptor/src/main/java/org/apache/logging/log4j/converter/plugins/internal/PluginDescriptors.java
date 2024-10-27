@@ -54,7 +54,7 @@ public final class PluginDescriptors {
             "org.apache.logging.log4j.core.config.plugins.PluginBuilderFactory";
     private static final String PLUGIN_FACTORY = "org.apache.logging.log4j.core.config.plugins.PluginFactory";
 
-    private static final Logger LOGGER = LogManager.getLogger(PluginDescriptors.class);
+    private static final Logger logger = LogManager.getLogger(PluginDescriptors.class);
 
     public static final class PluginDescriptor {
         private final Map<String, Namespace> namespacesByName;
@@ -197,7 +197,7 @@ public final class PluginDescriptors {
                 } catch (final PluginNotFoundException e) {
                     // No need to bother the user with the full cause
                     // Since we use Simple Logger, we only print the NoClassDefFound message.
-                    LOGGER.warn(
+                    logger.warn(
                             "Skipping plugin {} because it can not be loaded: {}",
                             e.getMessage(),
                             e.getCause().toString());

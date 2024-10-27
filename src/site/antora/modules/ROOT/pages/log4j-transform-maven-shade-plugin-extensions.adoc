@@ -20,7 +20,7 @@
 This project contains a collection of https://maven.apache.org/plugins/maven-shade-plugin/examples/resource-transformers.html[resource transformer]s for the Apache Maven Shade Plugin that allows you to use additional Log4j 2.x Core component modules.
 
 [#log4j-plugin-cache-transformer]
-== Log4j Plugin Cache Transformer
+== Log4j Plugin Descriptor Transformer
 
 A
 https://maven.apache.org/plugins/maven-shade-plugin/examples/resource-transformers.html[resource transformer]
