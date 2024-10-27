@@ -64,6 +64,7 @@ jobs:
           whoami: ${{ github.ref_name }}-out
           subdir: content/log4j/transform
       target-branch: ${{ github.ref_name }}-out
+      install-required: true
 
   export-version:
     if: github.repository == 'apache/logging-log4j-transform' && startsWith(github.ref_name, 'release/')
