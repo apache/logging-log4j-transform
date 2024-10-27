@@ -54,8 +54,8 @@ RELEASE_NOTES_FILE="$SCRIPT_DIR/../target/generated-site/antora/modules/ROOT/pag
 
 dump_release_notes() {
     awk "f{print} /^Release date::/{f=1}" "$RELEASE_NOTES_FILE" \
-        | sed -r -e 's|'$PROJECT_REPO'/(issues|pull)/[0-9]+\[([0-9]+)\]|#\2|g
-                     s|https://github.com/([^/]+)/([^/]+)/(pull|issues)/([0-9]+)\[(\1/\2#\4)\]|\5|g'
+        | sed -r -e 's!'$PROJECT_REPO'/(issues|pull)/[0-9]+\[([0-9]+)\]!#\2!g
+                     s!https://github.com/([^/]+)/([^/]+)/(pull|issues)/([0-9]+)\[(\1/\2#\4)\]!\5!g'
 }
 
 case $1 in
