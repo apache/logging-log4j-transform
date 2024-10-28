@@ -409,8 +409,8 @@ public final class PluginDescriptors {
                     for (final Annotation annotation : method.getAnnotations()) {
                         switch (annotation.annotationType().getName()) {
                             case PLUGIN_FACTORY:
-                                // No need to search further, there is no builder
-                                return Collections.emptyList();
+                                // Continue the search until apache/logging-log4j2#3126 is fixed.
+                                break;
                             case PLUGIN_BUILDER_FACTORY:
                                 return computeClassHierarchy(findBuilderClass(method.getGenericReturnType()));
                         }
