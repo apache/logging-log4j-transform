@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>https://logging.apache.org/log4j/transform/cli.html</loc>
+<lastmod>2024-10-28T11:34:36.033Z</lastmod>
+</url>
+<url>
 <loc>https://logging.apache.org/log4j/transform/development.html</loc>
-<lastmod>2024-10-15T23:07:27.280Z</lastmod>
+<lastmod>2024-10-28T11:34:36.033Z</lastmod>
 </url>
 <url>
 <loc>https://logging.apache.org/log4j/transform/index.html</loc>
-<lastmod>2024-10-15T23:07:27.280Z</lastmod>
+<lastmod>2024-10-28T11:34:36.033Z</lastmod>
 </url>
 <url>
 <loc>https://logging.apache.org/log4j/transform/log4j-transform-maven-plugin.html</loc>
-<lastmod>2024-10-15T23:07:27.280Z</lastmod>
+<lastmod>2024-10-28T11:34:36.033Z</lastmod>
 </url>
 <url>
 <loc>https://logging.apache.org/log4j/transform/log4j-transform-maven-shade-plugin-extensions.html</loc>
-<lastmod>2024-10-15T23:07:27.280Z</lastmod>
+<lastmod>2024-10-28T11:34:36.033Z</lastmod>
 </url>
 <url>
 <loc>https://logging.apache.org/log4j/transform/release-notes.html</loc>
-<lastmod>2024-10-15T23:07:27.280Z</lastmod>
+<lastmod>2024-10-28T11:34:36.033Z</lastmod>
 </url>
 </urlset>
