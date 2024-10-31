@@ -47,6 +47,7 @@ jobs:
           whoami: ${{ github.ref_name }}-site-stg-out
           subdir: content/log4j/transform
       target-branch: ${{ github.ref_name }}-site-stg-out
+      install-required: true
 
   deploy-site-pro:
     if: github.repository == 'apache/logging-log4j-transform' && github.ref_name == 'main-site-pro'
@@ -64,6 +65,7 @@ jobs:
           whoami: ${{ github.ref_name }}-out
           subdir: content/log4j/transform
       target-branch: ${{ github.ref_name }}-out
+      install-required: true
 
   export-version:
     if: github.repository == 'apache/logging-log4j-transform' && startsWith(github.ref_name, 'release/')
@@ -93,3 +95,4 @@ jobs:
           whoami: ${{ github.ref_name }}-site-stg-out
           subdir: content/log4j/transform-${{ needs.export-version.outputs.version }}
       target-branch: ${{ github.ref_name }}-site-stg-out
+      install-required: true
