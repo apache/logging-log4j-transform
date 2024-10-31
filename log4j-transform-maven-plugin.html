@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Log4j Transform Maven Plugin :: Apache Log4j Transform</title>
+    <link rel="canonical" href="https://logging.apache.org/log4j/transform/log4j-transform-maven-plugin.html">
+    <meta name="generator" content="Antora 3.2.0-alpha.6">
+<link rel="stylesheet" href="./_/css/site.css">
+<link rel="icon" href="./_/../_images/favicon.ico" type="image/x-icon">
+<!-- `@asciidoctor/tabs` extension styles -->
+<link rel="stylesheet" href="./_/css/vendor/tabs.css">
+<style>
+  /* Swap colors of `IMPORTANT` and `WARNING` blocks */
+  .doc .admonitionblock.important .icon { background-color: #f70; }
+  .doc .admonitionblock.warning .icon { background-color: #e40046; }
+  /* Default `h4`, `h5`, and `h6` are smaller than the normal text, fix header font sizing: */
+  .doc h1 { font-size: 1.9rem; }
+  .doc h2 { font-size: 1.7rem; }
+  .doc h3 { font-size: 1.5rem; font-weight: 400; }
+  .doc h4 { font-size: 1.3rem; font-weight: 500; }
+  .doc h5 { font-size: 1.1rem; font-weight: 500; text-decoration: underline; }
+  .doc h6 { font-size: 0.9rem; font-weight: 500; text-decoration: underline; }
+  /* Default `code`, `pre`, and `.colist` (source code annotations) fonts are too big, adjust them: */
+  .doc .colist>table code, .doc p code, .doc thead code { font-size: 0.8em; }
+  .doc pre { font-size: 0.7rem; }
+  .doc .colist { font-size: 0.75rem; }
+  /* Make links more visible: */
+  .doc a { text-decoration: underline; }
+  .doc a code { text-decoration: underline; color: #1565c0; }
+  /* Tab header fonts aren't rendered good, adjusting the font weight: */
+  .tablist > ul li { font-weight: 500; }
+  /* `page-toclevels` greater than 4 are not supported by Antora UI, patching it: */
+  .toc .toc-menu li[data-level="4"] a {
+    padding-left: 2.75rem;
+  }
+  /* Replace the default highlight.js color for strings from red (unnecessarily signaling something negative) to green: */
+  .hljs-string {
+    color: #0f8532;
+  }
+</style>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <span class="navbar-item title">Apache Log4j Transform</span>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://logging.apache.org">a subproject of&nbsp;<strong>Apache Logging Services</strong></a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="ROOT" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="index.html">Home</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Components</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="log4j-transform-maven-plugin.html">Log4j Transform Maven Plugin</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="log4j-transform-maven-shade-plugin-extensions.html">Maven Shade Plugin Extensions</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="development.html">Development</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="release-notes.html">Release notes</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="https://logging.apache.org/download.html">Download</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="https://logging.apache.org/support.html">Support</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="https://logging.apache.org/security.html">Security</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li>Components</li>
+    <li><a href="log4j-transform-maven-plugin.html">Log4j Transform Maven Plugin</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="https://github.com/apache/logging-log4j-transform/edit/main/src/site/antora/modules/ROOT/pages/log4j-transform-maven-plugin.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Log4j Transform Maven Plugin</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Transform Plugin is used to postprocess the compiled classes of your project and replace all Log4j 2.x API calls with <a href="https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/LogBuilder.html"><code>LogBuilder</code></a> calls with a statically precomputed location.
+This allows you to use location information in your logs without incurring in the <strong>expensive</strong> runtime calls usually used to acquire it.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="why"><a class="anchor" href="#why"></a>Why do we need it</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Finding the location of a logging call is a very expensive operation (a couple of microseconds).</p>
+</div>
+<div class="paragraph">
+<p>Running <a href="https://github.com/apache/logging-log4j-transform/tree/main/log4j-transform-perf/src/main/java/org/apache/logging/log4j/transform/perf/LocationBenchmark.java"><code>LocationBenchmark</code></a> on a Ryzen 7 2700U laptop with Java 17 gives the following results:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Logging interface</th>
+<th class="tableblock halign-left valign-top">Sync/async logger</th>
+<th class="tableblock halign-left valign-top">No. threads</th>
+<th class="tableblock halign-left valign-top">Precomputed location</th>
+<th class="tableblock halign-left valign-top">Score</th>
+<th class="tableblock halign-left valign-top">Error</th>
+<th class="tableblock halign-left valign-top">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/LogBuilder.html"><code>LogBuilder</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sync</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">202343,624</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±719,875</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ops/s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/LogBuilder.html"><code>LogBuilder</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sync</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">68449,813</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±5086,148</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ops/s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html"><code>Logger</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sync</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">202579,793</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±547,961</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ops/s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html"><code>Logger</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sync</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100105,246</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±13748,554</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ops/s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html"><code>Logger</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">async</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">726877,012</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±38214,575</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ops/s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html"><code>Logger</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">async</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">440245,135</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±4849,946</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ops/s</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The figures show a performance bump of around 5 µs per logging statement when
+<a href="https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html"><code>Logger</code></a>
+is used and a bump of around 9 µs per logging statement when
+<a href="https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/LogBuilder.html"><code>LogBuilder</code></a>
+is used.</p>
+</div>
+<div class="paragraph">
+<p>By comparison, <strong>disabling</strong> location information on the same machine gives:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Logging interface</th>
+<th class="tableblock halign-left valign-top">Sync/async logger</th>
+<th class="tableblock halign-left valign-top">No. threads</th>
+<th class="tableblock halign-left valign-top">Precomputed location</th>
+<th class="tableblock halign-left valign-top">Score</th>
+<th class="tableblock halign-left valign-top">Error</th>
+<th class="tableblock halign-left valign-top">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/LogBuilder.html"><code>LogBuilder</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sync</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">234666,556</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±19759,779</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ops/s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/LogBuilder.html"><code>LogBuilder</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sync</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">212562,315</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±3631,670</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ops/s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html"><code>Logger</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sync</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">210751,730</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±1508,148</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ops/s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html"><code>Logger</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sync</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">220837,404</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±13248,184</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ops/s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html"><code>Logger</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">async</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">743467,533</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±38046,044</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ops/s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://logging.apache.org/log4j/2.x/log4j-api/apidocs/org/apache/logging/log4j/Logger.html"><code>Logger</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">async</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">776778,635</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±38878,794</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ops/s</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how"><a class="anchor" href="#how"></a>How it works</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The working principle is very simple: every call to the Log4j 2.x API like</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public void helloLog() {
+    logger.info(MarkerManager.getMarker("NET"), "Sending {} bytes of data.", 1000);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>is rewritten at a bytecode level into an equivalent <code>LogBuilder</code> call:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">private static final StackTraceElement[] locations = {
+        new StackTraceElement("org.apache.logging.log4j.HelloWorld", "HelloWorld.java", "helloLog", 1234)
+};
+
+public void helloLog() {
+    logger.atInfo()
+          .withLocation(locations[0])
+          .withMarker(MarkerManager.getMarker("NET"))
+          .log("Sending {} bytes of data.", 1000);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the current implementation locations are stored in classes whose name ends in <code>$$Log4j2$$Cache</code>, so they can not accidentally be used by XML/JSON serializers.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="goals"><a class="anchor" href="#goals"></a>Goals</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This plugin consists of a single goal:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><a href="#process-classes"><code>log4j-transform:process-classes</code></a></dt>
+<dd>
+<p>is bound to the process-classes phase and weaves your classes to include precomputed location information.</p>
+</dd>
+</dl>
+</div>
+<div class="sect2">
+<h3 id="process-classes"><a class="anchor" href="#process-classes"></a><code>log4j-transform:process-classes</code></h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Full name</dt>
+<dd>
+<p><code>org.apache.logging.log4j:log4j-transform-maven-plugin:0.2.0:process-classes</code></p>
+</dd>
+<dt class="hdlist1">Description</dt>
+<dd>
+<p>Generates static location information of Log4j 2.x API calls in the project classes.
+The resulting bytecode will not rely on runtime resolution of the location information.</p>
+</dd>
+<dt class="hdlist1">Attributes</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Requires a Maven project to be executed</p>
+</li>
+<li>
+<p>Requires dependency resolution of artifacts in scope: <code>&lt;code&gt;compile&lt;/code&gt;</code></p>
+</li>
+<li>
+<p>The goal is thread-safe and supports parallel builds</p>
+</li>
+<li>
+<p>Binds by default to the <a href="http://maven.apache.org/ref/current/maven-core/lifecycles.html">lifecycle phase</a>: <code>process-classes</code>.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+<div class="sect3">
+<h4 id="process-classes-required-parameters"><a class="anchor" href="#process-classes-required-parameters"></a>Required Parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 18.75%;">
+<col style="width: 18.75%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>&lt;sourceDirectory&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>File</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The directory containing classes to be processed.
+It defaults to <code>${project.build.outputDirectory}</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>&lt;sourceDirectory&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>File</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The directory where woven classes will be written.
+It defaults to <code>${project.build.outputDirectory}</code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="process-classes-optional-parameters"><a class="anchor" href="#process-classes-optional-parameters"></a>Optional Parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 18.75%;">
+<col style="width: 18.75%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>&lt;includes&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>List&lt;String&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Files to include. If empty all class files will be processed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>&lt;excludes&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>List&lt;String&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Files to exclude.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>&lt;staleMillis&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>int</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets the granularity in milliseconds of the last modification date for testing if a class file needs weaving.
+It defaults to <code>0</code> and can be configured using the <code>lastModGranularityMs</code> property.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To use the plugin you need to declare a dependency on <a href="https://central.sonatype.com/artifact/org.apache.logging.log4j/log4j-api/2.20.0"><code>log4j-api</code></a> version 2.20.0 or newer.</p>
+</div>
+<div class="paragraph">
+<p>Add the following configuration to your POM file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+  &lt;groupId&gt;org.apache.logging.log4j&lt;/groupId&gt;
+  &lt;artifactId&gt;log4j-transform-maven-plugin&lt;/artifactId&gt;
+  &lt;version&gt;0.2.0&lt;/version&gt;
+  &lt;executions&gt;
+    &lt;execution&gt;
+      &lt;goals&gt;
+        &lt;goal&gt;process-classes&lt;/goal&gt;
+      &lt;/goals&gt;
+    &lt;/execution&gt;
+  &lt;/executions&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>
+    Copyright © 1999-2024 <a href="https://www.apache.org/">The Apache Software Foundation</a>.
+    Licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache Software License, Version 2.0</a>.
+    Please read our <a href="https://privacy.apache.org/policies/privacy-policy-public.html">privacy policy</a>.
+  </p>
+  <p>
+    Apache, Log4j, and the Apache feather logo are trademarks or registered trademarks of The Apache Software Foundation.
+    Oracle and Java are registered trademarks of Oracle and/or its affiliates.
+    Other names may be trademarks of their respective owners.
+  </p>
+</footer>
+<script id="site-script" src="./_/js/site.js" data-ui-root-path="./_"></script>
+<script async src="./_/js/vendor/highlight.js"></script>
+<!-- `@asciidoctor/tabs` extension scripts -->
+<script async src="./_/js/vendor/tabs.js"></script>
+  </body>
+</html>
