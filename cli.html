@@ -209,6 +209,276 @@ For a list of standard priorities see
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="log4j-converter-plugin-descriptor"><a class="anchor" href="#log4j-converter-plugin-descriptor"></a><code>log4j-converter-plugin-descriptor</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>log4j-converter-plugin-descriptor</code> tool helps you to create custom
+<a href="https://logging.apache.org/log4j/2.x/manual/plugins.html#plugin-registry">plugin descriptors</a>
+and align their content with the
+<a href="https://www.graalvm.org/latest/reference-manual/native-image/metadata/">GraalVM reachability metadata</a>.
+This can be used to create smaller GraalVM native images by removing the parts of Log4j Core that are not used by the application.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Custom plugin descriptors are not required for applications running in the JVM.
+If you are
+<a href="https://logging.apache.org/log4j/2.x/faq.html#shading">shading/shadowing your application</a>,
+and you need to merge multiple plugin descriptors, use the
+<a href="log4j-transform-maven-shade-plugin-extensions.html#log4j-plugin-cache-transformer" class="xref page">Log4j Plugin Descriptor Transformer</a>
+instead.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To create a custom plugin descriptor and reachability metadata descriptor, you need to:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Extract the information contained in the <code>Log4j2Plugins.dat</code> descriptors in your runtime classpath.
+See <a href="#log4j-converter-plugin-descriptor-toJson">Converting from <code>Log4j2Plugins.dat</code> to <code>Log4j2Plugins.json</code></a> on how to do it.</p>
+</li>
+<li>
+<p>Select the plugins that you want in your GraalVM application.
+See <a href="#log4j-converter-plugin-descriptor-select">Selecting plugins</a> for some tips on how to do it.</p>
+</li>
+<li>
+<p>Convert your list of plugins back into the <code>Log4j2Plugins.dat</code> format.
+See <a href="#log4j-converter-plugin-descriptor-fromJson">Creating a custom <code>Log4j2Plugins.dat</code> file</a> for more information.</p>
+</li>
+<li>
+<p>Create a custom <code>reflect-config.json</code> using the reduced list of Log4j plugins.
+See <a href="#log4j-converter-plugin-descriptor-filterReflectConfig">Creating a custom <code>reflect-config.json</code> file</a> for more details.</p>
+</li>
+</ol>
+</div>
+<div class="sect2">
+<h3 id="log4j-converter-plugin-descriptor-toJson"><a class="anchor" href="#log4j-converter-plugin-descriptor-toJson"></a>Converting from <code>Log4j2Plugins.dat</code> to <code>Log4j2Plugins.json</code></h3>
+<div class="paragraph">
+<p>To convert all the <code>Log4j2Plugins.dat</code> files on your application&#8217;s classpath run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">java -jar log4j-converter-plugin-descriptor-0.3.0-SNAPSHOT.jar \
+    toJson [-o=&lt;outputDirectory&gt;] &lt;classPathElement&gt;...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>&lt;outputDirectory&gt;</code></dt>
+<dd>
+<p>The directory, where the command&#8217;s output will be saved.
+Defaults to the current working directory.</p>
+</dd>
+<dt class="hdlist1"><code>&lt;classPathElement&gt;</code></dt>
+<dd>
+<p>A list of file paths to the runtime dependencies of your application, separated by either spaces or your system path separator (<code>:</code> for UNIX and <code>;</code> for Windows).</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>The command will generate a <code>Log4j2Plugins.json</code> file in the output directory.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="log4j-converter-plugin-descriptor-select"><a class="anchor" href="#log4j-converter-plugin-descriptor-select"></a>Selecting plugins</h3>
+<div class="paragraph">
+<p>The <code>Log4j2Plugins.json</code> file contains all the
+<a href="https://logging.apache.org/log4j/2.x/manual/plugins.html#declare-plugin">Log4j Plugins</a>
+contained on your classpath and grouped by category/namespace.
+A functional Log4j Core installation needs these categories:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>configurationfactory</code></dt>
+<dd>
+<div class="paragraph">
+<p>Unless you have a
+<a href="https://logging.apache.org/log4j/2.x/manual/customconfig.html#ConfigurationFactory">custom <code>ConfigurationFactory</code></a>
+you need to include at least the configuration factory for your configuration format.</p>
+</div>
+</dd>
+<dt class="hdlist1"><code>core</code></dt>
+<dd>
+<p>This category contains all the plugins that can be used in a configuration file.
+You can browse the
+<a href="https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-config-Configuration">plugin reference</a>
+to choose those that you need.
+A minimal Log4j Core installation will certainly need:</p>
+</dd>
+</dl>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>The
+<a href="https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-config-AppendersPlugin"><code>Appenders</code></a>
+and
+<a href="https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-config-LoggersPlugin"><code>Loggers</code></a>
+plugins.</p>
+</li>
+<li>
+<p>Either the
+<a href="https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-config-LoggerConfig-RootLogger"><code>Root</code></a>
+and
+<a href="https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-config-LoggerConfig"><code>Logger</code></a>
+plugins or the
+<a href="https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-async-AsyncLoggerConfig-RootLogger"><code>AsyncRoot</code></a>
+and
+<a href="https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-async-AsyncLoggerConfig"><code>AsyncLogger</code></a> plugins.</p>
+</li>
+<li>
+<p>At least one
+<a href="https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-Appender">appender plugin</a>.
+See
+<a href="https://logging.apache.org/log4j/2.x/manual/appenders.html">Appenders</a>
+for more information on appenders.</p>
+</li>
+<li>
+<p>At least one
+<a href="https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-Layout">layout plugin</a>.
+See
+<a href="https://logging.apache.org/log4j/2.x/manual/layouts.html">Layouts</a>
+for more information on layouts.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If you plan to define properties for
+<a href="https://logging.apache.org/log4j/2.x/manual/configuration.html#property-substitution">property substitution</a>
+in your configuration file, consider adding the
+<a href="https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-config-PropertiesPlugin"><code>Properties</code></a>
+and
+<a href="https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-config-Property"><code>Property</code></a>
+plugins.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>converter</code></dt>
+<dd>
+<p>If you plan to use
+<a href="https://logging.apache.org/log4j/2.x/manual/pattern-layout.html">Pattern Layout</a>
+you need to add some
+<a href="https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-pattern-PatternConverter">pattern converter plugins</a>.</p>
+</dd>
+<dt class="hdlist1"><code>jsontemplateresolverfactory</code></dt>
+<dd>
+<p>To use
+<a href="https://logging.apache.org/log4j/2.x/manual/json-template-layout.html">JSON Template Layout</a>
+you need to add some
+<a href="https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-layout-template-json_org-apache-logging-log4j-layout-template-json-resolver-TemplateResolverFactory">template resolver factories</a>.</p>
+</dd>
+<dt class="hdlist1"><code>lookup</code></dt>
+<dd>
+<p>The <code>lookup</code> category contains
+<a href="https://logging.apache.org/log4j/2.x/manual/lookups.html">lookups</a>
+that can be used to retrieve configuration values from external sources.
+See also
+<a href="https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-lookup-StrLookup">lookup plugins</a>
+for a list of options.</p>
+</dd>
+<dt class="hdlist1"><code>typeconverter</code></dt>
+<dd>
+<p>This category provides basic conversion capabilities.
+Unless you know what you are doing, keep all the plugins.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="log4j-converter-plugin-descriptor-fromJson"><a class="anchor" href="#log4j-converter-plugin-descriptor-fromJson"></a>Creating a custom <code>Log4j2Plugins.dat</code> file</h3>
+<div class="paragraph">
+<p>Once you have chosen the plugins for your Log4j Core custom image, you need to convert the modified <code>Log4j2Plugins.json</code> file back to its original format.
+To do that run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">java -jar log4j-converter-plugin-descriptor-0.3.0-SNAPSHOT.jar \
+    fromJson [-o=&lt;outputDirectory&gt;] &lt;jsonPluginDescriptor&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>&lt;outputDirectory&gt;</code></dt>
+<dd>
+<p>The directory, where the command&#8217;s output will be saved.
+This parameter should point at the root of your application&#8217;s classpath (e.g., the <code>src/main/resources</code>) folder.
+Defaults to the current working directory.</p>
+</dd>
+<dt class="hdlist1"><code>&lt;jsonPluginDescriptor&gt;</code></dt>
+<dd>
+<p>The path to the <code>Log4j2Plugins.json</code> file.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>The command will generate a <code>Log4j2Plugins.dat</code> file in the <code>org/apache/logging/log4j/core/config/plugins</code> subfolder of the output directory.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="log4j-converter-plugin-descriptor-filterReflectConfig"><a class="anchor" href="#log4j-converter-plugin-descriptor-filterReflectConfig"></a>Creating a custom <code>reflect-config.json</code> file</h3>
+<div class="paragraph">
+<p>The same <code>Log4j2Plugins.json</code> file can be used to trim the
+<a href="https://www.graalvm.org/latest/reference-manual/native-image/metadata/">GraalVM reachability metadata</a>
+embedded in Log4j <code>2.25.0</code> and later, so that they contain only the classes required by the selected plugins.
+To extract all the <code>reflect-config.json</code> files from your runtime classpath and remove the unnecessary classes run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">java -jar log4j-converter-plugin-descriptor-0.3.0-SNAPSHOT.jar \
+    filterReflectConfig [-o=&lt;outputDirectory&gt;] &lt;jsonPluginDescriptor&gt; &lt;classPathElement&gt;...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>&lt;outputDirectory&gt;</code></dt>
+<dd>
+<p>The directory, where the command&#8217;s output will be saved.
+This parameter should point at the root of your application&#8217;s classpath (e.g., the <code>src/main/resources</code>) folder.
+Defaults to the current working directory.</p>
+</dd>
+<dt class="hdlist1"><code>&lt;jsonPluginDescriptor&gt;</code></dt>
+<dd>
+<p>The path to the <code>Log4j2Plugins.json</code> file.</p>
+</dd>
+<dt class="hdlist1"><code>&lt;classPathElement&gt;</code></dt>
+<dd>
+<p>A list of file paths to the runtime dependencies of your application, separated by either spaces or your system path separator (<code>:</code> for UNIX and <code>;</code> for Windows).</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>The command will filter and output each <code>reflect-config.json</code> in its original path under the <code>META-INF/native-image</code> subfolder of the output directory.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="log4j-converter-plugin-descriptor-example"><a class="anchor" href="#log4j-converter-plugin-descriptor-example"></a>Examples</h3>
+
+</div>
+</div>
+</div>
 </article>
   </div>
 </main>
