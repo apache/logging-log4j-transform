@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://logging.apache.org/json/schema/Log4j2Plugins.schema.json",
+  "title": "Log4j 2.x Plugin Descriptor",
+  "description": "A JSON version of the `Log4j2Plugins.dat` file.",
+  "type": "object",
+  "additionalProperties": {
+    "type": {
+      "$ref": "#/definitions/namespace"
+    }
+  },
+  "definitions": {
+    "plugin": {
+      "description": "Represents a Log4j Core Plugin.",
+      "type": "object",
+      "properties": {
+        "pluginNames": {
+          "description": "The name and aliases of the plugin in lowercase.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "elementName": {
+          "description": "The generic element name/category of the plugin.",
+          "type": "string"
+        },
+        "printable": {
+          "description": "Indicates if the plugin has a useful toString() method.",
+          "type": "boolean"
+        },
+        "defer": {
+          "description": "Indicates if the instantiation of configuration parameters should be deferred.",
+          "type": "boolean"
+        },
+        "builderHierarchy": {
+          "description": "The fully qualified name of the builder class and its ancestors.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "pluginNames",
+        "elementName",
+        "printable",
+        "defer"
+      ]
+    },
+    "namespace": {
+      "description": "Represents a namespace of plugins. The key is the fully qualified class name of the plugin",
+      "type": "object",
+      "additionalProperties": {
+        "type": {
+          "$ref": "#/definitions/plugin"
+        }
+      }
+    }
+  }
+}

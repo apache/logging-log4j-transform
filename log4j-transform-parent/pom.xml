@@ -40,13 +40,13 @@
     <junit.version>5.11.3</junit.version>
     <log4j.version>2.24.1</log4j.version>
     <maven.version>3.9.9</maven.version>
+    <picocli.version>4.7.5</picocli.version>
     <plexus-utils.version>4.0.2</plexus-utils.version>
     <slf4j.version>2.0.16</slf4j.version>
 
     <!-- plugin versions -->
     <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
     <maven-invoker-plugin.version>3.6.1</maven-invoker-plugin.version>
-    <maven-shade-plugin.version>3.5.0</maven-shade-plugin.version>
     <surefire.version>3.0.0-M7</surefire.version>
 
   </properties>
@@ -121,6 +121,12 @@
       </dependency>
 
       <dependency>
+        <groupId>info.picocli</groupId>
+        <artifactId>picocli</artifactId>
+        <version>${picocli.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-utils</artifactId>
         <version>${plexus-utils.version}</version>
@@ -151,17 +157,12 @@
           <version>${maven-invoker-plugin.version}</version>
         </plugin>
 
-        <plugin>
-          <groupId>org.apache.maven</groupId>
-          <artifactId>maven-shade-plugin</artifactId>
-          <version>${maven-shade-plugin.version}</version>
-        </plugin>
-
       </plugins>
     </pluginManagement>
   </build>
 
   <profiles>
+
     <profile>
       <id>java8-tests</id>
       <properties>
@@ -181,6 +182,75 @@
         </plugins>
       </build>
     </profile>
+
+    <!-- Profile for picocli-base applications -->
+    <profile>
+      <id>picocli</id>
+      <activation>
+        <file>
+          <exists>.picocli-application-activator</exists>
+        </file>
+      </activation>
+
+      <build>
+
+        <plugins>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <annotationProcessorPaths combine.children="append">
+                <path>
+                  <groupId>info.picocli</groupId>
+                  <artifactId>picocli-codegen</artifactId>
+                  <version>${picocli.version}</version>
+                </path>
+              </annotationProcessorPaths>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>shade-jar-with-dependencies</id>
+                <goals>
+                  <goal>shade</goal>
+                </goals>
+                <configuration>
+                  <filters>
+                    <filter>
+                      <artifact>*:*</artifact>
+                      <excludes>
+                        <exclude>module-info.class</exclude>
+                        <exclude>META-INF/versions/*/module-info.class</exclude>
+                        <exclude>META-INF/DEPENDENCIES</exclude>
+                        <exclude>META-INF/MANIFEST.MF</exclude>
+                      </excludes>
+                    </filter>
+                  </filters>
+                  <shadedArtifactAttached>true</shadedArtifactAttached>
+                  <shadedClassifierName>shaded</shadedClassifierName>
+                  <transformers>
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer" />
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer" />
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                      <manifestEntries>
+                        <Multi-Release>true</Multi-Release>
+                      </manifestEntries>
+                    </transformer>
+                  </transformers>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
   </profiles>
 
 </project>

@@ -74,3 +74,188 @@ For a list of standard priorities see
 ----
 java -jar log4j-codegen-{project-version}.jar extendedLogger DIAG=350 NOTICE=450 VERBOSE=550
 ----
+
+[#log4j-converter-plugin-descriptor]
+== `log4j-converter-plugin-descriptor`
+
+The `log4j-converter-plugin-descriptor` tool helps you to create custom
+https://logging.apache.org/log4j/2.x/manual/plugins.html#plugin-registry[plugin descriptors]
+and align their content with the
+https://www.graalvm.org/latest/reference-manual/native-image/metadata/[GraalVM reachability metadata].
+This can be used to create smaller GraalVM native images by removing the parts of Log4j Core that are not used by the application.
+
+[NOTE]
+====
+Custom plugin descriptors are not required for applications running in the JVM.
+If you are
+https://logging.apache.org/log4j/2.x/faq.html#shading[shading/shadowing your application],
+and you need to merge multiple plugin descriptors, use the
+xref:log4j-transform-maven-shade-plugin-extensions.adoc#log4j-plugin-cache-transformer[Log4j Plugin Descriptor Transformer]
+instead.
+====
+
+To create a custom plugin descriptor and reachability metadata descriptor, you need to:
+
+. Extract the information contained in the `Log4j2Plugins.dat` descriptors in your runtime classpath.
+See <<log4j-converter-plugin-descriptor-toJson>> on how to do it.
+. Select the plugins that you want in your GraalVM application.
+See <<log4j-converter-plugin-descriptor-select>> for some tips on how to do it.
+. Convert your list of plugins back into the `Log4j2Plugins.dat` format.
+See <<log4j-converter-plugin-descriptor-fromJson>> for more information.
+. Create a custom `reflect-config.json` using the reduced list of Log4j plugins.
+See <<log4j-converter-plugin-descriptor-filterReflectConfig>> for more details.
+
+[#log4j-converter-plugin-descriptor-toJson]
+=== Converting from `Log4j2Plugins.dat` to `Log4j2Plugins.json`
+
+To convert all the `Log4j2Plugins.dat` files on your application's classpath run:
+
+[source,subs="+attributes"]
+----
+java -jar log4j-converter-plugin-descriptor-{project-version}.jar \
+    toJson [-o=<outputDirectory>] <classPathElement>...
+----
+
+where:
+
+`<outputDirectory>`::
+The directory, where the command's output will be saved.
+Defaults to the current working directory.
+
+`<classPathElement>`::
+A list of file paths to the runtime dependencies of your application, separated by either spaces or your system path separator (`:` for UNIX and `;` for Windows).
+
+The command will generate a `Log4j2Plugins.json` file in the output directory.
+
+[#log4j-converter-plugin-descriptor-select]
+=== Selecting plugins
+
+The `Log4j2Plugins.json` file contains all the
+https://logging.apache.org/log4j/2.x/manual/plugins.html#declare-plugin[Log4j Plugins]
+contained on your classpath and grouped by category/namespace.
+A functional Log4j Core installation needs these categories:
+
+`configurationfactory`::
++
+Unless you have a
+https://logging.apache.org/log4j/2.x/manual/customconfig.html#ConfigurationFactory[custom `ConfigurationFactory`]
+you need to include at least the configuration factory for your configuration format.
+
+`core`::
+This category contains all the plugins that can be used in a configuration file.
+You can browse the
+https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-config-Configuration[plugin reference]
+to choose those that you need.
+A minimal Log4j Core installation will certainly need:
+--
+* The
+https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-config-AppendersPlugin[`Appenders`]
+and
+https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-config-LoggersPlugin[`Loggers`]
+plugins.
+* Either the
+https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-config-LoggerConfig-RootLogger[`Root`]
+and
+https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-config-LoggerConfig[`Logger`]
+plugins or the
+https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-async-AsyncLoggerConfig-RootLogger[`AsyncRoot`]
+and
+https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-async-AsyncLoggerConfig[`AsyncLogger`] plugins.
+* At least one
+https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-Appender[appender plugin].
+See
+https://logging.apache.org/log4j/2.x/manual/appenders.html[Appenders]
+for more information on appenders.
+* At least one
+https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-Layout[layout plugin].
+See
+https://logging.apache.org/log4j/2.x/manual/layouts.html[Layouts]
+for more information on layouts.
+--
+If you plan to define properties for
+https://logging.apache.org/log4j/2.x/manual/configuration.html#property-substitution[property substitution]
+in your configuration file, consider adding the
+https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-config-PropertiesPlugin[`Properties`]
+and
+https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-config-Property[`Property`]
+plugins.
+
+`converter`::
+If you plan to use
+https://logging.apache.org/log4j/2.x/manual/pattern-layout.html[Pattern Layout]
+you need to add some
+https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-pattern-PatternConverter[pattern converter plugins].
+
+`jsontemplateresolverfactory`::
+To use
+https://logging.apache.org/log4j/2.x/manual/json-template-layout.html[JSON Template Layout]
+you need to add some
+https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-layout-template-json_org-apache-logging-log4j-layout-template-json-resolver-TemplateResolverFactory[template resolver factories].
+
+`lookup`::
+The `lookup` category contains
+https://logging.apache.org/log4j/2.x/manual/lookups.html[lookups]
+that can be used to retrieve configuration values from external sources.
+See also
+https://logging.apache.org/log4j/2.x/plugin-reference.html#org-apache-logging-log4j_log4j-core_org-apache-logging-log4j-core-lookup-StrLookup[lookup plugins]
+for a list of options.
+
+`typeconverter`::
+This category provides basic conversion capabilities.
+Unless you know what you are doing, keep all the plugins.
+
+[#log4j-converter-plugin-descriptor-fromJson]
+=== Creating a custom `Log4j2Plugins.dat` file
+
+Once you have chosen the plugins for your Log4j Core custom image, you need to convert the modified `Log4j2Plugins.json` file back to its original format.
+To do that run:
+
+[source,subs="+attributes"]
+----
+java -jar log4j-converter-plugin-descriptor-{project-version}.jar \
+    fromJson [-o=<outputDirectory>] <jsonPluginDescriptor>
+----
+
+where:
+
+`<outputDirectory>`::
+The directory, where the command's output will be saved.
+This parameter should point at the root of your application's classpath (e.g., the `src/main/resources`) folder.
+Defaults to the current working directory.
+
+`<jsonPluginDescriptor>`::
+The path to the `Log4j2Plugins.json` file.
+
+The command will generate a `Log4j2Plugins.dat` file in the `org/apache/logging/log4j/core/config/plugins` subfolder of the output directory.
+
+[#log4j-converter-plugin-descriptor-filterReflectConfig]
+=== Creating a custom `reflect-config.json` file
+
+The same `Log4j2Plugins.json` file can be used to trim the
+https://www.graalvm.org/latest/reference-manual/native-image/metadata/[GraalVM reachability metadata]
+embedded in Log4j `2.25.0` and later, so that they contain only the classes required by the selected plugins.
+To extract all the `reflect-config.json` files from your runtime classpath and remove the unnecessary classes run:
+
+[source,subs="+attributes"]
+----
+java -jar log4j-converter-plugin-descriptor-{project-version}.jar \
+    filterReflectConfig [-o=<outputDirectory>] <jsonPluginDescriptor> <classPathElement>...
+----
+
+where:
+
+`<outputDirectory>`::
+The directory, where the command's output will be saved.
+This parameter should point at the root of your application's classpath (e.g., the `src/main/resources`) folder.
+Defaults to the current working directory.
+
+`<jsonPluginDescriptor>`::
+The path to the `Log4j2Plugins.json` file.
+
+`<classPathElement>`::
+A list of file paths to the runtime dependencies of your application, separated by either spaces or your system path separator (`:` for UNIX and `;` for Windows).
+
+The command will filter and output each `reflect-config.json` in its original path under the `META-INF/native-image` subfolder of the output directory.
+
+[#log4j-converter-plugin-descriptor-example]
+=== Examples
