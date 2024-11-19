@@ -78,8 +78,8 @@ public class XmlConfigurationMapper implements ConfigurationMapper {
 
     @Override
     public void writeConfiguration(OutputStream outputStream, ConfigurationNode configuration) throws IOException {
+        XMLStreamWriter streamWriter = createStreamWriter(outputStream);
         try {
-            XMLStreamWriter streamWriter = createStreamWriter(outputStream);
             streamWriter.writeStartDocument();
             streamWriter.setDefaultNamespace(LOG4J_NAMESPACE_URI);
             streamWriter.writeStartElement(LOG4J_NAMESPACE_URI, configuration.getPluginName());
@@ -92,8 +92,19 @@ public class XmlConfigurationMapper implements ConfigurationMapper {
             writeNodeContentToStreamWriter(configuration, streamWriter);
             streamWriter.writeEndElement();
             streamWriter.writeEndDocument();
+            streamWriter.flush();
         } catch (XMLStreamException e) {
             throw new IOException("Unable to write configuration.", e);
+        } finally {
+            closeStreamWriter(streamWriter);
+        }
+    }
+
+    private static void closeStreamWriter(XMLStreamWriter streamWriter) throws IOException {
+        try {
+            streamWriter.close();
+        } catch (XMLStreamException e) {
+            throw new IOException("Unable to close stream writer.", e);
         }
     }
 
