@@ -43,24 +43,6 @@
 
   <dependencies>
 
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.annotation.bundle</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.annotation.versioning</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.github.spotbugs</groupId>
-      <artifactId>spotbugs-annotations</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
     <!-- Compile dependencies: the artifact is shaded, so limit these. -->
     <dependency>
       <groupId>info.picocli</groupId>
