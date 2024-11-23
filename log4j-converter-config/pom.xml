@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>log4j-converter-config</artifactId>
-  <name>Apache Log4j Configuration converter</name>
+  <name>Apache Log4j Configuration Converter</name>
   <description>Converts various logging configuration formats to the Log4j Core 2.x format.</description>
 
   <properties>

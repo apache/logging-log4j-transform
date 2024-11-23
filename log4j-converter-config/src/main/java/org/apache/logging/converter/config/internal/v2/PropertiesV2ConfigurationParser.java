@@ -16,6 +16,7 @@
  */
 package org.apache.logging.converter.config.internal.v2;
 
+import static org.apache.logging.converter.config.internal.ComponentUtils.newNodeBuilder;
 import static org.apache.logging.log4j.util.PropertiesUtil.extractSubset;
 import static org.apache.logging.log4j.util.PropertiesUtil.partitionOnCommonPrefixes;
 
@@ -29,7 +30,7 @@ import java.util.Properties;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 import org.apache.logging.converter.config.ConfigurationConverterException;
-import org.apache.logging.converter.config.internal.ConfigurationNodeImpl;
+import org.apache.logging.converter.config.internal.ComponentUtils.ConfigurationNodeBuilder;
 import org.apache.logging.converter.config.spi.ConfigurationNode;
 import org.apache.logging.converter.config.spi.ConfigurationParser;
 import org.apache.logging.log4j.util.Strings;
@@ -73,8 +74,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
     public ConfigurationNode parse(InputStream inputStream) throws IOException {
         Properties rootProperties = new Properties();
         rootProperties.load(inputStream);
-        ConfigurationNodeImpl.NodeBuilder builder =
-                ConfigurationNodeImpl.newNodeBuilder().setPluginName(CONFIGURATION_PLUGIN_NAME);
+        ConfigurationNodeBuilder builder = newNodeBuilder().setPluginName(CONFIGURATION_PLUGIN_NAME);
 
         for (final String key : rootProperties.stringPropertyNames()) {
             if (!key.contains(".")) {
@@ -107,8 +107,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
             builder.addChild(processAppenders(appenders));
         }
 
-        ConfigurationNodeImpl.NodeBuilder loggersBuilder =
-                ConfigurationNodeImpl.newNodeBuilder().setPluginName(LOGGERS_PLUGIN_NAME);
+        ConfigurationNodeBuilder loggersBuilder = newNodeBuilder().setPluginName(LOGGERS_PLUGIN_NAME);
         // 1. Start with the root logger
         Properties rootLoggerProperties = extractSubset(rootProperties, "rootLogger");
         String rootLoggerProperty = rootProperties.getProperty("rootLogger");
@@ -149,10 +148,9 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
     }
 
     private static ConfigurationNode processPropertyPlaceholders(final Properties propertyPlaceholders) {
-        ConfigurationNodeImpl.NodeBuilder builder =
-                ConfigurationNodeImpl.newNodeBuilder().setPluginName(PROPERTIES_PLUGIN_NAME);
+        ConfigurationNodeBuilder builder = newNodeBuilder().setPluginName(PROPERTIES_PLUGIN_NAME);
         for (final String key : propertyPlaceholders.stringPropertyNames()) {
-            builder.addChild(ConfigurationNodeImpl.newNodeBuilder()
+            builder.addChild(newNodeBuilder()
                     .setPluginName(PROPERTY_PLUGIN_NAME)
                     .addAttribute(NAME_ATTRIBUTE, key)
                     .addAttribute(VALUE_ATTRIBUTE, propertyPlaceholders.getProperty(key))
@@ -162,8 +160,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
     }
 
     private ConfigurationNode processScripts(Map<String, Properties> scripts) {
-        ConfigurationNodeImpl.NodeBuilder builder =
-                ConfigurationNodeImpl.newNodeBuilder().setPluginName(SCRIPTS_PLUGIN_NAME);
+        ConfigurationNodeBuilder builder = newNodeBuilder().setPluginName(SCRIPTS_PLUGIN_NAME);
         for (final Map.Entry<String, Properties> entry : scripts.entrySet()) {
             String scriptPrefix = "script." + entry.getKey();
             Properties scriptProperties = entry.getValue();
@@ -173,11 +170,10 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
     }
 
     private ConfigurationNode processCustomLevels(Properties customLevels) {
-        ConfigurationNodeImpl.NodeBuilder builder =
-                ConfigurationNodeImpl.newNodeBuilder().setPluginName(CUSTOM_LEVELS_PLUGIN_NAME);
+        ConfigurationNodeBuilder builder = newNodeBuilder().setPluginName(CUSTOM_LEVELS_PLUGIN_NAME);
         for (final String key : customLevels.stringPropertyNames()) {
             String value = validateInteger("customLevel." + key, customLevels.getProperty(key));
-            builder.addChild(ConfigurationNodeImpl.newNodeBuilder()
+            builder.addChild(newNodeBuilder()
                     .setPluginName(CUSTOM_LEVEL_PLUGIN_NAME)
                     .addAttribute(NAME_ATTRIBUTE, key)
                     .addAttribute(INT_LEVEL_ATTRIBUTE, value)
@@ -199,8 +195,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
         if (filters.size() == 1) {
             return processFilter(prefix, filters.entrySet().iterator().next());
         }
-        ConfigurationNodeImpl.NodeBuilder builder =
-                ConfigurationNodeImpl.newNodeBuilder().setPluginName(FILTERS_PLUGIN_NAME);
+        ConfigurationNodeBuilder builder = newNodeBuilder().setPluginName(FILTERS_PLUGIN_NAME);
         for (final Map.Entry<String, Properties> filterEntry : filters.entrySet()) {
             builder.addChild(processFilter(prefix, filterEntry));
         }
@@ -215,8 +210,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
     }
 
     private static ConfigurationNode processAppenders(Map<String, Properties> appenders) {
-        ConfigurationNodeImpl.NodeBuilder builder =
-                ConfigurationNodeImpl.newNodeBuilder().setPluginName(APPENDERS_PLUGIN_NAME);
+        ConfigurationNodeBuilder builder = newNodeBuilder().setPluginName(APPENDERS_PLUGIN_NAME);
         for (Map.Entry<String, Properties> entry : appenders.entrySet()) {
             builder.addChild(processAppender(entry.getKey(), entry.getValue()));
         }
@@ -225,7 +219,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
 
     private static ConfigurationNode processAppender(String key, Properties properties) {
         String appenderPrefix = "appender." + key;
-        ConfigurationNodeImpl.NodeBuilder builder = ConfigurationNodeImpl.newNodeBuilder()
+        ConfigurationNodeBuilder builder = newNodeBuilder()
                 .setPluginName(getRequiredAttribute(
                         properties, TYPE_ATTRIBUTE, () -> "No type attribute provided for Appender " + appenderPrefix))
                 .addAttribute(
@@ -242,7 +236,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
     }
 
     private static ConfigurationNode processLogger(String key, Properties properties) {
-        ConfigurationNodeImpl.NodeBuilder builder = ConfigurationNodeImpl.newNodeBuilder()
+        ConfigurationNodeBuilder builder = newNodeBuilder()
                 .addAttribute(LEVEL_AND_REFS_ATTRIBUTE, remove(properties, ""))
                 .addAttribute(
                         NAME_ATTRIBUTE,
@@ -267,7 +261,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
     }
 
     private static void addAppenderRefsToComponent(
-            String prefix, Properties properties, ConfigurationNodeImpl.NodeBuilder builder) {
+            String prefix, Properties properties, ConfigurationNodeBuilder builder) {
         Map<String, Properties> appenderRefs = extractSubsetAndPartition(properties, "appenderRef");
         for (final Map.Entry<String, Properties> entry : appenderRefs.entrySet()) {
             builder.addChild(processAppenderRef(prefix + ".appenderRef." + entry.getKey(), entry.getValue()));
@@ -275,7 +269,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
     }
 
     private static ConfigurationNode processAppenderRef(String prefix, Properties properties) {
-        ConfigurationNodeImpl.NodeBuilder builder = ConfigurationNodeImpl.newNodeBuilder()
+        ConfigurationNodeBuilder builder = newNodeBuilder()
                 .setPluginName(APPENDER_REF_PLUGIN_NAME)
                 .addAttribute(
                         REF_ATTRIBUTE,
@@ -295,8 +289,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
         return builder.build();
     }
 
-    private static void addFiltersToComponent(
-            String prefix, Properties properties, ConfigurationNodeImpl.NodeBuilder builder) {
+    private static void addFiltersToComponent(String prefix, Properties properties, ConfigurationNodeBuilder builder) {
         Map<String, Properties> filters = extractSubsetAndPartition(properties, "filter");
         if (!filters.isEmpty()) {
             builder.addChild(processFilters(prefix, filters));
@@ -304,8 +297,8 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
     }
 
     private static ConfigurationNode processRootLogger(Properties properties) {
-        ConfigurationNodeImpl.NodeBuilder builder =
-                ConfigurationNodeImpl.newNodeBuilder().addAttribute(LEVEL_AND_REFS_ATTRIBUTE, remove(properties, ""));
+        ConfigurationNodeBuilder builder =
+                newNodeBuilder().addAttribute(LEVEL_AND_REFS_ATTRIBUTE, remove(properties, ""));
 
         String type = remove(properties, TYPE_ATTRIBUTE);
         if (ASYNC_ROOT_PLUGIN_NAME.equalsIgnoreCase(type)) {
@@ -340,7 +333,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
      */
     private static ConfigurationNode processGenericComponent(
             String prefix, String componentCategory, Properties properties) {
-        ConfigurationNodeImpl.NodeBuilder builder = ConfigurationNodeImpl.newNodeBuilder();
+        ConfigurationNodeBuilder builder = newNodeBuilder();
 
         builder.setPluginName(getRequiredAttribute(
                 properties,
@@ -351,7 +344,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
     }
 
     private static void processRemainingProperties(
-            String prefix, Properties properties, ConfigurationNodeImpl.NodeBuilder builder) {
+            String prefix, Properties properties, ConfigurationNodeBuilder builder) {
         while (!properties.isEmpty()) {
             String propertyName = properties.stringPropertyNames().iterator().next();
             int index = propertyName.indexOf('.');

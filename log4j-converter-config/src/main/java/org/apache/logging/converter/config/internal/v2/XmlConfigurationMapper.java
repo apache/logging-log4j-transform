@@ -25,13 +25,13 @@ import java.io.OutputStream;
 import java.util.Map;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.apache.logging.converter.config.ConfigurationConverterException;
-import org.apache.logging.converter.config.internal.ConfigurationNodeImpl;
+import org.apache.logging.converter.config.internal.ComponentUtils;
+import org.apache.logging.converter.config.internal.ComponentUtils.ConfigurationNodeBuilder;
+import org.apache.logging.converter.config.internal.XmlUtils;
 import org.apache.logging.converter.config.spi.ConfigurationMapper;
 import org.apache.logging.converter.config.spi.ConfigurationNode;
 import org.jspecify.annotations.Nullable;
@@ -41,14 +41,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 @ServiceProvider(value = ConfigurationMapper.class, resolution = Resolution.MANDATORY)
 public class XmlConfigurationMapper implements ConfigurationMapper {
 
-    private static final String DISABLE_DOCTYPE_DECLARATION = "http://apache.org/xml/features/disallow-doctype-decl";
     private static final String LOG4J_NAMESPACE_URI = "https://logging.apache.org/xml/ns";
     private static final String LOG4J_SCHEMA_LOCATION =
             LOG4J_NAMESPACE_URI + " https://logging.apache.org/xml/ns/log4j-config-2.xsd";
@@ -56,9 +53,7 @@ public class XmlConfigurationMapper implements ConfigurationMapper {
 
     @Override
     public ConfigurationNode parse(InputStream inputStream) throws IOException {
-        DocumentBuilder documentBuilder = createDocumentBuilder();
-        // The default error handler pollutes `System.err`
-        documentBuilder.setErrorHandler(new ThrowingErrorHandler());
+        DocumentBuilder documentBuilder = XmlUtils.createDocumentBuilderV2();
         try {
             Document document = documentBuilder.parse(inputStream);
             Element configurationElement = document.getDocumentElement();
@@ -113,29 +108,6 @@ public class XmlConfigurationMapper implements ConfigurationMapper {
         return LOG4J_V2_XML_FORMAT;
     }
 
-    private static DocumentBuilder createDocumentBuilder() throws IOException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        enableFeature(factory, XMLConstants.FEATURE_SECURE_PROCESSING);
-        enableFeature(factory, DISABLE_DOCTYPE_DECLARATION);
-        try {
-            factory.setXIncludeAware(false);
-        } catch (UnsupportedOperationException e) {
-            throw new IOException(
-                    "Failed to disable XInclude on DocumentBuilderFactory "
-                            + factory.getClass().getName(),
-                    e);
-        }
-        try {
-            return factory.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            throw new IOException(
-                    "Failed to create DocumentBuilder using DocumentBuilderFactory "
-                            + factory.getClass().getName(),
-                    e);
-        }
-    }
-
     private static XMLStreamWriter createStreamWriter(OutputStream outputStream) throws IOException {
         XMLOutputFactory outputFactory = XMLOutputFactory.newFactory();
         try {
@@ -149,22 +121,11 @@ public class XmlConfigurationMapper implements ConfigurationMapper {
         }
     }
 
-    private static void enableFeature(DocumentBuilderFactory factory, String feature) throws IOException {
-        try {
-            factory.setFeature(feature, true);
-        } catch (ParserConfigurationException e) {
-            throw new IOException(
-                    "Failed to enable '" + feature + "' feature on DocumentBuilderFactory "
-                            + factory.getClass().getName(),
-                    e);
-        }
-    }
-
     /**
      * Transforms an XML element into a Log4j configuration node.
      */
     private static ConfigurationNode parseComplexElement(Element element) {
-        ConfigurationNodeImpl.NodeBuilder builder = ConfigurationNodeImpl.newNodeBuilder();
+        ConfigurationNodeBuilder builder = ComponentUtils.newNodeBuilder();
         // Handle child elements
         NodeList childNodes = element.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -182,7 +143,7 @@ public class XmlConfigurationMapper implements ConfigurationMapper {
      * @param childNode An XML node.
      * @param builder A {@link ConfigurationNode} builder.
      */
-    private static void processChildElement(org.w3c.dom.Node childNode, ConfigurationNodeImpl.NodeBuilder builder) {
+    private static void processChildElement(org.w3c.dom.Node childNode, ConfigurationNodeBuilder builder) {
         if (isLog4jNamespace(childNode) && childNode instanceof Element) {
             Element childElement = (Element) childNode;
             if (isComplexElement(childElement)) {
@@ -225,7 +186,7 @@ public class XmlConfigurationMapper implements ConfigurationMapper {
      * @param nodeMap A collection of XML attributes.
      * @param builder A {@link ConfigurationNode} builder.
      */
-    private static void processAttributes(NamedNodeMap nodeMap, ConfigurationNodeImpl.NodeBuilder builder) {
+    private static void processAttributes(NamedNodeMap nodeMap, ConfigurationNodeBuilder builder) {
         for (int i = 0; i < nodeMap.getLength(); i++) {
             org.w3c.dom.Node item = nodeMap.item(i);
             if (isLog4jNamespace(item) && item instanceof Attr) {
@@ -264,29 +225,5 @@ public class XmlConfigurationMapper implements ConfigurationMapper {
     private static boolean isLog4jNamespace(Node node) {
         @Nullable String namespaceUri = node.getNamespaceURI();
         return namespaceUri == null || namespaceUri.equals(LOG4J_NAMESPACE_URI);
-    }
-
-    private static class ThrowingErrorHandler implements ErrorHandler {
-        @Override
-        public void warning(SAXParseException exception) {}
-
-        @Override
-        public void error(SAXParseException exception) throws SAXException {
-            throwOnParseException(exception);
-        }
-
-        @Override
-        public void fatalError(SAXParseException exception) throws SAXException {
-            throwOnParseException(exception);
-        }
-
-        private void throwOnParseException(SAXParseException exception) throws SAXException {
-            IOException ioException = new IOException(
-                    String.format(
-                            "Invalid configuration file content at line %d, column %d: %s",
-                            exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage()),
-                    exception);
-            throw new SAXException(ioException);
-        }
     }
 }

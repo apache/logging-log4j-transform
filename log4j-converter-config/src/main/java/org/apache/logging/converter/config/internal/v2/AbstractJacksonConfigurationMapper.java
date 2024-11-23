@@ -16,6 +16,8 @@
  */
 package org.apache.logging.converter.config.internal.v2;
 
+import static org.apache.logging.converter.config.internal.ComponentUtils.newNodeBuilder;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -28,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import org.apache.logging.converter.config.internal.ConfigurationNodeImpl;
+import org.apache.logging.converter.config.internal.ComponentUtils.ConfigurationNodeBuilder;
 import org.apache.logging.converter.config.spi.ConfigurationMapper;
 import org.apache.logging.converter.config.spi.ConfigurationNode;
 import org.jspecify.annotations.Nullable;
@@ -74,7 +76,7 @@ public abstract class AbstractJacksonConfigurationMapper implements Configuratio
     }
 
     private static ConfigurationNode parseObjectNode(ObjectNode objectNode, String fieldName) {
-        ConfigurationNodeImpl.NodeBuilder builder = ConfigurationNodeImpl.newNodeBuilder();
+        ConfigurationNodeBuilder builder = newNodeBuilder();
         objectNode.fields().forEachRemaining(entry -> {
             String childFieldName = entry.getKey();
             JsonNode childNode = entry.getValue();
@@ -91,8 +93,7 @@ public abstract class AbstractJacksonConfigurationMapper implements Configuratio
         return builder.setPluginName(getPluginName(objectNode, fieldName)).build();
     }
 
-    private static void processArrayNode(
-            ArrayNode arrayNode, String fieldName, ConfigurationNodeImpl.NodeBuilder builder) {
+    private static void processArrayNode(ArrayNode arrayNode, String fieldName, ConfigurationNodeBuilder builder) {
         arrayNode.elements().forEachRemaining(childNode -> {
             if (childNode.isObject()) {
                 builder.addChild(parseObjectNode((ObjectNode) childNode, fieldName));

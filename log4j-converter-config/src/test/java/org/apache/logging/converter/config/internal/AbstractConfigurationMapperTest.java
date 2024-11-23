@@ -16,7 +16,7 @@
  */
 package org.apache.logging.converter.config.internal;
 
-import static org.apache.logging.converter.config.internal.ConfigurationNodeImpl.newNodeBuilder;
+import static org.apache.logging.converter.config.internal.ComponentUtils.newNodeBuilder;
 
 import java.util.ArrayList;
 import java.util.Comparator;
