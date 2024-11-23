@@ -67,7 +67,14 @@ class ConfigurationConverterTest {
     @Test
     void supportedFormats() {
         assertThat(converter.getSupportedInputFormats())
-                .containsExactlyInAnyOrder("v2:json", "v2:properties", DEFAULT_FORMAT, "v2:yaml", "v3:properties");
+                .containsExactlyInAnyOrder(
+                        "v1:properties",
+                        "v1:xml",
+                        "v2:json",
+                        "v2:properties",
+                        DEFAULT_FORMAT,
+                        "v2:yaml",
+                        "v3:properties");
         assertThat(converter.getSupportedOutputFormats())
                 .containsExactlyInAnyOrder("v2:json", DEFAULT_FORMAT, "v2:yaml", "v3:properties");
     }

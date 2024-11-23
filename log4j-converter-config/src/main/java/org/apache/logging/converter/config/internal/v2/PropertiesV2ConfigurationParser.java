@@ -123,9 +123,9 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
             }
         }
         // Add the `Loggers` plugin
-        builder.addChild(loggersBuilder.build());
+        builder.addChild(loggersBuilder.get());
 
-        return builder.build();
+        return builder.get();
     }
 
     private static Map<String, Properties> extractSubsetAndPartition(Properties rootProperties, String prefix) {
@@ -150,13 +150,13 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
     private static ConfigurationNode processPropertyPlaceholders(final Properties propertyPlaceholders) {
         ConfigurationNodeBuilder builder = newNodeBuilder().setPluginName(PROPERTIES_PLUGIN_NAME);
         for (final String key : propertyPlaceholders.stringPropertyNames()) {
-            builder.addChild(newNodeBuilder()
+            ConfigurationNodeBuilder builder1 = newNodeBuilder()
                     .setPluginName(PROPERTY_PLUGIN_NAME)
                     .addAttribute(NAME_ATTRIBUTE, key)
-                    .addAttribute(VALUE_ATTRIBUTE, propertyPlaceholders.getProperty(key))
-                    .build());
+                    .addAttribute(VALUE_ATTRIBUTE, propertyPlaceholders.getProperty(key));
+            builder.addChild(builder1.get());
         }
-        return builder.build();
+        return builder.get();
     }
 
     private ConfigurationNode processScripts(Map<String, Properties> scripts) {
@@ -166,20 +166,20 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
             Properties scriptProperties = entry.getValue();
             builder.addChild(processGenericComponent(scriptPrefix, "Script", scriptProperties));
         }
-        return builder.build();
+        return builder.get();
     }
 
     private ConfigurationNode processCustomLevels(Properties customLevels) {
         ConfigurationNodeBuilder builder = newNodeBuilder().setPluginName(CUSTOM_LEVELS_PLUGIN_NAME);
         for (final String key : customLevels.stringPropertyNames()) {
             String value = validateInteger("customLevel." + key, customLevels.getProperty(key));
-            builder.addChild(newNodeBuilder()
+            ConfigurationNodeBuilder builder1 = newNodeBuilder()
                     .setPluginName(CUSTOM_LEVEL_PLUGIN_NAME)
                     .addAttribute(NAME_ATTRIBUTE, key)
-                    .addAttribute(INT_LEVEL_ATTRIBUTE, value)
-                    .build());
+                    .addAttribute(INT_LEVEL_ATTRIBUTE, value);
+            builder.addChild(builder1.get());
         }
-        return builder.build();
+        return builder.get();
     }
 
     private static String validateInteger(String key, String value) {
@@ -199,7 +199,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
         for (final Map.Entry<String, Properties> filterEntry : filters.entrySet()) {
             builder.addChild(processFilter(prefix, filterEntry));
         }
-        return builder.build();
+        return builder.get();
     }
 
     private static ConfigurationNode processFilter(String prefix, Map.Entry<String, ? extends Properties> filterEntry) {
@@ -214,7 +214,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
         for (Map.Entry<String, Properties> entry : appenders.entrySet()) {
             builder.addChild(processAppender(entry.getKey(), entry.getValue()));
         }
-        return builder.build();
+        return builder.get();
     }
 
     private static ConfigurationNode processAppender(String key, Properties properties) {
@@ -232,7 +232,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
         addFiltersToComponent(appenderPrefix, properties, builder);
         processRemainingProperties(appenderPrefix, properties, builder);
 
-        return builder.build();
+        return builder.get();
     }
 
     private static ConfigurationNode processLogger(String key, Properties properties) {
@@ -257,7 +257,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
         addFiltersToComponent(prefix, properties, builder);
         processRemainingProperties(prefix, properties, builder);
 
-        return builder.build();
+        return builder.get();
     }
 
     private static void addAppenderRefsToComponent(
@@ -286,7 +286,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
         addFiltersToComponent(prefix, properties, builder);
         processRemainingProperties(prefix, properties, builder);
 
-        return builder.build();
+        return builder.get();
     }
 
     private static void addFiltersToComponent(String prefix, Properties properties, ConfigurationNodeBuilder builder) {
@@ -314,7 +314,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
         addFiltersToComponent(prefix, properties, builder);
         processRemainingProperties(prefix, properties, builder);
 
-        return builder.build();
+        return builder.get();
     }
 
     private static @Nullable String remove(final Properties properties, final String key) {
@@ -340,7 +340,7 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
                 TYPE_ATTRIBUTE,
                 () -> "No type attribute provided for " + componentCategory + " " + prefix));
         processRemainingProperties(prefix, properties, builder);
-        return builder.build();
+        return builder.get();
     }
 
     private static void processRemainingProperties(
