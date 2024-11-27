@@ -1,0 +1,105 @@
+////
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+////
+
+= Log4j Configuration Converter API
+
+To help users migrate between
+{logging-services-url}/log4j/2.x/manual/installation.html#concepts[logging implementations]
+the Log4j Configuration Converter offers a simple API to convert configuration files from one format to another.
+
+[#api]
+== Using the API
+
+The API is based on a single
+link:javadoc/log4j-converter-config/org/apache/logging/log4j/converter/config/ConfigurationConverter.html[`ConfigurationConverter`]
+interface.
+To use it, first import the `log4j-converter-config` artifact to your project.
+
+[tabs]
+====
+Maven::
++
+[source,xml,subs="+attributes"]
+----
+<plugin>
+  <groupId>org.apache.logging.log4j</groupId>
+  <artifactId>log4j-converter-config</artifactId>
+  <version>{project-version}</version>
+</plugin>
+----
+
+Gradle::
++
+[source,groovy,subs="+attributes"]
+----
+implementation 'org.apache.logging.log4j:log4j-converter-config:{project-version}'
+----
+====
+
+You can access the main functionality of the library through the
+link:javadoc/log4j-converter-config/org/apache/logging/converter/config/ConfigurationConverter.html#convert(java.io.InputStream,java.lang.String,java.io.OutputStream,java.lang.String)[ConfigurationConverter.convert()]
+method, as shown in the example below:
+
+.Snippet from a {examples-url}/log4j-converter-config/Main.java[`Main.java`] CLI example
+[source,java,indent=0]
+----
+include::example$log4j-converter-config/Main.java[tag=convert]
+----
+
+[#formats]
+== Supported configuration formats
+
+The configuration converter is extensible by third-parties using the
+link:javadoc/log4j-converter-config/org/apache/logging/converter/config/spi/ConfigurationParser.html[`ConfigurationParser`]
+and
+link:javadoc/log4j-converter-config/org/apache/logging/converter/config/spi/ConfigurationWriter.html[`ConfigurationWriter`]
+interfaces from the
+link:javadoc/log4j-converter-config/org/apache/logging/converter/config/spi/package-summary.html[`o.a.l.l.converter.config.spi`]
+package.
+
+The library provides an out-of-the-box support for the following configuration formats
+
+.List of supported configuration formats
+[%header,cols="2h,1m,1,1"]
+|===
+| Format name | Format id | Parsing support | Writing support
+
+| {logging-services-url}/log4j/2.x/manual/configuration.html#xml[Log4j Core 2 XML]
+| v2:xml
+| yes
+| yes
+
+| {logging-services-url}/log4j/2.x/manual/configuration.html#json[Log4j Core 2 JSON]
+| v2:json
+| yes
+| yes
+
+| {logging-services-url}/log4j/2.x/manual/configuration.html#yaml[Log4j Core 2 YAML]
+| v2:yaml
+| yes
+| yes
+
+| {logging-services-url}/log4j/2.x/manual/configuration.html#xml[Log4j Core 2 Properties]
+| v2:properties
+| yes
+| no
+
+| {logging-services-url}/log4j/2.x/manual/configuration.html#xml[Log4j Core 3 Properties]
+| v3:properties
+| yes
+| yes
+|===

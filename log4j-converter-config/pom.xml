@@ -29,6 +29,9 @@
   <description>Converts various logging configuration formats to the Log4j Core 2.x format.</description>
 
   <properties>
+    <!-- This artifact is an API: we need to generate its Javadoc -->
+    <maven.javadoc.skip>false</maven.javadoc.skip>
+
     <!-- Remove after first release -->
     <bnd.baseline.fail.on.missing>false</bnd.baseline.fail.on.missing>
 

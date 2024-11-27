@@ -18,6 +18,7 @@
 * Components
 ** xref:cli.adoc[]
 ** xref:log4j-transform-maven-plugin.adoc[]
+** xref:log4j-converter-config.adoc[]
 ** xref:log4j-transform-maven-shade-plugin-extensions.adoc[]
 * xref:development.adoc[]
 * xref:release-notes.adoc[]
