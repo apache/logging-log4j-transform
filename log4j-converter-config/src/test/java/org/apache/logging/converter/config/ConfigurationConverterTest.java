@@ -40,7 +40,7 @@ class ConfigurationConverterTest {
 
     private static final String DEFAULT_FORMAT = "v2:xml";
 
-    private final ConfigurationConverter converter = ConfigurationConverter.newInstance();
+    private final ConfigurationConverter converter = ConfigurationConverter.getInstance();
     private final ConfigurationParser parser = new XmlConfigurationMapper();
 
     public static Stream<Arguments> conversionToXml() {

@@ -48,12 +48,14 @@ import org.apache.logging.converter.config.spi.ConfigurationWriter;
         value = ConfigurationMapper.class,
         cardinality = Cardinality.MULTIPLE,
         resolution = Resolution.OPTIONAL)
-public class DefaultConfigurationConverter implements ConfigurationConverter {
+public final class DefaultConfigurationConverter implements ConfigurationConverter {
+
+    public static final ConfigurationConverter INSTANCE = new DefaultConfigurationConverter();
 
     private final Map<String, ConfigurationParser> parsers = new HashMap<>();
     private final Map<String, ConfigurationWriter> writers = new HashMap<>();
 
-    public DefaultConfigurationConverter() {
+    private DefaultConfigurationConverter() {
         ServiceLoader.load(ConfigurationParser.class).forEach(parser -> parsers.put(parser.getInputFormat(), parser));
         ServiceLoader.load(ConfigurationWriter.class).forEach(writer -> writers.put(writer.getOutputFormat(), writer));
         ServiceLoader.load(ConfigurationMapper.class).forEach(mapper -> {

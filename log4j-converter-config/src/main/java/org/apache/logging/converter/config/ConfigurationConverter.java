@@ -30,8 +30,8 @@ public interface ConfigurationConverter {
      * A default implementation of {@link ConfigurationConverter} that uses {@link java.util.ServiceLoader} to load additional formats.
      * @see org.apache.logging.converter.config.spi.ConfigurationMapper
      */
-    static ConfigurationConverter newInstance() {
-        return new DefaultConfigurationConverter();
+    static ConfigurationConverter getInstance() {
+        return DefaultConfigurationConverter.INSTANCE;
     }
 
     /**

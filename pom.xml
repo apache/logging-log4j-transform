@@ -108,6 +108,9 @@
     <!-- project version -->
     <revision>0.3.0-SNAPSHOT</revision>
 
+    <!-- disable Javadoc generation. Can be overridden in child modules -->
+    <maven.javadoc.skip>true</maven.javadoc.skip>
+
     <!-- disable `maven-site-plugin`-->
     <maven.site.skip>true</maven.site.skip>
     <maven.site.deploy.skip>true</maven.site.deploy.skip>
@@ -183,6 +186,98 @@
             </goals>
             <phase>process-resources</phase>
             <inherited>false</inherited>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- ███████ ████████  █████  ██████  ████████        ███████ ██ ████████ ███████
+         ██         ██    ██   ██ ██   ██    ██    ██     ██      ██    ██    ██
+         ███████    ██    ███████ ██████     ██           ███████ ██    ██    █████
+              ██    ██    ██   ██ ██   ██    ██    ██          ██ ██    ██    ██
+         ███████    ██    ██   ██ ██   ██    ██           ███████ ██    ██    ███████
+
+         This section consists of plugins responsible for generating the site.
+         Note that only this (i.e., the root) module is supposed to have a `site` goal, it is skipped for all other modules! -->
+
+      <!-- Remove the Maven Site Plugin execution -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-site</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <!--
+        ~ JAVADOC GENERATION
+        ~ 1. Define `currentYear` property used by the `maven-javadoc-plugin` configuration
+        -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>define-currentYear-property</id>
+            <goals>
+              <goal>timestamp-property</goal>
+            </goals>
+            <phase>pre-site</phase>
+            <inherited>false</inherited>
+            <configuration>
+              <name>currentYear</name>
+              <pattern>yyyy</pattern>
+              <locale>en_US</locale>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- 2. Generate the JavaDoc -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-site-javadoc</id>
+            <goals>
+              <goal>javadoc-no-fork</goal>
+            </goals>
+            <phase>pre-site</phase>
+            <configuration combine.self="override">
+              <!-- `notimestamp` avoids `diff` noise and is required for reproducible builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
+              <notimestamp>true</notimestamp>
+              <skip>${maven.javadoc.skip}</skip>
+              <bottom><![CDATA[<p align="center">
+              Copyright &copy; {inceptionYear}-{currentYear} {organizationName}.
+              All Rights Reserved.<br/>
+              Apache, Log4j, and the Apache feather logo are trademarks or registered trademarks of {organizationName}.
+              Oracle and Java are registered trademarks of Oracle and/or its affiliates.
+              Other names may be trademarks of their respective owners.
+            </p>]]></bottom>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- 3. Move the JavaDoc to the main module -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-javadoc</id>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <phase>pre-site</phase>
+            <configuration>
+              <outputDirectory>${maven.multiModuleProjectDirectory}/target/site/javadoc/${project.artifactId}</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>target/site/apidocs</directory>
+                </resource>
+              </resources>
+            </configuration>
           </execution>
         </executions>
       </plugin>
