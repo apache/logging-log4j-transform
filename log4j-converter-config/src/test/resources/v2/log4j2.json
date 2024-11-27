@@ -1,0 +1,103 @@
+{
+  "Configuration": {
+    "monitorInterval": "10",
+    "name": "Test Configuration",
+    "Properties": {
+      "Property": {
+        "name": "pattern",
+        "value": "%d [%t] %-5p %c - %m%n%ex"
+      }
+    },
+    "CustomLevels": {
+      "CustomLevel": {
+        "intLevel": "450",
+        "name": "CONFIG"
+      }
+    },
+    "Appenders": {
+      "File": [
+        {
+          "fileName": "main.log",
+          "name": "MAIN",
+          "JsonTemplateLayout": {}
+        },
+        {
+          "fileName": "audit.log",
+          "name": "AUDIT",
+          "MarkerFilter": {
+            "marker": "AUDIT"
+          },
+          "PatternLayout": {
+            "pattern": "${pattern}"
+          }
+        }
+      ],
+      "Console": {
+        "name": "CONSOLE",
+        "Filters": {
+          "ThresholdFilter": {
+            "level": "WARN",
+            "onMatch": "ACCEPT",
+            "onMismatch": "NEUTRAL"
+          },
+          "BurstFilter": {}
+        },
+        "JsonTemplateLayout": {}
+      },
+      "id1": {
+        "type": "File",
+        "fileName": "debug.log",
+        "name": "DEBUG_LOG",
+        "JsonTemplateLayout": {}
+      }
+    },
+    "Loggers": {
+      "Root": {
+        "level": "INFO",
+        "AppenderRef": [
+          {
+            "ref": "MAIN",
+            "MarkerFilter": {
+              "marker": "PRIVATE"
+            }
+          },
+          {
+            "ref": "CONSOLE",
+            "Filters": {
+              "ThresholdFilter": {
+                "level": "WARN",
+                "onMatch": "ACCEPT",
+                "onMismatch": "NEUTRAL"
+              },
+              "BurstFilter": {}
+            }
+          }
+        ],
+        "BurstFilter": {}
+      },
+      "Logger": {
+        "additivity": "false",
+        "level": "DEBUG",
+        "name": "org.apache.logging",
+        "AppenderRef": [
+          {
+            "ref": "AUDIT"
+          },
+          {
+            "ref": "DEBUG_LOG"
+          }
+        ],
+        "Filters": {
+          "ThresholdFilter": {
+            "level": "DEBUG",
+            "onMatch": "ACCEPT",
+            "onMismatch": "NEUTRAL"
+          },
+          "BurstFilter": {
+            "level": "TRACE"
+          }
+        }
+      }
+    }
+  }
+}

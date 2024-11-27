@@ -44,6 +44,7 @@ asciidoc:
     project-id: "log4j-transform"
     java-target-version: "8"
     java-compiler-version: "[17,18)"
+    examples-url: "https://github.com/apache/logging-log4j-transform/blob/main/src/site/antora/modules/ROOT/examples"
     logging-services-url: "https://logging.apache.org"
 nav:
   - modules/ROOT/nav.adoc
