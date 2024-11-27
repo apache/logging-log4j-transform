@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to you under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration threshold="info">
+  <!-- Supported appenders -->
+  <appender name="ASYNC" class="org.apache.log4j.AsyncAppender">
+    <param name="blocking" value="true"/>
+    <param name="bufferSize" value="512"/>
+    <param name="includeLocation" value="true"/>
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="DAILY_ROLLING"/>
+    <appender-ref ref="FILE"/>
+    <appender-ref ref="ROLLING"/>
+  </appender>
+
+  <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+    <param name="follow" value="true"/>
+    <param name="immediateFlush" value="false"/>
+    <param name="target" value="System.err"/>
+    <param name="threshold" value="WARN"/>
+    <layout class="org.apache.log4j.SimpleLayout"/>
+  </appender>
+
+  <appender name="DAILY_ROLLING" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="append" value="false"/>
+    <param name="bufferedIO" value="true"/>
+    <param name="bufferSize" value="1024"/>
+    <param name="datePattern" value=".yyyy_MM_dd"/>
+    <param name="file" value="file.log"/>
+    <param name="immediateFlush" value="false"/>
+    <param name="threshold" value="WARN"/>
+    <layout class="org.apache.log4j.SimpleLayout"/>
+  </appender>
+
+  <appender name="FILE" class="org.apache.log4j.FileAppender">
+    <param name="append" value="false"/>
+    <param name="bufferedIO" value="true"/>
+    <param name="bufferSize" value="1024"/>
+    <param name="file" value="file.log"/>
+    <param name="immediateFlush" value="false"/>
+    <param name="threshold" value="WARN"/>
+    <layout class="org.apache.log4j.SimpleLayout"/>
+  </appender>
+
+  <appender name="ROLLING" class="org.apache.log4j.RollingFileAppender">
+    <param name="append" value="false"/>
+    <param name="bufferedIO" value="true"/>
+    <param name="bufferSize" value="1024"/>
+    <param name="file" value="file.log"/>
+    <param name="immediateFlush" value="false"/>
+    <param name="maxBackupIndex" value="30"/>
+    <!-- Exactly 10 GiB -->
+    <param name="maxFileSize" value="10737418240"/>
+    <param name="threshold" value="WARN"/>
+    <layout class="org.apache.log4j.SimpleLayout"/>
+  </appender>
+
+  <!-- Filters -->
+  <appender name="FILTERS" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.SimpleLayout"/>
+    <filter class="org.apache.log4j.varia.DenyAllFilter"/>
+    <filter class="org.apache.log4j.varia.LevelMatchFilter">
+      <param name="acceptOnMatch" value="true"/>
+      <param name="levelToMatch" value="WARN"/>
+    </filter>
+    <filter class="org.apache.log4j.varia.LevelRangeFilter">
+      <param name="acceptOnMatch" value="true"/>
+      <param name="levelMin" value="DEBUG"/>
+      <param name="levelMax" value="INFO"/>
+    </filter>
+    <filter class="org.apache.log4j.varia.StringMatchFilter">
+      <param name="acceptOnMatch" value="true"/>
+      <param name="stringToMatch" value="Hello"/>
+    </filter>
+  </appender>
+
+  <!-- Layouts -->
+  <appender name="HTML" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.HTMLLayout">
+      <param name="locationInfo" value="true"/>
+      <param name="title" value="Example HTML Layout"/>
+    </layout>
+  </appender>
+
+  <appender name="PATTERN" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="conversionPattern" value="%d [%t] %-5p %c - %m%n%ex"/>
+    </layout>
+  </appender>
+
+  <appender name="EPATTERN" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.EnhancedPatternLayout">
+      <param name="conversionPattern" value="%d [%t] %-5p %c - %m%n%ex"/>
+    </layout>
+  </appender>
+
+  <appender name="SIMPLE" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.SimpleLayout"/>
+  </appender>
+
+  <appender name="TTCC" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.TTCCLayout">
+      <param name="categoryPrefixing" value="true"/>
+      <param name="contextPrinting" value="true"/>
+      <param name="dateFormat" value="ISO8601"/>
+      <param name="threadPrinting" value="true"/>
+      <param name="timeZone" value="UTC"/>
+    </layout>
+  </appender>
+
+  <!-- Loggers -->
+  <logger name="org.apache.logging" additivity="false">
+    <level value="DEBUG"/>
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="DAILY_ROLLING"/>
+    <appender-ref ref="FILE"/>
+    <appender-ref ref="ROLLING"/>
+  </logger>
+
+  <root>
+    <level value="INFO"/>
+    <appender-ref ref="CONSOLE"/>
+  </root>
+</log4j:configuration>

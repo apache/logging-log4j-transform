@@ -24,6 +24,7 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.logging.converter.config.ConfigurationConverterException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -58,6 +59,41 @@ public final class XmlUtils {
         enableFeature(factory, DISABLE_DOCTYPE_DECLARATION);
         disableXIncludeAware(factory);
         return newDocumentBuilder(factory);
+    }
+
+    /**
+     * Finds an XPath expression that helps to identify a node in an XML document
+     *
+     * @param node An XML node.
+     * @return An XPath expression.
+     */
+    public static String getXPathExpression(Element node) {
+        String tagName = node.getTagName();
+        // Position of the node among siblings
+        int position = 1;
+        Node sibling = node.getPreviousSibling();
+        while (sibling != null) {
+            if (sibling instanceof Element && tagName.equals(((Element) sibling).getTagName())) {
+                position++;
+            }
+            sibling = sibling.getPreviousSibling();
+        }
+        Node parent = node.getParentNode();
+        String parentExpression = parent instanceof Element ? getXPathExpression((Element) parent) : "";
+        return parentExpression + "/" + tagName + "[" + position + "]";
+    }
+
+    public static void throwUnknownElement(Element node) {
+        throw new ConfigurationConverterException("Unknown configuration element '" + getXPathExpression(node) + "'.");
+    }
+
+    public static String requireNonEmpty(Element node, String attributeName) {
+        String value = node.getAttribute(attributeName);
+        if (value.isEmpty()) {
+            throw new ConfigurationConverterException("Missing required attribute '" + attributeName
+                    + "' on  configuration element '" + getXPathExpression(node) + "'.");
+        }
+        return value;
     }
 
     private static void disableXIncludeAware(DocumentBuilderFactory factory) throws IOException {

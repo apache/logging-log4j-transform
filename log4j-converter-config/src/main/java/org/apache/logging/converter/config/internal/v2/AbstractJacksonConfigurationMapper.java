@@ -90,7 +90,7 @@ public abstract class AbstractJacksonConfigurationMapper implements Configuratio
                 builder.addAttribute(childFieldName, childNode.asText());
             }
         });
-        return builder.setPluginName(getPluginName(objectNode, fieldName)).build();
+        return builder.setPluginName(getPluginName(objectNode, fieldName)).get();
     }
 
     private static void processArrayNode(ArrayNode arrayNode, String fieldName, ConfigurationNodeBuilder builder) {

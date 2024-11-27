@@ -33,17 +33,24 @@ public final class ComponentUtils {
         return new ConfigurationNodeBuilder();
     }
 
-    public static ConfigurationNode createThresholdFilter(String level) {
+    public static ConfigurationNode newAppenderRef(String ref) {
+        return newNodeBuilder()
+                .setPluginName("AppenderRef")
+                .addAttribute("ref", ref)
+                .get();
+    }
+
+    public static ConfigurationNode newThresholdFilter(String level) {
         return newNodeBuilder()
                 .setPluginName("ThresholdFilter")
                 .addAttribute("level", level)
-                .build();
+                .get();
     }
 
-    public static ConfigurationNode createCompositeFilter(Iterable<? extends ConfigurationNode> filters) {
+    public static ConfigurationNode newCompositeFilter(Iterable<? extends ConfigurationNode> filters) {
         ConfigurationNodeBuilder builder = newNodeBuilder().setPluginName("Filters");
         filters.forEach(builder::addChild);
-        return builder.build();
+        return builder.get();
     }
 
     private ComponentUtils() {}
@@ -73,21 +80,22 @@ public final class ComponentUtils {
             return this;
         }
 
+        public ConfigurationNodeBuilder addAttribute(String key, int value) {
+            attributes.put(key, String.valueOf(value));
+            return this;
+        }
+
         public ConfigurationNodeBuilder addChild(ConfigurationNode child) {
             children.add(child);
             return this;
         }
 
-        public ConfigurationNode build() {
+        @Override
+        public ConfigurationNode get() {
             if (pluginName == null) {
                 throw new ConfigurationConverterException("No plugin name specified");
             }
             return new ConfigurationNodeImpl(pluginName, attributes, children);
-        }
-
-        @Override
-        public ConfigurationNode get() {
-            return build();
         }
     }
 

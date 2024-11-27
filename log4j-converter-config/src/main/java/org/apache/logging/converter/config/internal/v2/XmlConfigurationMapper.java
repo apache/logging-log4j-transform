@@ -134,7 +134,7 @@ public class XmlConfigurationMapper implements ConfigurationMapper {
         // Handle child attributes
         NamedNodeMap nodeMap = element.getAttributes();
         processAttributes(nodeMap, builder);
-        return builder.setPluginName(element.getTagName()).build();
+        return builder.setPluginName(element.getTagName()).get();
     }
 
     /**
