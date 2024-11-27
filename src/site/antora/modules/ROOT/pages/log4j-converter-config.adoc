@@ -78,6 +78,16 @@ The library provides an out-of-the-box support for the following configuration f
 |===
 | Format name | Format id | Parsing support | Writing support
 
+| {logging-services-url}/log4j/1.x/apidocs/org/apache/log4j/PropertyConfigurator.html[Log4j 1 Properties]
+| v1:properties
+| yes
+| no
+
+| {logging-services-url}/log4j/1.x/apidocs/org/apache/log4j/xml/DOMConfigurator.html[Log4j 1 XML]
+| v1:xml
+| yes
+| no
+
 | {logging-services-url}/log4j/2.x/manual/configuration.html#xml[Log4j Core 2 XML]
 | v2:xml
 | yes
