@@ -108,6 +108,11 @@ public class XmlConfigurationMapper implements ConfigurationMapper {
         return LOG4J_V2_XML_FORMAT;
     }
 
+    @Override
+    public String getFormatDescription() {
+        return "Log4j Core 2 XML configuration format.";
+    }
+
     private static XMLStreamWriter createStreamWriter(OutputStream outputStream) throws IOException {
         XMLOutputFactory outputFactory = XMLOutputFactory.newFactory();
         try {

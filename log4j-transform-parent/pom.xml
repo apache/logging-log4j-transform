@@ -211,7 +211,7 @@
       </build>
     </profile>
 
-    <!-- Profile for picocli-base applications -->
+    <!-- Profile for picocli-based applications -->
     <profile>
       <id>picocli</id>
       <activation>
@@ -259,6 +259,7 @@
                       </excludes>
                     </filter>
                   </filters>
+                  <minimizeJar>true</minimizeJar>
                   <shadedArtifactAttached>true</shadedArtifactAttached>
                   <shadedClassifierName>shaded</shadedClassifierName>
                   <transformers>

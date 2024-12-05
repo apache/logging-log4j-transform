@@ -38,6 +38,11 @@ public interface ConfigurationParser {
     String getInputFormat();
 
     /**
+     * A description of the supported format for self-documentation purposes.
+     */
+    String getInputFormatDescription();
+
+    /**
      * Parses a configuration file into a tree of configuration nodes.
      * <p>
      *     The returned tree should represent a valid Log4j Core 2 configuration.
