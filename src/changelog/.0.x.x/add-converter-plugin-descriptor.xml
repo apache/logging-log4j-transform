@@ -3,7 +3,11 @@
        xmlns="https://logging.apache.org/xml/ns"
        xsi:schemaLocation="https://logging.apache.org/xml/ns https://logging.apache.org/xml/ns/log4j-changelog-0.xsd"
        type="added">
+  <issue id="139" link="https://github.com/apache/logging-log4j-transform/pull/139"/>
   <description format="asciidoc">
-    Add `log4j-codegen` tool to generate custom loggers.
+    Adds a
+    xref:cli.adoc#log4j-converter-plugin-descriptor[`log4j-converter-plugin-descriptor` CLI tool]
+    to manipulate
+    {logging-services-url}/log4j/2.x/manual/plugins.html#plugin-registry[Log4j Plugin descriptors].
   </description>
 </entry>
