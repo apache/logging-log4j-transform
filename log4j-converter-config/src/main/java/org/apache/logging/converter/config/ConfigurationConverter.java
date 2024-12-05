@@ -18,6 +18,7 @@ package org.apache.logging.converter.config;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Map;
 import java.util.Set;
 import org.apache.logging.converter.config.internal.DefaultConfigurationConverter;
 
@@ -55,4 +56,12 @@ public interface ConfigurationConverter {
      * Returns the list of supported output formats.
      */
     Set<String> getSupportedOutputFormats();
+
+    /**
+     * Associates each supported format symbol with a description.
+     * <p>
+     *     For self-documentation purposes.
+     * </p>
+     */
+    Map<String, String> getFormatDescriptions();
 }

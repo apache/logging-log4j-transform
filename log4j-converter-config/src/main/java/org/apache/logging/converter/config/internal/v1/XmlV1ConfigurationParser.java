@@ -62,6 +62,11 @@ public class XmlV1ConfigurationParser extends AbstractV1ConfigurationParser {
     }
 
     @Override
+    public String getInputFormatDescription() {
+        return "Log4j 1 XML configuration file format.";
+    }
+
+    @Override
     public ConfigurationNode parse(InputStream inputStream) throws IOException {
         DocumentBuilder documentBuilder = XmlUtils.createDocumentBuilderV1();
         try {

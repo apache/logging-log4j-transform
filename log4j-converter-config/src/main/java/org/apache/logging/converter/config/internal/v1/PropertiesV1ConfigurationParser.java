@@ -57,6 +57,11 @@ public class PropertiesV1ConfigurationParser extends AbstractV1ConfigurationPars
     }
 
     @Override
+    public String getInputFormatDescription() {
+        return "Log4j 1 Properties configuration file format.";
+    }
+
+    @Override
     public ConfigurationNode parse(InputStream inputStream) throws IOException {
         Properties properties = new Properties();
         properties.load(inputStream);

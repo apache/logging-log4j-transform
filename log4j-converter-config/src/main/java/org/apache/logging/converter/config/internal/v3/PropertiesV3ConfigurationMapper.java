@@ -45,6 +45,11 @@ public class PropertiesV3ConfigurationMapper extends AbstractJacksonConfiguratio
     }
 
     @Override
+    public String getFormatDescription() {
+        return "Log4j Core 3 Properties configuration format.";
+    }
+
+    @Override
     public ConfigurationNode parse(InputStream inputStream) throws IOException {
         return super.parse(inputStream);
     }

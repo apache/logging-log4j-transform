@@ -35,13 +35,28 @@ public interface ConfigurationMapper extends ConfigurationParser, ConfigurationW
      */
     String getFormat();
 
+    /**
+     * A description of the supported format for self-documentation purposes.
+     */
+    String getFormatDescription();
+
     @Override
     default String getInputFormat() {
         return getFormat();
     }
 
     @Override
+    default String getInputFormatDescription() {
+        return getFormatDescription();
+    }
+
+    @Override
     default String getOutputFormat() {
         return getFormat();
+    }
+
+    @Override
+    default String getOutputFormatDescription() {
+        return getFormatDescription();
     }
 }

@@ -54,6 +54,7 @@ public final class DefaultConfigurationConverter implements ConfigurationConvert
 
     private final Map<String, ConfigurationParser> parsers = new HashMap<>();
     private final Map<String, ConfigurationWriter> writers = new HashMap<>();
+    private final Map<String, String> descriptions = new HashMap<>();
 
     private DefaultConfigurationConverter() {
         ServiceLoader.load(ConfigurationParser.class).forEach(parser -> parsers.put(parser.getInputFormat(), parser));
@@ -62,6 +63,10 @@ public final class DefaultConfigurationConverter implements ConfigurationConvert
             parsers.put(mapper.getInputFormat(), mapper);
             writers.put(mapper.getOutputFormat(), mapper);
         });
+        parsers.values()
+                .forEach(parser -> descriptions.put(parser.getInputFormat(), parser.getInputFormatDescription()));
+        writers.values()
+                .forEach(writer -> descriptions.put(writer.getOutputFormat(), writer.getOutputFormatDescription()));
     }
 
     @Override
@@ -97,5 +102,10 @@ public final class DefaultConfigurationConverter implements ConfigurationConvert
     @Override
     public Set<String> getSupportedOutputFormats() {
         return Collections.unmodifiableSet(writers.keySet());
+    }
+
+    @Override
+    public Map<String, String> getFormatDescriptions() {
+        return Collections.unmodifiableMap(descriptions);
     }
 }

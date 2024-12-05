@@ -38,6 +38,11 @@ public interface ConfigurationWriter {
     String getOutputFormat();
 
     /**
+     * A description of the supported format for self-documentation purposes.
+     */
+    String getOutputFormatDescription();
+
+    /**
      * Write a tree of configuration nodes to a configuration file.
      * <p>
      *     The returned tree should represent a valid Log4j Core 2 configuration.

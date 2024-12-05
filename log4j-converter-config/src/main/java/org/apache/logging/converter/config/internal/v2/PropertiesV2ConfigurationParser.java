@@ -71,6 +71,11 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
     }
 
     @Override
+    public String getInputFormatDescription() {
+        return "Log4j Core 2 Properties configuration format.";
+    }
+
+    @Override
     public ConfigurationNode parse(InputStream inputStream) throws IOException {
         Properties rootProperties = new Properties();
         rootProperties.load(inputStream);

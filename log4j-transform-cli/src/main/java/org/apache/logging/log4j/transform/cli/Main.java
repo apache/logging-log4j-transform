@@ -14,29 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.logging.converter.config.internal.v2;
+package org.apache.logging.log4j.transform.cli;
 
-import aQute.bnd.annotation.Resolution;
-import aQute.bnd.annotation.spi.ServiceProvider;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import org.apache.logging.converter.config.spi.ConfigurationMapper;
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
 
-@ServiceProvider(value = ConfigurationMapper.class, resolution = Resolution.MANDATORY)
-public class JsonConfigurationMapper extends AbstractJacksonConfigurationMapper {
+@Command(
+        name = "log4j-transform-cli",
+        description = "Provides several utilities that transform Log4j-related files.",
+        subcommands = {ConfigurationFileCommands.class})
+public final class Main {
 
-    private static final String LOG4J_V2_JSON_FORMAT = "v2:json";
-
-    public JsonConfigurationMapper() {
-        super(JsonMapper.builder().build(), true);
+    public static void main(final String[] args) {
+        System.exit(new CommandLine(Main.class).execute(args));
     }
 
-    @Override
-    public String getFormat() {
-        return LOG4J_V2_JSON_FORMAT;
-    }
-
-    @Override
-    public String getFormatDescription() {
-        return "Log4j Core 2 JSON configuration format.";
-    }
+    private Main() {}
 }

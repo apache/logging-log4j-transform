@@ -40,4 +40,9 @@ public class YamlConfigurationMapper extends AbstractJacksonConfigurationMapper 
     public String getFormat() {
         return LOG4J_V2_YAML_FORMAT;
     }
+
+    @Override
+    public String getFormatDescription() {
+        return "Log4j Core 2 YAML configuration format.";
+    }
 }
