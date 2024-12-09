@@ -73,7 +73,6 @@
     <module>log4j-transform-parent</module>
 
     <!-- Modules here must have a corresponding entry in `dependencyManagement > dependencies` block below! -->
-    <module>log4j-codegen</module>
     <module>log4j-converter-config</module>
     <module>log4j-converter-plugin-descriptor</module>
     <module>log4j-transform-maven-plugin</module>
@@ -130,12 +129,6 @@
        Modules here must have a corresponding entry in `modules` block above! -->
   <dependencyManagement>
     <dependencies>
-
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-codegen</artifactId>
-        <version>${project.version}</version>
-      </dependency>
 
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>

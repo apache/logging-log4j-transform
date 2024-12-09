@@ -19,62 +19,6 @@
 
 The Log4j Transform CLI Tools are a set of command line tools to help users with various Log4j-related formats.
 
-[#log4j-codegen]
-== `log4j-codegen`
-
-The `log4j-codegen` tool is a small command line application that generates
-{logging-services-url}/log4j/2.x/javadoc/log4j-api/org/apache/logging/log4j/Logger.html[`Logger`]
-wrappers with custom log levels.
-
-[#log4j-codegen-syntax]
-=== Syntax
-
-The general syntax of the tool is:
-
-[source,subs="+attributes"]
-----
-java -jar log4j-codegen-{project-version}.jar [-f=<outputFile>] <command> <className> [<level>...]
-----
-
-where the elements have the following meaning:
-
-`<outputFile>`::
-The name of the output file.
-By default, the output is printed on the standard output.
-
-`<command>`::
-This can be one of:
-
-extendedLogger:::
-Generates a logger class that supports the
-{logging-services-url}/log4j/2.x/manual/customloglevels.html[standard log levels]
-and some additional ones.
-
-customLogger:::
-Generates a logger class that supports only the levels specified on the command line.
-
-`<className>`::
-The fully qualified name of the `Logger` class to generate.
-
-`<level>`::
-A string of the form `<levelName>=<levelPriority>`, where:
-
-`<levelName>`:::
-The name of the level, e.g. `CONFIG`, `AUDIT`.
-
-`<levelPriority>`:::
-An integer that specifies the severity of each level.
-For a list of standard priorities see
-{logging-services-url}/log4j/2.x/manual/customloglevels.html[Levels].
-
-[#log4j-codegen-examples]
-=== Usage examples
-
-[source,subs="+attributes"]
-----
-java -jar log4j-codegen-{project-version}.jar extendedLogger DIAG=350 NOTICE=450 VERBOSE=550
-----
-
 [#log4j-converter-plugin-descriptor]
 == `log4j-converter-plugin-descriptor`
 
