@@ -272,7 +272,7 @@ See <<log4j-transform-cli-configFile-convert>> for the syntax.
 See <<log4j-transform-cli-configFile-listFormats>> for the syntax.
 
 [#log4j-transform-cli-configFile-convert]
-include::cli::partial$configFile-convert.adoc[leveloffset=2]
+include::cli::partial$config-file-convert.adoc[leveloffset=2]
 
 [#log4j-transform-cli-configFile-listFormats]
-include::cli::partial$configFile-listFormats.adoc[leveloffset=2]
+include::cli::partial$config-file-list-formats.adoc[leveloffset=2]
