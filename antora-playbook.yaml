@@ -25,6 +25,7 @@ content:
     - url: .
       branches: HEAD
       start_paths:
+        - log4j-transform-cli/target/generated-site/antora
         - target/generated-site/antora
       edit_url:
 

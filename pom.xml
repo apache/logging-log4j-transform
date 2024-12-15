@@ -76,6 +76,7 @@
     <module>log4j-codegen</module>
     <module>log4j-converter-config</module>
     <module>log4j-converter-plugin-descriptor</module>
+    <module>log4j-transform-cli</module>
     <module>log4j-transform-maven-plugin</module>
     <module>log4j-transform-maven-shade-plugin-extensions</module>
     <module>log4j-weaver</module>
@@ -146,6 +147,12 @@
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-converter-plugin-descriptor</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-transform-cli</artifactId>
         <version>${project.version}</version>
       </dependency>
 

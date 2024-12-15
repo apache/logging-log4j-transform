@@ -257,5 +257,22 @@ A list of file paths to the runtime dependencies of your application, separated 
 
 The command will filter and output each `reflect-config.json` in its original path under the `META-INF/native-image` subfolder of the output directory.
 
-[#log4j-converter-plugin-descriptor-example]
-=== Examples
+[#log4j-transform-cli]
+== `log4j-transform-cli`
+
+The `log4j-transform-cli` tool provides CLI access to some of the functionalities offered by
+xref:ROOT::index.adoc[].
+
+Currently, you can use it to:
+
+* Convert between different formats of logging configuration files.
+See <<log4j-transform-cli-configFile-convert>> for the syntax.
+
+* List the support configuration file formats.
+See <<log4j-transform-cli-configFile-listFormats>> for the syntax.
+
+[#log4j-transform-cli-configFile-convert]
+include::cli::partial$config-file-convert.adoc[leveloffset=2]
+
+[#log4j-transform-cli-configFile-listFormats]
+include::cli::partial$config-file-list-formats.adoc[leveloffset=2]
