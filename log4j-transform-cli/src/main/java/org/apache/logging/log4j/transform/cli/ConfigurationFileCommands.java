@@ -32,19 +32,32 @@ import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import org.apache.logging.converter.config.ConfigurationConverter;
 import org.jspecify.annotations.Nullable;
+import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 @Command(
-        name = "configFile",
+        name = "config-file",
         description = "Handles the transformation of logging configuration files.",
-        subcommands = {ConfigurationFileCommands.Convert.class, ConfigurationFileCommands.ListFormats.class})
-class ConfigurationFileCommands {
+        mixinStandardHelpOptions = true,
+        subcommands = {ConfigurationFileCommands.Convert.class, ConfigurationFileCommands.ListFormats.class},
+        versionProvider = Main.VersionProvider.class)
+public final class ConfigurationFileCommands {
 
     private static final int PADDING_SIZE = 2;
 
-    @Command(name = "listFormats", description = "Lists the supported configuration file formats.")
+    public static void main(final String[] args) {
+        System.exit(new CommandLine(ConfigurationFileCommands.class).execute(args));
+    }
+
+    private ConfigurationFileCommands() {}
+
+    @Command(
+            name = "list-formats",
+            description = "Lists the supported configuration file formats.",
+            mixinStandardHelpOptions = true,
+            versionProvider = Main.VersionProvider.class)
     static class ListFormats implements Callable<Integer> {
 
         private final ConfigurationConverter converter = ConfigurationConverter.getInstance();
@@ -100,7 +113,11 @@ class ConfigurationFileCommands {
         }
     }
 
-    @Command(name = "convert", description = "Converts a logging configuration file to a different format.")
+    @Command(
+            name = "convert",
+            description = "Converts a logging configuration file to a different format.",
+            mixinStandardHelpOptions = true,
+            versionProvider = Main.VersionProvider.class)
     static class Convert implements Callable<Integer> {
 
         private final ConfigurationConverter converter = ConfigurationConverter.getInstance();

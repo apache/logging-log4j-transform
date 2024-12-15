@@ -22,7 +22,9 @@ import picocli.CommandLine.Command;
 @Command(
         name = "log4j-transform-cli",
         description = "Provides several utilities that transform Log4j-related files.",
-        subcommands = {ConfigurationFileCommands.class})
+        mixinStandardHelpOptions = true,
+        subcommands = ConfigurationFileCommands.class,
+        versionProvider = Main.VersionProvider.class)
 public final class Main {
 
     public static void main(final String[] args) {
@@ -30,4 +32,14 @@ public final class Main {
     }
 
     private Main() {}
+
+    static class VersionProvider implements CommandLine.IVersionProvider {
+
+        @Override
+        public String[] getVersion() {
+            return new String[] {
+                "log4j-transform-cli " + Main.class.getPackage().getImplementationVersion()
+            };
+        }
+    }
 }
