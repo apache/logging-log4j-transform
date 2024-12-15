@@ -103,15 +103,30 @@ extends <a href="ConfigurationParser.html" title="interface in org.apache.loggin
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">A short string that identifies the format supported by this mapper.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#getInputFormat()" class="member-name-link">getInputFormat</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getFormatDescription()" class="member-name-link">getFormatDescription</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">A description of the supported format for self-documentation purposes.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#getInputFormat()" class="member-name-link">getInputFormat</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">A short string that identifies the format supported by this parser.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#getInputFormatDescription()" class="member-name-link">getInputFormatDescription</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">A description of the supported format for self-documentation purposes.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#getOutputFormat()" class="member-name-link">getOutputFormat</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">A short string that identifies the format supported by this writer.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#getOutputFormatDescription()" class="member-name-link">getOutputFormatDescription</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">A description of the supported format for self-documentation purposes.</div>
 </div>
 </div>
 </div>
@@ -144,6 +159,13 @@ extends <a href="ConfigurationParser.html" title="interface in org.apache.loggin
 </section>
 </li>
 <li>
+<section class="detail" id="getFormatDescription()">
+<h3>getFormatDescription</h3>
+<div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getFormatDescription</span>()</div>
+<div class="block">A description of the supported format for self-documentation purposes.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="getInputFormat()">
 <h3>getInputFormat</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getInputFormat</span>()</div>
@@ -159,6 +181,18 @@ extends <a href="ConfigurationParser.html" title="interface in org.apache.loggin
 </section>
 </li>
 <li>
+<section class="detail" id="getInputFormatDescription()">
+<h3>getInputFormatDescription</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getInputFormatDescription</span>()</div>
+<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="ConfigurationParser.html#getInputFormatDescription()">ConfigurationParser</a></code></span></div>
+<div class="block">A description of the supported format for self-documentation purposes.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="ConfigurationParser.html#getInputFormatDescription()">getInputFormatDescription</a></code>&nbsp;in interface&nbsp;<code><a href="ConfigurationParser.html" title="interface in org.apache.logging.converter.config.spi">ConfigurationParser</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="getOutputFormat()">
 <h3>getOutputFormat</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getOutputFormat</span>()</div>
@@ -170,6 +204,18 @@ extends <a href="ConfigurationParser.html" title="interface in org.apache.loggin
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="ConfigurationWriter.html#getOutputFormat()">getOutputFormat</a></code>&nbsp;in interface&nbsp;<code><a href="ConfigurationWriter.html" title="interface in org.apache.logging.converter.config.spi">ConfigurationWriter</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getOutputFormatDescription()">
+<h3>getOutputFormatDescription</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getOutputFormatDescription</span>()</div>
+<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="ConfigurationWriter.html#getOutputFormatDescription()">ConfigurationWriter</a></code></span></div>
+<div class="block">A description of the supported format for self-documentation purposes.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="ConfigurationWriter.html#getOutputFormatDescription()">getOutputFormatDescription</a></code>&nbsp;in interface&nbsp;<code><a href="ConfigurationWriter.html" title="interface in org.apache.logging.converter.config.spi">ConfigurationWriter</a></code></dd>
 </dl>
 </section>
 </li>

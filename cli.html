@@ -476,9 +476,125 @@ Defaults to the current working directory.</p>
 <p>The command will filter and output each <code>reflect-config.json</code> in its original path under the <code>META-INF/native-image</code> subfolder of the output directory.</p>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="log4j-transform-cli"><a class="anchor" href="#log4j-transform-cli"></a><code>log4j-transform-cli</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>log4j-transform-cli</code> tool provides CLI access to some of the functionalities offered by
+<a href="index.html" class="xref page">Log4j Transform</a>.</p>
+</div>
+<div class="paragraph">
+<p>Currently, you can use it to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Convert between different formats of logging configuration files.
+See <a href="#log4j-transform-cli-configFile-convert">config-file-convert(1)</a> for the syntax.</p>
+</li>
+<li>
+<p>List the support configuration file formats.
+See <a href="#log4j-transform-cli-configFile-listFormats">config-file-list-formats(1)</a> for the syntax.</p>
+</li>
+</ul>
+</div>
 <div class="sect2">
-<h3 id="log4j-converter-plugin-descriptor-example"><a class="anchor" href="#log4j-converter-plugin-descriptor-example"></a>Examples</h3>
-
+<h3 id="log4j-transform-cli-configFile-convert"><a class="anchor" href="#log4j-transform-cli-configFile-convert"></a>config-file-convert(1)</h3>
+<div class="sect3">
+<h4 id="_name"><a class="anchor" href="#_name"></a>Name</h4>
+<div class="paragraph">
+<p>config-file-convert - Converts a logging configuration file to a different format.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h4>
+<div class="paragraph">
+<p><strong>config-file convert</strong> [<strong>-hV</strong>] <strong>-i</strong>=<em>&lt;inputFormat&gt;</em> <strong>-o</strong>=<em>&lt;outputFormat&gt;</em> <em>&lt;inputFile&gt;</em>
+                    <em>&lt;outputFile&gt;</em></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_description"><a class="anchor" href="#_description"></a>Description</h4>
+<div class="paragraph">
+<p>Converts a logging configuration file to a different format.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_options"><a class="anchor" href="#_options"></a>Options</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>-h</strong>, <strong>--help</strong></dt>
+<dd>
+<p>Show this help message and exit.</p>
+</dd>
+<dt class="hdlist1"><strong>-i</strong>, <strong>--input-format</strong>=<em>&lt;inputFormat&gt;</em></dt>
+<dd>
+<p>The format of the input file.</p>
+</dd>
+<dt class="hdlist1"><strong>-o</strong>, <strong>--output-format</strong>=<em>&lt;outputFormat&gt;</em></dt>
+<dd>
+<p>The format of the output file.</p>
+</dd>
+<dt class="hdlist1"><strong>-V</strong>, <strong>--version</strong></dt>
+<dd>
+<p>Print version information and exit.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_arguments"><a class="anchor" href="#_arguments"></a>Arguments</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><em>&lt;inputFile&gt;</em></dt>
+<dd>
+<p>The input logging configuration file.</p>
+</dd>
+<dt class="hdlist1"><em>&lt;outputFile&gt;</em></dt>
+<dd>
+<p>The output logging configuration file.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="log4j-transform-cli-configFile-listFormats"><a class="anchor" href="#log4j-transform-cli-configFile-listFormats"></a>config-file-list-formats(1)</h3>
+<div class="sect3">
+<h4 id="_name_2"><a class="anchor" href="#_name_2"></a>Name</h4>
+<div class="paragraph">
+<p>config-file-list-formats - Lists the supported configuration file formats.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_synopsis_2"><a class="anchor" href="#_synopsis_2"></a>Synopsis</h4>
+<div class="paragraph">
+<p><strong>config-file list-formats</strong> [<strong>-hV</strong>]</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_description_2"><a class="anchor" href="#_description_2"></a>Description</h4>
+<div class="paragraph">
+<p>Lists the supported configuration file formats.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_options_2"><a class="anchor" href="#_options_2"></a>Options</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>-h</strong>, <strong>--help</strong></dt>
+<dd>
+<p>Show this help message and exit.</p>
+</dd>
+<dt class="hdlist1"><strong>-V</strong>, <strong>--version</strong></dt>
+<dd>
+<p>Print version information and exit.</p>
+</dd>
+</dl>
+</div>
+</div>
 </div>
 </div>
 </div>
