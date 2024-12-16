@@ -23,8 +23,8 @@ import java.util.function.Supplier;
 import org.apache.logging.converter.config.internal.ComponentUtils;
 import org.apache.logging.converter.config.internal.v1.AbstractComponentParser;
 import org.apache.logging.converter.config.spi.ConfigurationNode;
+import org.apache.logging.converter.config.spi.PropertiesSubset;
 import org.apache.logging.converter.config.spi.v1.Log4j1ComponentParser;
-import org.apache.logging.converter.config.spi.v1.PropertiesSubset;
 import org.w3c.dom.Element;
 
 /**

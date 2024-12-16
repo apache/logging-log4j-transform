@@ -35,7 +35,7 @@ import org.apache.logging.converter.config.internal.ComponentUtils.Configuration
 import org.apache.logging.converter.config.internal.PropertiesUtils;
 import org.apache.logging.converter.config.spi.ConfigurationNode;
 import org.apache.logging.converter.config.spi.ConfigurationParser;
-import org.apache.logging.converter.config.spi.v1.PropertiesSubset;
+import org.apache.logging.converter.config.spi.PropertiesSubset;
 
 @ServiceProvider(value = ConfigurationParser.class, resolution = Resolution.MANDATORY)
 public class PropertiesV1ConfigurationParser extends AbstractV1ConfigurationParser {

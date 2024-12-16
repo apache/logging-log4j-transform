@@ -16,31 +16,18 @@
  */
 package org.apache.logging.converter.config.internal;
 
-import java.util.Map;
+import java.util.Comparator;
 import java.util.Properties;
 import java.util.stream.Stream;
 import org.apache.logging.converter.config.ConfigurationConverterException;
-import org.apache.logging.converter.config.spi.v1.PropertiesSubset;
+import org.apache.logging.converter.config.spi.PropertiesSubset;
 import org.jspecify.annotations.Nullable;
 
 public final class PropertiesUtils {
 
-    public static @Nullable String getAndRemove(Properties properties, String key) {
-        return (String) properties.remove(key);
-    }
-
     public static String getLastComponent(String name) {
         int idx = name.lastIndexOf('.');
         return idx == -1 ? name : name.substring(idx + 1);
-    }
-
-    public static Properties extractSubset(Properties properties, String prefix) {
-        Properties subset = org.apache.logging.log4j.util.PropertiesUtil.extractSubset(properties, prefix);
-        String value = getAndRemove(properties, prefix);
-        if (value != null) {
-            subset.setProperty("", value);
-        }
-        return subset;
     }
 
     public static @Nullable String extractProperty(PropertiesSubset subset, String key) {
@@ -51,25 +38,24 @@ public final class PropertiesUtils {
         Properties parentProperties = parentSubset.getProperties();
         Properties properties =
                 org.apache.logging.log4j.util.PropertiesUtil.extractSubset(parentProperties, childPrefix);
-        String value = getAndRemove(parentProperties, childPrefix);
+        String value = (String) parentProperties.remove(childPrefix);
         if (value != null) {
             properties.setProperty("", value);
         }
         return PropertiesSubset.of(addPrefixes(parentSubset.getPrefix(), childPrefix), properties);
     }
 
-    public static Map<String, Properties> partitionOnCommonPrefixes(Properties properties) {
-        return org.apache.logging.log4j.util.PropertiesUtil.partitionOnCommonPrefixes(properties, true);
-    }
-
     public static Stream<PropertiesSubset> partitionOnCommonPrefixes(PropertiesSubset parentSubset) {
         String parentPrefix = parentSubset.getPrefix();
         String effectivePrefix = parentPrefix.isEmpty() ? parentPrefix : parentPrefix + ".";
-        return org.apache.logging.log4j.util.PropertiesUtil.partitionOnCommonPrefixes(
+        Stream<PropertiesSubset> partitioned = org.apache.logging.log4j.util.PropertiesUtil.partitionOnCommonPrefixes(
                         parentSubset.getProperties(), true)
                 .entrySet()
                 .stream()
-                .map(entry -> PropertiesSubset.of(effectivePrefix + entry.getKey(), entry.getValue()));
+                .map(entry -> PropertiesSubset.of(effectivePrefix + entry.getKey(), entry.getValue()))
+                .sorted(Comparator.comparing(PropertiesSubset::getPrefix));
+        parentSubset.getProperties().clear();
+        return partitioned;
     }
 
     private static String addPrefixes(String left, String right) {
@@ -92,6 +78,20 @@ public final class PropertiesUtils {
                     .forEach(k -> messageBuilder.append("\n\t").append(k));
             throw new ConfigurationConverterException(messageBuilder.toString());
         }
+    }
+
+    /**
+     * @return {@code true} if the subset contains no properties.
+     */
+    public static boolean isEmpty(PropertiesSubset subset) {
+        return subset.getProperties().isEmpty();
+    }
+
+    /**
+     * @return {@code true} if the subset contains some properties.
+     */
+    public static boolean isNotEmpty(PropertiesSubset subset) {
+        return !isEmpty(subset);
     }
 
     private PropertiesUtils() {}

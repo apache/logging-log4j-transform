@@ -18,6 +18,7 @@ package org.apache.logging.converter.config.spi.v1;
 
 import org.apache.logging.converter.config.ConfigurationConverterException;
 import org.apache.logging.converter.config.spi.ConfigurationNode;
+import org.apache.logging.converter.config.spi.PropertiesSubset;
 import org.w3c.dom.Element;
 
 public interface Log4j1ComponentParser {

@@ -17,24 +17,29 @@
 package org.apache.logging.converter.config.internal.v2;
 
 import static org.apache.logging.converter.config.internal.ComponentUtils.newNodeBuilder;
-import static org.apache.logging.log4j.util.PropertiesUtil.extractSubset;
-import static org.apache.logging.log4j.util.PropertiesUtil.partitionOnCommonPrefixes;
+import static org.apache.logging.converter.config.internal.PropertiesUtils.extractProperty;
+import static org.apache.logging.converter.config.internal.PropertiesUtils.extractSubset;
+import static org.apache.logging.converter.config.internal.PropertiesUtils.isNotEmpty;
+import static org.apache.logging.converter.config.internal.PropertiesUtils.partitionOnCommonPrefixes;
 
 import aQute.bnd.annotation.Resolution;
 import aQute.bnd.annotation.spi.ServiceProvider;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.Collection;
+import java.util.Objects;
 import java.util.Properties;
-import java.util.TreeMap;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.logging.converter.config.ConfigurationConverterException;
+import org.apache.logging.converter.config.internal.ComponentUtils;
 import org.apache.logging.converter.config.internal.ComponentUtils.ConfigurationNodeBuilder;
+import org.apache.logging.converter.config.internal.PropertiesUtils;
 import org.apache.logging.converter.config.spi.ConfigurationNode;
 import org.apache.logging.converter.config.spi.ConfigurationParser;
+import org.apache.logging.converter.config.spi.PropertiesSubset;
 import org.apache.logging.log4j.util.Strings;
-import org.jspecify.annotations.Nullable;
 
 @ServiceProvider(value = ConfigurationParser.class, resolution = Resolution.MANDATORY)
 public class PropertiesV2ConfigurationParser implements ConfigurationParser {
@@ -48,8 +53,6 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
     private static final String TYPE_ATTRIBUTE = "type";
     private static final String VALUE_ATTRIBUTE = "value";
 
-    private static final String ROOT_LOGGER_NAME = "root";
-
     private static final String APPENDERS_PLUGIN_NAME = "Appenders";
     private static final String CONFIGURATION_PLUGIN_NAME = "Configuration";
     private static final String CUSTOM_LEVEL_PLUGIN_NAME = "CustomLevel";
@@ -57,13 +60,14 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
     private static final String APPENDER_REF_PLUGIN_NAME = "AppenderRef";
     private static final String ASYNC_LOGGER_PLUGIN_NAME = "AsyncLogger";
     private static final String ASYNC_ROOT_PLUGIN_NAME = "AsyncRoot";
-    private static final String FILTERS_PLUGIN_NAME = "Filters";
     private static final String LOGGER_PLUGIN_NAME = "Logger";
     private static final String LOGGERS_PLUGIN_NAME = "Loggers";
     private static final String PROPERTIES_PLUGIN_NAME = "Properties";
     private static final String PROPERTY_PLUGIN_NAME = "Property";
     private static final String ROOT_PLUGIN_NAME = "Root";
     private static final String SCRIPTS_PLUGIN_NAME = "Scripts";
+
+    private static final String COMMA_SEPARATOR = "\\s*,\\s*";
 
     @Override
     public String getInputFormat() {
@@ -77,107 +81,104 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
 
     @Override
     public ConfigurationNode parse(InputStream inputStream) throws IOException {
-        Properties rootProperties = new Properties();
-        rootProperties.load(inputStream);
+        Properties props = new Properties();
+        props.load(inputStream);
+        PropertiesSubset rootProperties = PropertiesSubset.of("", props);
         ConfigurationNodeBuilder builder = newNodeBuilder().setPluginName(CONFIGURATION_PLUGIN_NAME);
 
-        for (final String key : rootProperties.stringPropertyNames()) {
-            if (!key.contains(".")) {
-                builder.addAttribute(key, remove(rootProperties, key));
-            }
-        }
-
-        Properties propertyPlaceholders = extractSubset(rootProperties, "property");
-        if (!propertyPlaceholders.isEmpty()) {
+        PropertiesSubset propertyPlaceholders = extractSubset(rootProperties, "property");
+        if (isNotEmpty(propertyPlaceholders)) {
             builder.addChild(processPropertyPlaceholders(propertyPlaceholders));
         }
 
-        Map<String, Properties> scripts = extractSubsetAndPartition(rootProperties, "script");
-        if (!scripts.isEmpty()) {
-            builder.addChild(processScripts(scripts));
+        PropertiesSubset scriptProperties = extractSubset(rootProperties, "script");
+        if (isNotEmpty(scriptProperties)) {
+            builder.addChild(processScripts(scriptProperties));
         }
+        PropertiesUtils.throwIfNotEmpty(scriptProperties);
 
-        Properties customLevels = extractSubset(rootProperties, "customLevel");
-        if (!customLevels.isEmpty()) {
+        PropertiesSubset customLevels = extractSubset(rootProperties, "customLevel");
+        if (isNotEmpty(customLevels)) {
             builder.addChild(processCustomLevels(customLevels));
         }
+        PropertiesUtils.throwIfNotEmpty(customLevels);
 
-        Map<String, Properties> filters = extractSubsetAndPartition(rootProperties, "filter", "filters");
+        // Filters
+        PropertiesSubset filtersProperties = extractSubset(rootProperties, "filter");
+        String filterNames = extractProperty(rootProperties, "filters");
+        final Stream<? extends PropertiesSubset> filtersStream = filterNames != null
+                ? partitionOnGivenPrefixes(filtersProperties, filterNames)
+                : partitionOnCommonPrefixes(filtersProperties);
+        Collection<ConfigurationNode> filters =
+                filtersStream.map(p -> processGenericComponent("filter", p)).collect(Collectors.toList());
         if (!filters.isEmpty()) {
-            builder.addChild(processFilters("", filters));
+            builder.addChild(wrapFilters(filters));
         }
+        PropertiesUtils.throwIfNotEmpty(filtersProperties);
 
-        Map<String, Properties> appenders = extractSubsetAndPartition(rootProperties, "appender", "appenders");
-        if (!appenders.isEmpty()) {
-            builder.addChild(processAppenders(appenders));
-        }
+        // Appenders
+        PropertiesSubset appendersProperties = extractSubset(rootProperties, "appender");
+        String appenderNames = extractProperty(rootProperties, "appenders");
+        final Stream<? extends PropertiesSubset> appendersStream = appenderNames != null
+                ? partitionOnGivenPrefixes(appendersProperties, appenderNames)
+                : partitionOnCommonPrefixes(appendersProperties);
+        Collection<ConfigurationNode> appenders = appendersStream
+                .map(PropertiesV2ConfigurationParser::processAppender)
+                .collect(Collectors.toList());
+        builder.addChild(createAppenders(appenders));
+        PropertiesUtils.throwIfNotEmpty(appendersProperties);
 
         ConfigurationNodeBuilder loggersBuilder = newNodeBuilder().setPluginName(LOGGERS_PLUGIN_NAME);
         // 1. Start with the root logger
-        Properties rootLoggerProperties = extractSubset(rootProperties, "rootLogger");
-        String rootLoggerProperty = rootProperties.getProperty("rootLogger");
-        if (rootLoggerProperty != null) {
-            rootLoggerProperties.put("", rootLoggerProperty);
-        }
+        PropertiesSubset rootLoggerProperties = extractSubset(rootProperties, "rootLogger");
         loggersBuilder.addChild(processRootLogger(rootLoggerProperties));
+        PropertiesUtils.throwIfNotEmpty(rootLoggerProperties);
         // 2. The remaining loggers
-        Map<String, Properties> loggers = extractSubsetAndPartition(rootProperties, "logger", "loggers");
-        for (Map.Entry<String, Properties> entry : loggers.entrySet()) {
-            if (!ROOT_LOGGER_NAME.equals(entry.getKey())) {
-                loggersBuilder.addChild(processLogger(entry.getKey(), entry.getValue()));
-            }
-        }
+        PropertiesSubset loggersProperties = extractSubset(rootProperties, "logger");
+        String loggersName = extractProperty(rootProperties, "loggers");
+        final Stream<? extends PropertiesSubset> loggersStream = loggersName != null
+                ? partitionOnGivenPrefixes(loggersProperties, loggersName)
+                : partitionOnCommonPrefixes(loggersProperties);
+        loggersStream.map(PropertiesV2ConfigurationParser::processLogger).forEach(loggersBuilder::addChild);
+        PropertiesUtils.throwIfNotEmpty(loggersProperties);
         // Add the `Loggers` plugin
         builder.addChild(loggersBuilder.get());
 
+        // Extract attributes of Configuration
+        for (final String key : rootProperties.getProperties().stringPropertyNames()) {
+            if (!key.contains(".")) {
+                builder.addAttribute(key, extractProperty(rootProperties, key));
+            }
+        }
+        PropertiesUtils.throwIfNotEmpty(rootProperties);
         return builder.get();
     }
 
-    private static Map<String, Properties> extractSubsetAndPartition(Properties rootProperties, String prefix) {
-        return new TreeMap<>(partitionOnCommonPrefixes(extractSubset(rootProperties, prefix)));
-    }
-
-    private static Map<String, Properties> extractSubsetAndPartition(
-            Properties rootProperties, String prefix, String keysProperty) {
-        String keysList = rootProperties.getProperty(keysProperty);
-        if (keysList != null) {
-            String[] keys = keysList.split(",", -1);
-            Map<String, Properties> result = new LinkedHashMap<>();
-            for (final String untrimmedKey : keys) {
-                String key = untrimmedKey.trim();
-                result.put(key, extractSubset(rootProperties, prefix + "." + key));
-            }
-            return result;
-        }
-        return extractSubsetAndPartition(rootProperties, prefix);
-    }
-
-    private static ConfigurationNode processPropertyPlaceholders(final Properties propertyPlaceholders) {
+    private static ConfigurationNode processPropertyPlaceholders(PropertiesSubset propertyPlaceholders) {
+        Properties props = propertyPlaceholders.getProperties();
         ConfigurationNodeBuilder builder = newNodeBuilder().setPluginName(PROPERTIES_PLUGIN_NAME);
-        for (final String key : propertyPlaceholders.stringPropertyNames()) {
+        for (final String key : props.stringPropertyNames()) {
             ConfigurationNodeBuilder builder1 = newNodeBuilder()
                     .setPluginName(PROPERTY_PLUGIN_NAME)
                     .addAttribute(NAME_ATTRIBUTE, key)
-                    .addAttribute(VALUE_ATTRIBUTE, propertyPlaceholders.getProperty(key));
+                    .addAttribute(VALUE_ATTRIBUTE, props.getProperty(key));
             builder.addChild(builder1.get());
         }
         return builder.get();
     }
 
-    private ConfigurationNode processScripts(Map<String, Properties> scripts) {
+    private ConfigurationNode processScripts(PropertiesSubset scripts) {
         ConfigurationNodeBuilder builder = newNodeBuilder().setPluginName(SCRIPTS_PLUGIN_NAME);
-        for (final Map.Entry<String, Properties> entry : scripts.entrySet()) {
-            String scriptPrefix = "script." + entry.getKey();
-            Properties scriptProperties = entry.getValue();
-            builder.addChild(processGenericComponent(scriptPrefix, "Script", scriptProperties));
-        }
+        partitionOnCommonPrefixes(scripts)
+                .forEach(script -> builder.addChild(processGenericComponent("script", script)));
         return builder.get();
     }
 
-    private ConfigurationNode processCustomLevels(Properties customLevels) {
+    private ConfigurationNode processCustomLevels(PropertiesSubset customLevels) {
         ConfigurationNodeBuilder builder = newNodeBuilder().setPluginName(CUSTOM_LEVELS_PLUGIN_NAME);
-        for (final String key : customLevels.stringPropertyNames()) {
-            String value = validateInteger("customLevel." + key, customLevels.getProperty(key));
+        for (final String key : customLevels.getProperties().stringPropertyNames()) {
+            String value =
+                    validateInteger("customLevel." + key, Objects.requireNonNull(extractProperty(customLevels, key)));
             ConfigurationNodeBuilder builder1 = newNodeBuilder()
                     .setPluginName(CUSTOM_LEVEL_PLUGIN_NAME)
                     .addAttribute(NAME_ATTRIBUTE, key)
@@ -196,84 +197,75 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
         }
     }
 
-    private static ConfigurationNode processFilters(String prefix, Map<String, Properties> filters) {
-        if (filters.size() == 1) {
-            return processFilter(prefix, filters.entrySet().iterator().next());
-        }
-        ConfigurationNodeBuilder builder = newNodeBuilder().setPluginName(FILTERS_PLUGIN_NAME);
-        for (final Map.Entry<String, Properties> filterEntry : filters.entrySet()) {
-            builder.addChild(processFilter(prefix, filterEntry));
-        }
-        return builder.get();
-    }
-
-    private static ConfigurationNode processFilter(String prefix, Map.Entry<String, ? extends Properties> filterEntry) {
-        String actualPrefix = prefix.isEmpty() ? prefix : prefix + ".";
-        String filterPrefix = actualPrefix + "filter." + filterEntry.getKey();
-        Properties filterProperties = filterEntry.getValue();
-        return processGenericComponent(filterPrefix, "Filter", filterProperties);
-    }
-
-    private static ConfigurationNode processAppenders(Map<String, Properties> appenders) {
+    private static ConfigurationNode createAppenders(Iterable<? extends ConfigurationNode> appenders) {
         ConfigurationNodeBuilder builder = newNodeBuilder().setPluginName(APPENDERS_PLUGIN_NAME);
-        for (Map.Entry<String, Properties> entry : appenders.entrySet()) {
-            builder.addChild(processAppender(entry.getKey(), entry.getValue()));
+        for (ConfigurationNode appender : appenders) {
+            builder.addChild(appender);
         }
         return builder.get();
     }
 
-    private static ConfigurationNode processAppender(String key, Properties properties) {
-        String appenderPrefix = "appender." + key;
+    private static ConfigurationNode processAppender(PropertiesSubset properties) {
         ConfigurationNodeBuilder builder = newNodeBuilder()
                 .setPluginName(getRequiredAttribute(
-                        properties, TYPE_ATTRIBUTE, () -> "No type attribute provided for Appender " + appenderPrefix))
+                        properties,
+                        TYPE_ATTRIBUTE,
+                        () -> "No type attribute provided for Appender " + properties.getPrefix()))
                 .addAttribute(
                         NAME_ATTRIBUTE,
                         getRequiredAttribute(
                                 properties,
                                 NAME_ATTRIBUTE,
-                                () -> "No name attribute provided for Appender " + appenderPrefix));
+                                () -> "No name attribute provided for Appender " + properties.getPrefix()));
 
-        addFiltersToComponent(appenderPrefix, properties, builder);
-        processRemainingProperties(appenderPrefix, properties, builder);
-
+        addFiltersToComponent(properties, builder);
+        processRemainingProperties(properties, builder);
         return builder.get();
     }
 
-    private static ConfigurationNode processLogger(String key, Properties properties) {
+    private static ConfigurationNode processLogger(PropertiesSubset properties) {
         ConfigurationNodeBuilder builder = newNodeBuilder()
-                .addAttribute(LEVEL_AND_REFS_ATTRIBUTE, remove(properties, ""))
+                .addAttribute(LEVEL_AND_REFS_ATTRIBUTE, extractProperty(properties, ""))
                 .addAttribute(
                         NAME_ATTRIBUTE,
                         getRequiredAttribute(
-                                properties, NAME_ATTRIBUTE, () -> "No name attribute provided for Logger " + key));
+                                properties,
+                                NAME_ATTRIBUTE,
+                                () -> "No name attribute provided for Logger " + properties.getPrefix()));
 
-        String type = remove(properties, TYPE_ATTRIBUTE);
+        String type = extractProperty(properties, TYPE_ATTRIBUTE);
         if (ASYNC_LOGGER_PLUGIN_NAME.equalsIgnoreCase(type)) {
             builder.setPluginName(ASYNC_LOGGER_PLUGIN_NAME);
         } else if (type != null) {
-            throw new ConfigurationConverterException("Unknown logger type `" + type + "` for logger " + key);
+            throw new ConfigurationConverterException(
+                    "Unknown logger type `" + type + "` for logger " + properties.getPrefix());
         } else {
             builder.setPluginName(LOGGER_PLUGIN_NAME);
         }
 
-        String prefix = "logger." + key;
-        addAppenderRefsToComponent(prefix, properties, builder);
-        addFiltersToComponent(prefix, properties, builder);
-        processRemainingProperties(prefix, properties, builder);
+        addAppenderRefsToComponent(properties, builder);
+        addFiltersToComponent(properties, builder);
+        processRemainingProperties(properties, builder);
 
         return builder.get();
     }
 
-    private static void addAppenderRefsToComponent(
-            String prefix, Properties properties, ConfigurationNodeBuilder builder) {
-        Map<String, Properties> appenderRefs = extractSubsetAndPartition(properties, "appenderRef");
-        for (final Map.Entry<String, Properties> entry : appenderRefs.entrySet()) {
-            builder.addChild(processAppenderRef(prefix + ".appenderRef." + entry.getKey(), entry.getValue()));
+    private static ConfigurationNode wrapFilters(Collection<? extends ConfigurationNode> filters) {
+        if (filters.isEmpty()) {
+            throw new IllegalArgumentException("No filters provided");
         }
+        return filters.size() > 1
+                ? ComponentUtils.newCompositeFilter(filters)
+                : filters.iterator().next();
     }
 
-    private static ConfigurationNode processAppenderRef(String prefix, Properties properties) {
+    private static void addAppenderRefsToComponent(PropertiesSubset properties, ConfigurationNodeBuilder builder) {
+        PropertiesSubset appenderRefProperties = extractSubset(properties, "appenderRef");
+        partitionOnCommonPrefixes(appenderRefProperties).forEach(p -> builder.addChild(processAppenderRef(p)));
+        PropertiesUtils.throwIfNotEmpty(appenderRefProperties);
+    }
+
+    private static ConfigurationNode processAppenderRef(PropertiesSubset properties) {
         ConfigurationNodeBuilder builder = newNodeBuilder()
                 .setPluginName(APPENDER_REF_PLUGIN_NAME)
                 .addAttribute(
@@ -281,31 +273,32 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
                         getRequiredAttribute(
                                 properties,
                                 REF_ATTRIBUTE,
-                                () -> "No ref attribute provided for AppenderRef " + prefix));
+                                () -> "No ref attribute provided for AppenderRef " + properties.getPrefix()));
 
-        String level = Strings.trimToNull(remove(properties, "level"));
+        String level = Strings.trimToNull(extractProperty(properties, "level"));
         if (level != null) {
             builder.addAttribute("level", level);
         }
-
-        addFiltersToComponent(prefix, properties, builder);
-        processRemainingProperties(prefix, properties, builder);
-
+        addFiltersToComponent(properties, builder);
+        processRemainingProperties(properties, builder);
         return builder.get();
     }
 
-    private static void addFiltersToComponent(String prefix, Properties properties, ConfigurationNodeBuilder builder) {
-        Map<String, Properties> filters = extractSubsetAndPartition(properties, "filter");
+    private static void addFiltersToComponent(PropertiesSubset properties, ConfigurationNodeBuilder builder) {
+        PropertiesSubset filtersProperties = extractSubset(properties, "filter");
+        Collection<ConfigurationNode> filters = partitionOnCommonPrefixes(filtersProperties)
+                .map(p -> processGenericComponent("filter", p))
+                .collect(Collectors.toList());
         if (!filters.isEmpty()) {
-            builder.addChild(processFilters(prefix, filters));
+            builder.addChild(wrapFilters(filters));
         }
     }
 
-    private static ConfigurationNode processRootLogger(Properties properties) {
+    private static ConfigurationNode processRootLogger(PropertiesSubset properties) {
         ConfigurationNodeBuilder builder =
-                newNodeBuilder().addAttribute(LEVEL_AND_REFS_ATTRIBUTE, remove(properties, ""));
+                newNodeBuilder().addAttribute(LEVEL_AND_REFS_ATTRIBUTE, extractProperty(properties, ""));
 
-        String type = remove(properties, TYPE_ATTRIBUTE);
+        String type = extractProperty(properties, TYPE_ATTRIBUTE);
         if (ASYNC_ROOT_PLUGIN_NAME.equalsIgnoreCase(type)) {
             builder.setPluginName(ASYNC_ROOT_PLUGIN_NAME);
         } else if (type != null) {
@@ -314,16 +307,11 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
             builder.setPluginName(ROOT_PLUGIN_NAME);
         }
 
-        String prefix = "rootLogger";
-        addAppenderRefsToComponent(prefix, properties, builder);
-        addFiltersToComponent(prefix, properties, builder);
-        processRemainingProperties(prefix, properties, builder);
+        addAppenderRefsToComponent(properties, builder);
+        addFiltersToComponent(properties, builder);
+        processRemainingProperties(properties, builder);
 
         return builder.get();
-    }
-
-    private static @Nullable String remove(final Properties properties, final String key) {
-        return (String) properties.remove(key);
     }
 
     /**
@@ -332,44 +320,51 @@ public class PropertiesV2ConfigurationParser implements ConfigurationParser {
      *     The component must have a {@code type} attribute.
      * </p>
      *
-     * @param prefix Prefix of all the properties in the global prefix file. Used only for the exception message.
      * @param componentCategory Type of expected component. Used only for the exception message.
      * @param properties Component properties with names relative to {@code prefix}.
      */
-    private static ConfigurationNode processGenericComponent(
-            String prefix, String componentCategory, Properties properties) {
+    private static ConfigurationNode processGenericComponent(String componentCategory, PropertiesSubset properties) {
         ConfigurationNodeBuilder builder = newNodeBuilder();
 
         builder.setPluginName(getRequiredAttribute(
                 properties,
                 TYPE_ATTRIBUTE,
-                () -> "No type attribute provided for " + componentCategory + " " + prefix));
-        processRemainingProperties(prefix, properties, builder);
+                () -> "No type attribute provided for " + componentCategory + " " + properties.getPrefix()));
+        processRemainingProperties(properties, builder);
         return builder.get();
     }
 
-    private static void processRemainingProperties(
-            String prefix, Properties properties, ConfigurationNodeBuilder builder) {
-        while (!properties.isEmpty()) {
-            String propertyName = properties.stringPropertyNames().iterator().next();
+    private static void processRemainingProperties(PropertiesSubset properties, ConfigurationNodeBuilder builder) {
+        while (isNotEmpty(properties)) {
+            String propertyName =
+                    properties.getProperties().stringPropertyNames().iterator().next();
             int index = propertyName.indexOf('.');
             if (index > 0) {
                 String localPrefix = propertyName.substring(0, index);
-                String globalPrefix = prefix + "." + propertyName.substring(0, index);
-                Properties componentProperties = extractSubset(properties, localPrefix);
-                builder.addChild(processGenericComponent(globalPrefix, "component", componentProperties));
+                PropertiesSubset componentProperties = extractSubset(properties, localPrefix);
+                builder.addChild(processGenericComponent("component", componentProperties));
             } else {
-                builder.addAttribute(propertyName, remove(properties, propertyName));
+                builder.addAttribute(propertyName, extractProperty(properties, propertyName));
             }
         }
     }
 
     private static String getRequiredAttribute(
-            Properties properties, String propertyName, Supplier<String> errorMessageSupplier) {
-        String value = remove(properties, propertyName);
+            PropertiesSubset properties, String propertyName, Supplier<String> errorMessageSupplier) {
+        String value = extractProperty(properties, propertyName);
         if (Strings.isEmpty(value)) {
             throw new ConfigurationConverterException(errorMessageSupplier.get());
         }
         return value;
+    }
+
+    private static Stream<PropertiesSubset> partitionOnGivenPrefixes(PropertiesSubset properties, String prefixes) {
+        Stream.Builder<PropertiesSubset> builder = Stream.builder();
+        for (String prefix : prefixes.split(COMMA_SEPARATOR, -1)) {
+            if (!prefix.isEmpty()) {
+                builder.add(extractSubset(properties, prefix));
+            }
+        }
+        return builder.build();
     }
 }

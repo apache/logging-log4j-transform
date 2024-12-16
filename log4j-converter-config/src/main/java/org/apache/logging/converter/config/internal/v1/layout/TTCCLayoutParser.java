@@ -26,8 +26,8 @@ import org.apache.logging.converter.config.internal.ComponentUtils.Configuration
 import org.apache.logging.converter.config.internal.StringUtils;
 import org.apache.logging.converter.config.internal.v1.AbstractComponentParser;
 import org.apache.logging.converter.config.spi.ConfigurationNode;
+import org.apache.logging.converter.config.spi.PropertiesSubset;
 import org.apache.logging.converter.config.spi.v1.Log4j1ComponentParser;
-import org.apache.logging.converter.config.spi.v1.PropertiesSubset;
 import org.jspecify.annotations.Nullable;
 import org.w3c.dom.Element;
 
