@@ -42,8 +42,8 @@ import org.objectweb.asm.commons.GeneratorAdapter;
 public class LocationMethodVisitor extends GeneratorAdapter {
 
     // Programmatically define LAMBDA_METAFACTORY_HANDLE
-    private static Type SUPPLIER_OF_OBJECT_TYPE = Type.getMethodType(OBJECT_TYPE);
-    private static Type SUPPLIER_OF_MESSAGE_TYPE = Type.getMethodType(MESSAGE_TYPE);
+    private static final Type SUPPLIER_OF_OBJECT_TYPE = Type.getMethodType(OBJECT_TYPE);
+    private static final Type SUPPLIER_OF_MESSAGE_TYPE = Type.getMethodType(MESSAGE_TYPE);
     private static final Type LAMBDA_METAFACTORY_TYPE = Type.getType(LambdaMetafactory.class);
     private static final Type METHOD_HANDLE_TYPE = Type.getType(MethodHandle.class);
     private static final Type METHOD_TYPE_TYPE = Type.getType(MethodType.class);

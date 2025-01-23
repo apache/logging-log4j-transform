@@ -27,7 +27,7 @@ import org.apache.logging.converter.config.spi.ConfigurationNode;
 
 public class AbstractV1ConfigurationParserTest extends AbstractConfigurationMapperTest {
 
-    static ConfigurationNode EXAMPLE_V1_CONFIGURATION = newNodeBuilder()
+    static final ConfigurationNode EXAMPLE_V1_CONFIGURATION = newNodeBuilder()
             .setPluginName("Configuration")
             .addChild(newNodeBuilder()
                     .setPluginName("Properties")

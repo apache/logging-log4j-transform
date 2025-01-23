@@ -278,7 +278,7 @@ public class LocationCacheGenerator {
      */
     private static class LocationCacheContents {
         private final List<StackTraceElement> locations = new CopyOnWriteArrayList<>();
-        private Set<SupplierLambdaType> lambdas = EnumSet.noneOf(SupplierLambdaType.class);
+        private final Set<SupplierLambdaType> lambdas = EnumSet.noneOf(SupplierLambdaType.class);
 
         public int addLocation(
                 final String internalClassName, final String methodName, final String fileName, final int lineNumber) {

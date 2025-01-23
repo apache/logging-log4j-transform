@@ -279,8 +279,8 @@ public class LoggerConversionHandler implements ClassConversionHandler {
             if (types.length == 1) {
                 mv.push((String) null);
             }
-            for (int i = 0; i < vars.length; i++) {
-                mv.loadLocal(vars[i]);
+            for (int var : vars) {
+                mv.loadLocal(var);
             }
             final boolean usesSuppliers = types[types.length - 1].equals(SUPPLIER_ARRAY_TYPE);
             mv.invokeSupplierLambda(
