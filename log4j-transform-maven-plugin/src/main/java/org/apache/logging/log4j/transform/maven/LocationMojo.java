@@ -210,7 +210,7 @@ public class LocationMojo extends AbstractMojo {
                 return false;
             }
             // Transitive dependency
-            if (!project.getDependencyArtifacts().contains(log4jApi)) {
+            if (!project.getArtifacts().contains(log4jApi)) {
                 getLog().warn("Log4j2 API should not be a transitive dependency.");
             }
         } catch (OverConstrainedVersionException e) {
