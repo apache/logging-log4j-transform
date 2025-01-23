@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
+import java.util.stream.Stream;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.core.config.plugins.processor.PluginCache;
 import org.apache.logging.log4j.core.config.plugins.processor.PluginEntry;
@@ -42,6 +43,9 @@ import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 final class Log4j2PluginCacheFileTransformerTest {
 
@@ -110,16 +114,9 @@ final class Log4j2PluginCacheFileTransformerTest {
         }
     }
 
-    @Test
-    public void testRelocation() throws IOException {
-        // test with matching relocator
-        testRelocation("org.apache.logging", "new.location.org.apache.logging", "new.location.org.apache.logging");
-
-        // test without matching relocator
-        testRelocation("com.apache.logging", "new.location.com.apache.logging", "org.apache.logging");
-    }
-
-    private void testRelocation(final String src, final String pattern, final String target) throws IOException {
+    @ParameterizedTest
+    @MethodSource("relocationParameters")
+    public void testRelocation(final String src, final String pattern, final String target) throws IOException {
         final Log4j2PluginCacheFileTransformer transformer = new Log4j2PluginCacheFileTransformer();
         final Relocator log4jRelocator = new SimpleRelocator(src, pattern, null, null);
         final PluginCache aggregator = new PluginCache();
@@ -133,6 +130,15 @@ final class Log4j2PluginCacheFileTransformerTest {
                 assertTrue(entry.getClassName().startsWith(target));
             }
         }
+    }
+
+    private static Stream<Arguments> relocationParameters() {
+        return Stream.of(
+                // test with matching relocator
+                Arguments.of(
+                        "org.apache.logging", "new.location.org.apache.logging", "new.location.org.apache.logging"),
+                // test without matching relocator
+                Arguments.of("com.apache.logging", "new.location.com.apache.logging", "org.apache.logging"));
     }
 
     @AfterAll
