@@ -35,7 +35,7 @@ and was donated to the Apache Software Foundation by its author.
 [TIP]
 ====
 If you are a Gradle user, you can use the
-https://gradleup.com/shadow/configuration/merging/#merging-log4j2-plugin-cache-files-log4j2pluginsdat[equivalent GradleUp Shadow transformer].
+https://gradleup.com/shadow/configuration/merging/#merging-log4j2-plugin-cache-files-log4j2pluginsdat[equivalent Shadow Gradle Plugin transformer].
 ====
 
 [#log4j-plugin-cache-transformer-usage]
