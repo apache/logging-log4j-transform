@@ -107,7 +107,7 @@ public class Log4j2PluginCacheFileTransformer implements ReproducibleResourceTra
      */
     @Override
     public boolean hasTransformedResource() {
-        return tempFiles.size() > 0;
+        return !tempFiles.isEmpty();
     }
 
     /**
