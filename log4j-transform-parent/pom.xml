@@ -45,7 +45,7 @@
     <slf4j.version>2.0.17</slf4j.version>
 
     <!-- plugin versions -->
-    <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
     <maven-invoker-plugin.version>3.6.1</maven-invoker-plugin.version>
     <surefire.version>3.0.0-M7</surefire.version>
 
