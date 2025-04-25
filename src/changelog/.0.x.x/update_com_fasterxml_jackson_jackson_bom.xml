@@ -3,6 +3,6 @@
        xmlns="https://logging.apache.org/xml/ns"
        xsi:schemaLocation="https://logging.apache.org/xml/ns https://logging.apache.org/xml/ns/log4j-changelog-0.xsd"
        type="updated">
-  <issue id="173" link="https://github.com/apache/logging-log4j-transform/pull/173"/>
-  <description format="asciidoc">Update `com.fasterxml.jackson:jackson-bom` to version `2.18.3`</description>
+  <issue id="190" link="https://github.com/apache/logging-log4j-transform/pull/190"/>
+  <description format="asciidoc">Update `com.fasterxml.jackson:jackson-bom` to version `2.19.0`</description>
 </entry>
