@@ -3,6 +3,6 @@
        xmlns="https://logging.apache.org/xml/ns"
        xsi:schemaLocation="https://logging.apache.org/xml/ns https://logging.apache.org/xml/ns/log4j-changelog-0.xsd"
        type="updated">
-  <issue id="191" link="https://github.com/apache/logging-log4j-transform/pull/191"/>
-  <description format="asciidoc">Update `com.fasterxml.jackson.core:jackson-databind` to version `2.19.0`</description>
+  <issue id="196" link="https://github.com/apache/logging-log4j-transform/pull/196"/>
+  <description format="asciidoc">Update `com.fasterxml.jackson.core:jackson-databind` to version `2.19.1`</description>
 </entry>
