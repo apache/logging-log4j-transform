@@ -3,6 +3,6 @@
        xmlns="https://logging.apache.org/xml/ns"
        xsi:schemaLocation="https://logging.apache.org/xml/ns https://logging.apache.org/xml/ns/log4j-changelog-0.xsd"
        type="updated">
-  <issue id="199" link="https://github.com/apache/logging-log4j-transform/pull/199"/>
-  <description format="asciidoc">Update `org.apache.logging.log4j:log4j-bom` to version `2.25.0`</description>
+  <issue id="206" link="https://github.com/apache/logging-log4j-transform/pull/206"/>
+  <description format="asciidoc">Update `org.apache.logging.log4j:log4j-bom` to version `2.25.1`</description>
 </entry>
