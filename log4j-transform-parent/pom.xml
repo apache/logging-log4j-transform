@@ -39,7 +39,7 @@
     <jmh.version>1.37</jmh.version>
     <junit.version>5.13.3</junit.version>
     <log4j.version>2.25.1</log4j.version>
-    <maven.version>3.9.10</maven.version>
+    <maven.version>3.9.11</maven.version>
     <picocli.version>4.7.7</picocli.version>
     <plexus-utils.version>4.0.2</plexus-utils.version>
     <slf4j.version>2.0.17</slf4j.version>
