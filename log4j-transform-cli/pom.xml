@@ -35,7 +35,7 @@
     <bnd.baseline.fail.on.missing>false</bnd.baseline.fail.on.missing>
 
     <!-- Dependency versions -->
-    <commons-cli.version>1.9.0</commons-cli.version>
+    <commons-cli.version>1.10.0</commons-cli.version>
 
     <!-- Main class -->
     <Main-Class>org.apache.logging.log4j.transform.cli.Main</Main-Class>
