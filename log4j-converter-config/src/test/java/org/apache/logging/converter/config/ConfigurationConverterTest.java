@@ -59,8 +59,10 @@ class ConfigurationConverterTest {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             converter.convert(Objects.requireNonNull(inputStream), inputFormat, outputStream, DEFAULT_FORMAT);
             // Parse the result and check if it matches
-            ConfigurationNode actual = parser.parse(new ByteArrayInputStream(outputStream.toByteArray()));
+            byte[] outputBytes = outputStream.toByteArray();
+            ConfigurationNode actual = parser.parse(new ByteArrayInputStream(outputBytes));
             assertThat(actual).ignoringOrder().isEqualTo(EXAMPLE_V2_CONFIGURATION);
+            assertThat(new String(outputBytes)).endsWith("\n");
         }
     }
 
