@@ -73,6 +73,8 @@ public abstract class AbstractJacksonConfigurationMapper implements Configuratio
                 ? nodeFactory.objectNode().set(configuration.getPluginName(), configurationNode)
                 : configurationNode;
         mapper.writeValue(outputStream, documentNode);
+        outputStream.write('\n');
+        outputStream.close();
     }
 
     private static ConfigurationNode parseObjectNode(ObjectNode objectNode, String fieldName) {

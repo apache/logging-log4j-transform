@@ -18,6 +18,8 @@ package org.apache.logging.converter.config.internal.v2;
 
 import aQute.bnd.annotation.Resolution;
 import aQute.bnd.annotation.spi.ServiceProvider;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.apache.logging.converter.config.spi.ConfigurationMapper;
 
@@ -27,7 +29,12 @@ public class JsonConfigurationMapper extends AbstractJacksonConfigurationMapper 
     private static final String LOG4J_V2_JSON_FORMAT = "v2:json";
 
     public JsonConfigurationMapper() {
-        super(JsonMapper.builder().build(), true);
+        super(
+                JsonMapper.builder()
+                        .enable(SerializationFeature.INDENT_OUTPUT)
+                        .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET)
+                        .build(),
+                true);
     }
 
     @Override

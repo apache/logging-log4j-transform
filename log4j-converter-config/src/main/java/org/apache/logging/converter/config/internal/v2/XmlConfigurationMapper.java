@@ -88,6 +88,7 @@ public class XmlConfigurationMapper implements ConfigurationMapper {
             streamWriter.writeEndElement();
             streamWriter.writeEndDocument();
             streamWriter.flush();
+            streamWriter.writeCharacters("\n");
         } catch (XMLStreamException e) {
             throw new IOException("Unable to write configuration.", e);
         } finally {
