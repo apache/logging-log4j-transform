@@ -35,7 +35,7 @@
     <Main-Class>org.apache.logging.log4j.converter.plugins.PluginCacheConverter</Main-Class>
 
     <!-- Dependency versions -->
-    <jackson.version>2.19.2</jackson.version>
+    <jackson.version>2.20.0</jackson.version>
   </properties>
 
   <dependencies>
