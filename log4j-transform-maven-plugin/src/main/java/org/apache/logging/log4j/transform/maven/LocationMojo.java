@@ -42,7 +42,6 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.OverConstrainedVersionException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -102,7 +101,7 @@ public class LocationMojo extends AbstractMojo {
     private int staleMillis;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
         if ("pom".equals(project.getPackaging())) {
             getLog().info("Skipping project with packaging \"pom\".");
             return;
@@ -192,7 +191,7 @@ public class LocationMojo extends AbstractMojo {
         }
     }
 
-    private boolean validateLog4jVersion() throws MojoExecutionException {
+    private boolean validateLog4jVersion() {
         Optional<Artifact> artifact = project.getArtifacts().stream()
                 .filter(a -> LOG4J_GROUP_ID.equals(a.getGroupId()) && LOG4J_API_ARTIFACT_ID.equals(a.getArtifactId()))
                 .findAny();
@@ -210,7 +209,7 @@ public class LocationMojo extends AbstractMojo {
                 return false;
             }
             // Transitive dependency
-            if (!project.getDependencyArtifacts().contains(log4jApi)) {
+            if (!project.getArtifacts().contains(log4jApi)) {
                 getLog().warn("Log4j2 API should not be a transitive dependency.");
             }
         } catch (OverConstrainedVersionException e) {
