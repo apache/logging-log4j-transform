@@ -18,6 +18,7 @@ package org.apache.logging.log4j.weaver.log4j2;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.List;
 import org.apache.logging.log4j.Level;
@@ -62,12 +63,10 @@ public class LoggerConversionHandlerExample {
 
     private static final Logger logger = LogManager.getLogger();
 
-    private static final int referenceLine = 65;
-
     public void testFatal(final ListAppender app) {
         app.clear();
         final String methodName = "testFatal";
-        int lineNumber = referenceLine + 5; // current line number
+        int lineNumber = getLineNumber(); // current line number
         logger.fatal(CHAR_SEQUENCE);
         assertLocationEquals(methodName, ++lineNumber, app);
         logger.fatal(CHAR_SEQUENCE, THROWABLE);
@@ -165,7 +164,7 @@ public class LoggerConversionHandlerExample {
     public void testError(final ListAppender app) {
         app.clear();
         final String methodName = "testError";
-        int lineNumber = referenceLine + 103; // current line number
+        int lineNumber = getLineNumber(); // current line number
         logger.error(CHAR_SEQUENCE);
         assertLocationEquals(methodName, ++lineNumber, app);
         logger.error(CHAR_SEQUENCE, THROWABLE);
@@ -263,7 +262,7 @@ public class LoggerConversionHandlerExample {
     public void testWarn(final ListAppender app) {
         app.clear();
         final String methodName = "testWarn";
-        int lineNumber = referenceLine + 201; // current line number
+        int lineNumber = getLineNumber(); // current line number
         logger.warn(CHAR_SEQUENCE);
         assertLocationEquals(methodName, ++lineNumber, app);
         logger.warn(CHAR_SEQUENCE, THROWABLE);
@@ -361,7 +360,7 @@ public class LoggerConversionHandlerExample {
     public void testInfo(final ListAppender app) {
         app.clear();
         final String methodName = "testInfo";
-        int lineNumber = referenceLine + 299; // current line number
+        int lineNumber = getLineNumber(); // current line number
         logger.info(CHAR_SEQUENCE);
         assertLocationEquals(methodName, ++lineNumber, app);
         logger.info(CHAR_SEQUENCE, THROWABLE);
@@ -459,7 +458,7 @@ public class LoggerConversionHandlerExample {
     public void testDebug(final ListAppender app) {
         app.clear();
         final String methodName = "testDebug";
-        int lineNumber = referenceLine + 397; // current line number
+        int lineNumber = getLineNumber(); // current line number
         logger.debug(CHAR_SEQUENCE);
         assertLocationEquals(methodName, ++lineNumber, app);
         logger.debug(CHAR_SEQUENCE, THROWABLE);
@@ -557,7 +556,7 @@ public class LoggerConversionHandlerExample {
     public void testTrace(final ListAppender app) {
         app.clear();
         final String methodName = "testTrace";
-        int lineNumber = referenceLine + 495; // current line number
+        int lineNumber = getLineNumber(); // current line number
         logger.trace(CHAR_SEQUENCE);
         assertLocationEquals(methodName, ++lineNumber, app);
         logger.trace(CHAR_SEQUENCE, THROWABLE);
@@ -655,7 +654,7 @@ public class LoggerConversionHandlerExample {
     public void testLog(final ListAppender app) {
         app.clear();
         final String methodName = "testLog";
-        int lineNumber = referenceLine + 593; // current line number
+        int lineNumber = getLineNumber(); // current line number
         logger.log(Level.INFO, CHAR_SEQUENCE);
         assertLocationEquals(methodName, ++lineNumber, app);
         logger.log(Level.INFO, CHAR_SEQUENCE, THROWABLE);
@@ -753,7 +752,7 @@ public class LoggerConversionHandlerExample {
     public void testFrames(final ListAppender app) {
         app.clear();
         final String methodName = "testFrames";
-        final int lineNumber = referenceLine + 691; // Current line
+        final int lineNumber = getLineNumber(); // Current line
         int i = 0;
         while (i < 2) {
             if (i < 1) {
@@ -782,7 +781,7 @@ public class LoggerConversionHandlerExample {
     public void testPrintf(final ListAppender app) {
         app.clear();
         final String methodName = "testPrintf";
-        int lineNumber = referenceLine + 720; // Current line
+        int lineNumber = getLineNumber(); // Current line
         logger.printf(Level.INFO, "Hello %s.%s", "LoggerConversionHandlerExample", methodName);
         assertLocationEquals(methodName, ++lineNumber, app);
         logger.printf(Level.INFO, MARKER, "Hello %s.%s", "LoggerConversionHandlerExample", methodName);
@@ -792,7 +791,7 @@ public class LoggerConversionHandlerExample {
     public void testLogBuilder(final ListAppender app) {
         app.clear();
         final String methodName = "testLogBuilder";
-        int lineNumber = referenceLine + 730; // Current line
+        int lineNumber = getLineNumber(); // Current line
         logger.always().log();
         assertLocationEquals(methodName, ++lineNumber, app);
         logger.atDebug().log();
@@ -829,6 +828,10 @@ public class LoggerConversionHandlerExample {
         assertTrue(logger.isTraceEnabled(MARKER));
         assertTrue(logger.isWarnEnabled());
         assertTrue(logger.isWarnEnabled(MARKER));
+        assertDoesNotThrow(logger::getName);
+        assertDoesNotThrow(logger::getLevel);
+        assertDoesNotThrow(logger::getFlowMessageFactory);
+        assertDoesNotThrow(logger::getClass);
         app.clear();
         logger.logMessage(Level.INFO, MARKER, LoggerConversionHandlerExample.class.getName(), null, MESSAGE, THROWABLE);
         assertThat(app.getEvents()).hasSize(1);
@@ -837,7 +840,7 @@ public class LoggerConversionHandlerExample {
     public void testCatchingThrowing(final ListAppender app) {
         app.clear();
         final String methodName = "testCatchingThrowing";
-        int lineNumber = referenceLine + 775; // Current line
+        int lineNumber = getLineNumber(); // Current line
         logger.catching(THROWABLE);
         assertThat(app.getEvents()).allMatch(event -> AbstractLogger.CATCHING_MARKER.equals(event.getMarker()));
         assertLocationEquals(methodName, ++lineNumber, app);
@@ -855,7 +858,7 @@ public class LoggerConversionHandlerExample {
     public void testTraceEntry(final ListAppender app) {
         app.clear();
         final String methodName = "testTraceEntry";
-        int lineNumber = referenceLine + 793; // Current line
+        int lineNumber = getLineNumber(); // Current line
         EntryMessage entryMessage = logger.traceEntry();
         LogEvent event = assertLocationEquals(methodName, ++lineNumber, app);
         assertThat(event.getMarker()).isEqualTo(AbstractLogger.ENTRY_MARKER);
@@ -885,7 +888,7 @@ public class LoggerConversionHandlerExample {
     public void testTraceExit(final ListAppender app) {
         app.clear();
         final String methodName = "testTraceExit";
-        int lineNumber = referenceLine + 823; // Current line
+        int lineNumber = getLineNumber(); // Current line
         logger.traceExit();
         LogEvent event = assertLocationEquals(methodName, ++lineNumber, app);
         assertThat(event.getMarker()).isEqualTo(AbstractLogger.EXIT_MARKER);
@@ -941,5 +944,9 @@ public class LoggerConversionHandlerExample {
         assertThat(location.getLineNumber()).isEqualTo(lineNumber);
         app.clear();
         return event;
+    }
+
+    private static int getLineNumber() {
+        return Thread.currentThread().getStackTrace()[2].getLineNumber();
     }
 }
