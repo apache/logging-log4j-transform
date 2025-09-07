@@ -928,7 +928,6 @@ public class LoggerConversionHandlerExample {
         return assertLocationEquals(methodName, app, -1);
     }
 
-
     /**
      * Asserts log event has the right location intended, the log request is {@param difference} before this call
      *
@@ -937,8 +936,7 @@ public class LoggerConversionHandlerExample {
      * @param difference the difference between the call to this function and the log
      * @return the log event extracted
      */
-    private static LogEvent assertLocationEquals(
-            final String methodName, final ListAppender app, int difference) {
+    private static LogEvent assertLocationEquals(final String methodName, final ListAppender app, int difference) {
         final List<LogEvent> events = app.getEvents();
         assertThat(events).hasSize(1);
         final LogEvent event = events.get(0);
