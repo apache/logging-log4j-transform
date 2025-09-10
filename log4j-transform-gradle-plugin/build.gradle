@@ -1,0 +1,36 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'groovy'
+    id 'com.diffplug.spotless' version '7.2.1'
+}
+
+group = 'org.apache.logging.log4j'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.apache.logging.log4j:log4j-core:2.24.0'
+    implementation 'org.apache.logging.log4j:log4j-weaver:0.2.0'
+    implementation 'org.codehaus.plexus:plexus-utils:4.0.2'
+    implementation 'org.apache.commons:commons-lang3:3.18.0'
+}
+
+gradlePlugin {
+    plugins {
+        loggingTransform {
+            id = 'org.apache.logging.transform'
+            implementationClass = 'org.apache.logging.log4j.transform.gradle.LoggingTransformPlugin'
+            description = 'A plugin that provides logging transformation to add location information to your logs'
+        }
+    }
+}
+
+spotless {
+    groovy {
+        removeSemicolons()
+        greclipse()
+    }
+}
