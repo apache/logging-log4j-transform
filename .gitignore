@@ -30,3 +30,6 @@ target/
 node
 node_modules
 package-lock.json
+build/
+.gradle
+lib/
