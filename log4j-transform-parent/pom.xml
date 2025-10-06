@@ -31,7 +31,7 @@
   <properties>
 
     <!-- dependency versions -->
-    <asm.version>9.8</asm.version>
+    <asm.version>9.9</asm.version>
     <assertj.version>3.27.6</assertj.version>
     <commons-lang.version>3.19.0</commons-lang.version>
     <commons-logging.version>1.3.5</commons-logging.version>
