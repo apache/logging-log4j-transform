@@ -132,17 +132,6 @@ public class LoggerConversionHandler implements ClassConversionHandler {
             case "throwing":
                 handleCatchingThrowing(mv, descriptor, "throwing".equals(name));
                 break;
-            case "isDebugEnabled":
-            case "isEnabled":
-            case "isErrorEnabled":
-            case "isFatalEnabled":
-            case "isInfoEnabled":
-            case "isTraceEnabled":
-            case "isWarnEnabled":
-            case "logMessage":
-                // These are NOPs
-                mv.invokeInterface(LOGGER_TYPE, new Method(name, descriptor));
-                break;
             case "traceEntry":
                 handleTraceEntry(mv, descriptor);
                 break;
@@ -150,7 +139,8 @@ public class LoggerConversionHandler implements ClassConversionHandler {
                 handleTraceExit(mv, descriptor);
                 break;
             default:
-                throw new ConversionException("Unsupported method 'org.apache.logging.log4j.Logger#" + name + "'.");
+                // The default is to not change the original call
+                mv.invokeInterface(LOGGER_TYPE, new Method(name, descriptor));
         }
     }
 
