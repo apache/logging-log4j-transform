@@ -3,6 +3,6 @@
        xmlns="https://logging.apache.org/xml/ns"
        xsi:schemaLocation="https://logging.apache.org/xml/ns https://logging.apache.org/xml/ns/log4j-changelog-0.xsd"
        type="updated">
-  <issue id="215" link="https://github.com/apache/logging-log4j-transform/pull/215"/>
-  <description format="asciidoc">Update `commons-cli:commons-cli` to version `1.10.0`</description>
+  <issue id="239" link="https://github.com/apache/logging-log4j-transform/pull/239"/>
+  <description format="asciidoc">Update `commons-cli:commons-cli` to version `1.11.0`</description>
 </entry>

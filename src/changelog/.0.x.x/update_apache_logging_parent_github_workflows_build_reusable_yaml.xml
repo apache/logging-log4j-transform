@@ -3,6 +3,6 @@
        xmlns="https://logging.apache.org/xml/ns"
        xsi:schemaLocation="https://logging.apache.org/xml/ns https://logging.apache.org/xml/ns/log4j-changelog-0.xsd"
        type="updated">
-  <issue id="225" link="https://github.com/apache/logging-log4j-transform/pull/225"/>
-  <description format="asciidoc">Update `org.assertj:assertj-core` to version `3.27.6`</description>
+  <issue id="238" link="https://github.com/apache/logging-log4j-transform/pull/238"/>
+  <description format="asciidoc">Update `apache/logging-parent/.github/workflows/build-reusable.yaml` to version `12.1.1`</description>
 </entry>

@@ -31,13 +31,13 @@
   <properties>
 
     <!-- dependency versions -->
-    <asm.version>9.8</asm.version>
-    <assertj.version>3.27.4</assertj.version>
-    <commons-lang.version>3.18.0</commons-lang.version>
+    <asm.version>9.9</asm.version>
+    <assertj.version>3.27.6</assertj.version>
+    <commons-lang.version>3.20.0</commons-lang.version>
     <commons-logging.version>1.3.5</commons-logging.version>
-    <commons-io.version>2.20.0</commons-io.version>
+    <commons-io.version>2.21.0</commons-io.version>
     <jmh.version>1.37</jmh.version>
-    <junit.version>5.13.3</junit.version>
+    <junit.version>6.0.1</junit.version>
     <log4j.version>2.25.1</log4j.version>
     <maven.version>3.9.11</maven.version>
     <picocli.version>4.7.7</picocli.version>
@@ -45,7 +45,7 @@
     <slf4j.version>2.0.17</slf4j.version>
 
     <!-- plugin versions -->
-    <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
     <maven-invoker-plugin.version>3.6.1</maven-invoker-plugin.version>
     <surefire.version>3.0.0-M7</surefire.version>
 

@@ -134,7 +134,7 @@ public final class ConfigurationFileCommands {
         public void setInputFormat(String inputFormat) {
             if (!converter.getSupportedInputFormats().contains(inputFormat)) {
                 throw new IllegalArgumentException("Unsupported input format: `" + inputFormat
-                        + "`.\nRun `listFormats` for a list of supported formats.");
+                        + "`.\nRun `list-formats` for a list of supported formats.");
             }
             this.inputFormat = inputFormat;
         }
@@ -146,7 +146,7 @@ public final class ConfigurationFileCommands {
         public void setOutputFormat(String outputFormat) {
             if (!converter.getSupportedOutputFormats().contains(outputFormat)) {
                 throw new IllegalArgumentException("Unsupported output format: `" + outputFormat
-                        + "`.\nRun `listFormats` for a list of supported formats.");
+                        + "`.\nRun `list-formats` for a list of supported formats.");
             }
             this.outputFormat = outputFormat;
         }

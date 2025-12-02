@@ -36,8 +36,8 @@
     <bnd.baseline.fail.on.missing>false</bnd.baseline.fail.on.missing>
 
     <!-- Dependencies -->
-    <jackson.version>2.20.0</jackson.version>
-    <txw2.version>4.0.5</txw2.version>
+    <jackson.version>2.20.1</jackson.version>
+    <txw2.version>4.0.6</txw2.version>
   </properties>
 
   <dependencyManagement>

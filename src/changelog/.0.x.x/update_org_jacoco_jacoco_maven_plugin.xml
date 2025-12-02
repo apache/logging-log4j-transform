@@ -3,6 +3,6 @@
        xmlns="https://logging.apache.org/xml/ns"
        xsi:schemaLocation="https://logging.apache.org/xml/ns https://logging.apache.org/xml/ns/log4j-changelog-0.xsd"
        type="updated">
-  <issue id="178" link="https://github.com/apache/logging-log4j-transform/pull/178"/>
-  <description format="asciidoc">Update `org.jacoco:jacoco-maven-plugin` to version `0.8.13`</description>
+  <issue id="231" link="https://github.com/apache/logging-log4j-transform/pull/231"/>
+  <description format="asciidoc">Update `org.jacoco:jacoco-maven-plugin` to version `0.8.14`</description>
 </entry>
