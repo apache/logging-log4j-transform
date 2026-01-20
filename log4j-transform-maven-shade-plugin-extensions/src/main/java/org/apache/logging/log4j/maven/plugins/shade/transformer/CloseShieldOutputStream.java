@@ -16,7 +16,7 @@
  */
 package org.apache.logging.log4j.maven.plugins.shade.transformer;
 
-import static org.apache.commons.io.output.ClosedOutputStream.CLOSED_OUTPUT_STREAM;
+import static org.apache.commons.io.output.ClosedOutputStream.INSTANCE;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -37,6 +37,6 @@ final class CloseShieldOutputStream extends ProxyOutputStream {
     @Override
     public void close() throws IOException {
         out.flush();
-        out = CLOSED_OUTPUT_STREAM;
+        out = INSTANCE;
     }
 }
